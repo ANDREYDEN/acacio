@@ -50,3 +50,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
    ```bash
    npm start
    ```
+
+## Licencing
+
+This software is protected by the MIT Licence. Anyone can fork, modify or distribute this software, however the authours take no responsibility for possible harm, bugs or exploits that this software might cause.
