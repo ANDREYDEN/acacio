@@ -6,6 +6,9 @@ name: Build and Lint
 jobs:
   test_and_build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_API_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_API_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
