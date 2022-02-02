@@ -17,6 +17,11 @@ This project contains a `.nvmrc` file with the desired node version. If you are 
 
 ### Run the development server
 
+Set up the environment variables
+```bash
+cp .env.example .env.local
+```
+
 Install dependencies
 ```bash
 npm i
