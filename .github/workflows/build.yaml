@@ -2,7 +2,7 @@ on:
   pull_request:
     branches: 
     - main 
-name: Test and build
+name: Build and Lint
 jobs:
   test_and_build:
     runs-on: ubuntu-latest
