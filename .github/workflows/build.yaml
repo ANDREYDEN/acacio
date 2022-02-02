@@ -1,0 +1,29 @@
+on:
+  pull_request:
+    branches: 
+    - main 
+name: Build and Lint
+jobs:
+  test_and_build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_API_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_API_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      
+      - name: Install dependecies
+        run: npm i
+      
+      - name: Build Project
+        run: npm run build
+
+      - name: Run linter
+        run: npm run lint
+
