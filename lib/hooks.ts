@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { supabase } from '../client'
 
 export const useUser = () => {
-  const router = useRouter();
+  const router = useRouter()
   const user = supabase.auth.user()
 
   useEffect(() => {
@@ -12,5 +12,5 @@ export const useUser = () => {
     }
   }, [router, user])
 
-  return user;
-};
+  return user
+}

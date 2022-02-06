@@ -2,7 +2,7 @@
   "extends": ["next/core-web-vitals"],
   "rules": {
     "quotes": ["error", "single", { "avoidEscape": true }],
-    "semi": "off",
+    "semi": ["error", "never"],
     "object-curly-spacing": ["error", "always"]
   }
 }

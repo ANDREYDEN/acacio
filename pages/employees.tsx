@@ -30,7 +30,7 @@ const Employees: NextPage = () => {
     }
 
     const handleLogOut = async () => {
-        await supabase.auth.signOut();
+        await supabase.auth.signOut()
         router.replace('/')
     }
 
