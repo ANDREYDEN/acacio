@@ -1,13 +1,15 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { supabase } from '../client'
+import { useUser } from '../lib/hooks'
 import { definitions } from '../types/database'
 
 const Employees: NextPage = () => {
     const [loading, setLoading] = useState(true)
     const [employees, setEmployees] = useState<definitions['employees'][]>()
-
+    const router = useRouter()
     const [employee, setEmployee] = useState({
         firstName: '',
         lastName: '',
@@ -15,6 +17,7 @@ const Employees: NextPage = () => {
         salary: 0,
         coefficient: 0,
     })
+    const user = useUser()
 
     const { firstName, lastName, dateOfBirth, salary, coefficient } = employee
 
@@ -24,6 +27,11 @@ const Employees: NextPage = () => {
             setEmployees(data)
         }
         setLoading(false)
+    }
+
+    const handleLogOut = async () => {
+        await supabase.auth.signOut();
+        router.replace('/')
     }
 
     useEffect(() => {
@@ -59,7 +67,7 @@ const Employees: NextPage = () => {
         getEmployees()
     }
 
-    if (loading)
+    if (!user || loading)
         return (
             <div className="flex justify-center items-center">
                 <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"/>
@@ -73,6 +81,9 @@ const Employees: NextPage = () => {
                     <title>Acacio</title>
                     <link rel="icon" href="/favicon.ico"/>
                 </Head>
+
+                <div>User Email: {user.email}</div>
+                <button onClick={handleLogOut}>Log Out</button>
 
                 <div className="flex flex-wrap items-center justify-around mt-6">
                     <div className="p-8 mt-6 border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600">

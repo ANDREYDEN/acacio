@@ -1,18 +1,28 @@
 import { NextPage } from 'next'
-import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { supabase } from '../client'
+import { useUser } from '../lib/hooks'
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const router = useRouter()
+    const user = useUser()
+
+    useEffect(() => {
+        if (user) {
+            router.replace('/employees')
+        }
+    }, [user, router])
 
     // @ts-ignore
     const handleLogin = async (email) => {
         try {
             setLoading(true)
-            const { error } = await supabase.auth.signIn({ email })
-            if (error) throw error
-            alert('Check your email for the login link!')
+            await supabase.auth.signIn({ email, password })
+            router.replace('/employees')
         } catch (error) {
             // @ts-ignore
             alert(error.error_description || error.message)
@@ -32,6 +42,13 @@ const Login: NextPage = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
+                    <br />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
                 </div>
                 <div>
                     <button
@@ -41,7 +58,7 @@ const Login: NextPage = () => {
                         }}
                         disabled={loading}
                     >
-                        <span>{loading ? 'Loading' : 'Send magic link'}</span>
+                        <span>{loading ? 'Loading...' : 'Log In'}</span>
                     </button>
                 </div>
             </div>
