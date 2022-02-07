@@ -1,27 +1,27 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { useUser } from '../lib/hooks'
+import { useState } from 'react'
+import { supabase } from '../client'
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
-    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const router = useRouter()
-    const user = useUser()
 
-    useEffect(() => {
-        if (user) {
-            router.replace('/employees')
-        }
-    }, [user, router])
+    const [error, setError] = useState('')
 
     const handlePasswordReset = async () => {
         try {
-            router.replace('/employees')
+            setLoading(true)
+            const access_token = supabase.auth.session()?.access_token
+            if (!access_token) throw new Error('Invalid access_token')
+            const { error } = await supabase.auth.api.updateUser(access_token, { password })
+            if (error) throw new Error(error.message)
+            
+            router.replace('/')
         } catch (error: any) {
-            alert(error.error_description || error.message)
+            setError(error.error_description || error.message)
         } finally {
             setLoading(false)
         }
@@ -32,13 +32,6 @@ const PasswordReset: NextPage = () => {
             <div>
                 <p>Sign in via magic link with your email below</p>
                 <div>
-                    <input
-                        type="email"
-                        placeholder="Your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <br />
                     <input
                         type="password"
                         placeholder="New Password"
@@ -53,6 +46,7 @@ const PasswordReset: NextPage = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                 </div>
+                <div className='text-red-500'>{ error }</div>
                 <div>
                     <button
                         onClick={(e) => {
@@ -61,7 +55,7 @@ const PasswordReset: NextPage = () => {
                         }}
                         disabled={loading}
                     >
-                        <span>{loading ? 'Loading...' : 'Log In'}</span>
+                        <span>{loading ? 'Loading...' : 'Reset Password'}</span>
                     </button>
                 </div>
             </div>

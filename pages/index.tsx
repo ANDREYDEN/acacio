@@ -10,7 +10,8 @@ const Login: NextPage = () => {
     const [password, setPassword] = useState('')
     const router = useRouter()
     const user = useUser()
-
+    const [error, setError] = useState('')
+    
     useEffect(() => {
         if (user) {
             router.replace('/employees')
@@ -20,10 +21,11 @@ const Login: NextPage = () => {
     const handleLogin = async () => {
         try {
             setLoading(true)
-            await supabase.auth.signIn({ email, password })
+            const { error } = await supabase.auth.signIn({ email, password })
+            if (error) throw new Error(error.message)
             router.replace('/employees')
         } catch (error: any) {
-            alert(error.error_description || error.message)
+            setError(error.error_description || error.message)
         } finally {
             setLoading(false)
         }
@@ -32,9 +34,10 @@ const Login: NextPage = () => {
     const sendPasswordReset = async () => {
         try {
             setLoading(true)
-            await supabase.auth.api.resetPasswordForEmail(email)
+            const { error } = await supabase.auth.api.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/password-reset` })
+            if (error) throw new Error(error.message)
         } catch (error: any) {
-            alert(error.error_description || error.message)
+            setError(error.error_description || error.message)
         } finally {
             setLoading(false)
         }
@@ -59,6 +62,7 @@ const Login: NextPage = () => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
+                <div>{ error }</div>
                 <button
                     onClick={(e) => {
                         e.preventDefault()
@@ -68,6 +72,7 @@ const Login: NextPage = () => {
                 >
                     <span>{loading ? 'Loading...' : 'Log In'}</span>
                 </button>
+                <br />
                 <button
                     onClick={(e) => {
                         e.preventDefault()
@@ -75,7 +80,7 @@ const Login: NextPage = () => {
                     }}
                     disabled={loading}
                 >
-                    Reset Password
+                    Forgot Password?
                 </button>
             </div>
         </div>
