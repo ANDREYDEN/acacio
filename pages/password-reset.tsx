@@ -1,13 +1,13 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
 
-const Login: NextPage = () => {
+const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const router = useRouter()
     const user = useUser()
 
@@ -17,22 +17,9 @@ const Login: NextPage = () => {
         }
     }, [user, router])
 
-    const handleLogin = async () => {
+    const handlePasswordReset = async () => {
         try {
-            setLoading(true)
-            await supabase.auth.signIn({ email, password })
             router.replace('/employees')
-        } catch (error: any) {
-            alert(error.error_description || error.message)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const sendPasswordReset = async () => {
-        try {
-            setLoading(true)
-            await supabase.auth.api.resetPasswordForEmail(email)
         } catch (error: any) {
             alert(error.error_description || error.message)
         } finally {
@@ -54,32 +41,32 @@ const Login: NextPage = () => {
                     <br />
                     <input
                         type="password"
-                        placeholder="Password"
+                        placeholder="New Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    <br />
+                    <input
+                        type="password"
+                        placeholder="Confirm New Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                 </div>
-                <button
-                    onClick={(e) => {
-                        e.preventDefault()
-                        handleLogin()
-                    }}
-                    disabled={loading}
-                >
-                    <span>{loading ? 'Loading...' : 'Log In'}</span>
-                </button>
-                <button
-                    onClick={(e) => {
-                        e.preventDefault()
-                        sendPasswordReset()
-                    }}
-                    disabled={loading}
-                >
-                    Reset Password
-                </button>
+                <div>
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault()
+                            handlePasswordReset()
+                        }}
+                        disabled={loading}
+                    >
+                        <span>{loading ? 'Loading...' : 'Log In'}</span>
+                    </button>
+                </div>
             </div>
         </div>
     )
 }
 
-export default Login
+export default PasswordReset
