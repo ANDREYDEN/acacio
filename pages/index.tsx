@@ -47,6 +47,7 @@ const Login: NextPage = () => {
     return (
         <div className='h-screen grid grid-cols-7 grid-flow-row-dense'>
             <div className='col-span-3 flex flex-col justify-center mx-24'>
+                <img src='/img/Acacio.svg' alt='Logo' className='absolute top-16' />
                 <h1>Welcome back</h1>
                 <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
                 <div>
