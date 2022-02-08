@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
+import TextInput from '../components/TextInput'
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState(false)
@@ -44,26 +45,28 @@ const Login: NextPage = () => {
     }
 
     return (
-        <div className='h-screen grid grid-cols-5 grid-flow-row-dense'>
-            <div className='col-span-2 flex flex-col justify-center mx-16'>
-                <h1 className='text-2xl'>Welcome back</h1>
-                <p>Welcome back! Please, sign in</p>
+        <div className='h-screen grid grid-cols-7 grid-flow-row-dense'>
+            <div className='col-span-3 flex flex-col justify-center mx-24'>
+                <h1>Welcome back</h1>
+                <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
                 <div>
-                    <label htmlFor='email'>Email address</label>
-                    <input
-                        id='email'
-                        type="email"
-                        placeholder="Enter your email address"
+                    <TextInput
+                        type='email'
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        name='email'
+                        label='Email address'
+                        placeholder='Enter your email address'
+                        onChange={email => setEmail(email)}
+                        textInputClass='mb-8'
                     />
-                    <label htmlFor='password'>Email address</label>
-                    <input
-                        id='password'
-                        type="password"
-                        placeholder="Enter your password"
+                    <TextInput
+                        type='password'
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        name='password'
+                        label='Password'
+                        placeholder='Enter your password'
+                        onChange={password => setPassword(password)}
+                        textInputClass='mb-8'
                     />
                 </div>
                 <div>{ error }</div>
@@ -73,6 +76,7 @@ const Login: NextPage = () => {
                         handleLogin()
                     }}
                     disabled={loading}
+                    className='bg-primary-blue text-white font-bold rounded py-2 mb-8'
                 >
                     <span>{loading ? 'Loading...' : 'Sign In'}</span>
                 </button>
@@ -87,7 +91,7 @@ const Login: NextPage = () => {
                     Forgot Password?
                 </button>
             </div>
-            <div className='bg-cover bg-login col-span-3 shadow-2xl' />
+            <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>
     )
 }

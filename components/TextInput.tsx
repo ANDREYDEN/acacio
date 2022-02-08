@@ -6,14 +6,15 @@ interface ITextInput {
     name: string
     label: string
     placeholder: string
-    onChange: () => void
-    error: string
+    onChange: (value: string) => void
+    error?: string
+    textInputClass?: string
 }
 
-const TextInput: React.FC<ITextInput> = ({ type, value, label, name, placeholder, onChange, error }: ITextInput) => {
+const TextInput: React.FC<ITextInput> = ({ type, value, label, name, placeholder, onChange, error, textInputClass }: ITextInput) => {
     return (
-        <div className='flex flex-col text-secondary-text'>
-            <label htmlFor={name} className='text-sm'>
+        <div className={`flex flex-col text-secondary-text ${textInputClass}`}>
+            <label htmlFor={name} className='mb-2 font-bold'>
                 {label}
             </label>
             <input
@@ -21,10 +22,9 @@ const TextInput: React.FC<ITextInput> = ({ type, value, label, name, placeholder
                 type={type}
                 placeholder={placeholder}
                 value={value}
-                onChange={onChange}
-                className={`focus:outline-none rounded-md text-primary-text h-10 p-4 placeholder-secondary-text
-                    border border-secondary-text focus:border-primary-green 
-                    ${error ? 'border-2 border-dark-peach' : 'border border-secondary-text'}`}
+                onChange={e => onChange(e.target.value)}
+                className={`focus:outline-none rounded-lg px-6 py-2 text-primary-text placeholder-secondary-text
+                    focus:border-dark-grey ${error ? 'border-2 border-error' : 'border border-grey'}`}
             />
         </div>
     )
