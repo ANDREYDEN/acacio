@@ -2,50 +2,59 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { definitions } from '../types/database'
 
-export const useSupabaseEntity = (entityType: 'employees') => {
-  const [loading, setLoading] = useState(true)
+export const useGetSupabaseEntities = (entityType: 'employees') => {
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState<definitions[typeof entityType][] | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    (async () => {
-      const { data: entityList, error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).select()
+  const getEntities = async () => {
+    setLoading(true)
+    const { data: entityList, error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).select()
+    setLoading(false)
 
-      setLoading(false)
-      if (entityList) {
-        setData(entityList)
-      }
 
-      if (entityError?.message) {
-        setError(entityError?.message)
-      }
-    })()
-  },
-  [setData, setError, entityType])
+    if (entityList) {
+      setData(entityList)
+    }
 
-  return { data, loading, error } 
+    if (entityError?.message) {
+      setError(entityError?.message)
+    }
+  }
+
+  return { data, loading, error, getEntities } 
 }
 
-export const useAddEntity = (entityType: 'employees', ) => {
-  const [loading, setLoading] = useState(true)
-  const [data, setData] = useState<definitions[typeof entityType][] | null>(null)
+export const useSupabaseAddEntity = (entityType: 'employees') => {
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    (async () => {
-      const { data: entityList, error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).select()
+  const addEntity = async (entity: Partial<definitions[typeof entityType]>) => {
+    setLoading(true)
+    const { error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).insert(entity)
+    setLoading(false)
 
-      setLoading(false)
-      if (entityList) {
-        setData(entityList)
-      }
+    if (entityError?.message) {
+      setError(entityError?.message)
+    }
+  }
 
-      if (entityError?.message) {
-        setError(entityError?.message)
-      }
-    })()
-  },
-  [setData, setError, entityType])
+  return { addEntity, loading, error } 
+}
 
-  return { data, loading, error } 
+export const useSupabaseDeleteEntity = (entityType: 'employees') => {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const deleteEntity = async (id: definitions[typeof entityType]['id']) => {
+    setLoading(true)
+    const { error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).delete().match({ id })
+    setLoading(false)
+
+    if (entityError?.message) {
+      setError(entityError?.message)
+    }
+  }
+
+  return { deleteEntity, loading, error } 
 }
