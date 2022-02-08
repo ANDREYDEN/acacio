@@ -44,20 +44,24 @@ const Login: NextPage = () => {
     }
 
     return (
-        <div className="text-center">
-            <div>
-                <p>Sign in via magic link with your email below</p>
+        <div className='h-screen grid grid-cols-5 grid-flow-row-dense'>
+            <div className='col-span-2 flex flex-col justify-center mx-16'>
+                <h1 className='text-2xl'>Welcome back</h1>
+                <p>Welcome back! Please, sign in</p>
                 <div>
+                    <label htmlFor='email'>Email address</label>
                     <input
+                        id='email'
                         type="email"
-                        placeholder="Your email"
+                        placeholder="Enter your email address"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <br />
+                    <label htmlFor='password'>Email address</label>
                     <input
+                        id='password'
                         type="password"
-                        placeholder="Password"
+                        placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -70,10 +74,10 @@ const Login: NextPage = () => {
                     }}
                     disabled={loading}
                 >
-                    <span>{loading ? 'Loading...' : 'Log In'}</span>
+                    <span>{loading ? 'Loading...' : 'Sign In'}</span>
                 </button>
-                <br />
                 <button
+                    className='underline'
                     onClick={(e) => {
                         e.preventDefault()
                         sendPasswordReset()
@@ -83,6 +87,7 @@ const Login: NextPage = () => {
                     Forgot Password?
                 </button>
             </div>
+            <div className='bg-cover bg-login col-span-3 shadow-2xl' />
         </div>
     )
 }
