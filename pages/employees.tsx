@@ -4,11 +4,11 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
+import { useSupabaseEntity } from '../lib/supabaseAcess'
 import { definitions } from '../types/database'
 
 const Employees: NextPage = () => {
-    const [loading, setLoading] = useState(true)
-    const [employees, setEmployees] = useState<definitions['employees'][]>()
+    const { data: employees, loading: employeesLoading, error: employeesError } = useSupabaseEntity('employees')
     const router = useRouter()
     const [employee, setEmployee] = useState({
         firstName: '',
@@ -21,22 +21,10 @@ const Employees: NextPage = () => {
 
     const { firstName, lastName, dateOfBirth, salary, coefficient } = employee
 
-    async function getEmployees() {
-        const { data } = await supabase.from<definitions['employees']>('employees').select()
-        if (data != null) {
-            setEmployees(data)
-        }
-        setLoading(false)
-    }
-
     const handleLogOut = async () => {
         await supabase.auth.signOut()
         router.replace('/')
     }
-
-    useEffect(() => {
-        getEmployees()
-    }, [])
 
     async function addEmployee() {
         await supabase
@@ -59,20 +47,27 @@ const Employees: NextPage = () => {
             salary: 0,
             coefficient: 0,
         })
-        getEmployees()
+        // getEmployees() //TODO: implement re-fetch
     }
 
     async function deleteEmployee(id: number) {
         await supabase.from('employees').delete().eq('id', id)
-        getEmployees()
+        // getEmployees() //TODO: implement re-fetch
     }
 
-    if (!user || loading)
+    if (!user || employeesLoading) {
         return (
             <div className="flex justify-center items-center">
                 <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"/>
             </div>
         )
+    }
+
+    if (employeesError) {
+        return (
+            <div>Error while fetching employees: {employeesError}</div>
+        )
+    }
 
     return (
         <div className="flex flex-col items-center justify-center py-2">
@@ -217,8 +212,7 @@ const Employees: NextPage = () => {
                                     Action
                                 </th>
                             </tr>
-                            {employee &&
-                                employees?.map((employee, index) => (
+                            {employees?.map((employee, index) => (
                                     <tr key={employee.id}>
                                         <td className="border px-4 py-4">{index + 1}</td>
                                         <td className="border px-4 py-4">{employee.first_name}</td>
