@@ -10,21 +10,22 @@ const PosterEmployees: NextPage = () => {
     const user = useUser()
 
     const { employees, employeesLoading, employeesError } = usePosterGetEmployees()
-
+    
+    
     const handleLogOut = async () => {
         await supabase.auth.signOut()
         router.replace('/')
     }
-
-    if (employeesLoading || !employees) {
+    
+    if (employeesLoading) {
         return (
             <div id="loader" className="flex justify-center items-center">
                 <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>
             </div>
         )
     }
-
-    if (employeesError) return (<div>Error: {employeesError}</div>)
+    
+    if (employeesError) return (<div>{employeesError}</div>)
 
     return (
         <div id="asd" className="flex flex-col items-center justify-center py-2">
@@ -61,7 +62,7 @@ const PosterEmployees: NextPage = () => {
                                     Coefficient
                                 </th>
                             </tr>
-                            {employees.map((employee, index) => (
+                            {employees!.map((employee, index) => (
                                     <tr key={employee.id}>
                                         <td className="border px-4 py-4">{index + 1}</td>
                                         <td className="border px-4 py-4">{employee.first_name}</td>

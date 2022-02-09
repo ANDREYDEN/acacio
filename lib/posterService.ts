@@ -5,17 +5,22 @@ import { definitions } from '../types/database'
 export const posterInstance = axios.create({
   baseURL: 'https://joinposter.com/api/',
   params: {
-    token: process.env.NEXT_POSTER_ACCESS_TOKEN
+    token: process.env.NEXT_POSTER_ACCESS_TOKEN ?? ''
   }
 })
 
 async function apiGet(url: string) {
-  const { data } = await axios.get(`/api/poster/${url}`)
-  return data
+  const response = await axios.get(`/api/poster/${url}`)
+  if (response.status === 400) {
+    throw response.data.message
+  }
+  return response.data
 }
 
 export function usePosterGetEmployees() {
   const { data, error } = useSWR('employees', apiGet)
+
+  const employeesError = error?.toString()
 
   function toSupabaseSchema(data: any) {
     if (!data) return null
@@ -30,5 +35,5 @@ export function usePosterGetEmployees() {
 
   const employees = toSupabaseSchema(data)
 
-  return { employees, employeesLoading: !employees, employeesError: error }
+  return { employees, employeesLoading: !employeesError && !employees, employeesError }
 }
