@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { definitions } from '../types/database'
 
-export const useGetSupabaseEntities = (entityType: 'employees') => {
+export const useGetSupabaseEntities = (entityType: keyof definitions) => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<definitions[typeof entityType][] | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -11,7 +11,6 @@ export const useGetSupabaseEntities = (entityType: 'employees') => {
     setLoading(true)
     const { data: entityList, error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).select()
     setLoading(false)
-
 
     if (entityList) {
       setData(entityList)
@@ -22,10 +21,10 @@ export const useGetSupabaseEntities = (entityType: 'employees') => {
     }
   }
 
-  return { data, loading, error, getEntities } 
+  return { getEntities, data, loading, error } 
 }
 
-export const useSupabaseAddEntity = (entityType: 'employees') => {
+export const useSupabaseAddEntity = (entityType: keyof definitions) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -42,7 +41,7 @@ export const useSupabaseAddEntity = (entityType: 'employees') => {
   return { addEntity, loading, error } 
 }
 
-export const useSupabaseDeleteEntity = (entityType: 'employees') => {
+export const useSupabaseDeleteEntity = (entityType: keyof definitions) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
