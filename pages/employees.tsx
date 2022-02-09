@@ -8,8 +8,8 @@ import { useSupabaseAddEntity, useSupabaseDeleteEntity, useGetSupabaseEntities }
 import { definitions } from '../types/database'
 
 const Employees: NextPage = () => {
-    const [mounted, setMounted] = useState(false)
     useEffect(() => setMounted(true), [])
+    const [mounted, setMounted] = useState(false)
 
     const router = useRouter()
     const user = useUser()
@@ -61,8 +61,10 @@ const Employees: NextPage = () => {
         getEmployees()
     }, [])
 
+    if (!mounted) return (<div></div>)
+
     if (!user || employeesLoading || addEmployeeLoading || deleteEmployeeLoading) {
-        return mounted && (
+        return (
             <div id="loader" className="flex justify-center items-center">
                 <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>
             </div>
@@ -70,12 +72,12 @@ const Employees: NextPage = () => {
     }
 
     if (employeesError) {
-        return mounted && (
+        return (
             <div>Error while fetching employees: {employeesError}</div>
         )
     }
 
-    return mounted && (
+    return (
         <div id="asd" className="flex flex-col items-center justify-center py-2">
             <div>
                 <Head>
