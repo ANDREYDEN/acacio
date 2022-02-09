@@ -1,27 +1,18 @@
-import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { useState } from 'react'
+import useSWR from 'swr'
 import { supabase } from '../client'
 import { definitions } from '../types/database'
 
-export const useGetSupabaseEntities = (entityType: keyof definitions) => {
-  const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<definitions[typeof entityType][] | null>(null)
-  const [error, setError] = useState<string | null>(null)
+async function apiGet(url: string) {
+  const { data } = await axios.get(url)
+  return data
+}
 
-  const getEntities = async () => {
-    setLoading(true)
-    const { data: entityList, error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).select()
-    setLoading(false)
+export const useSupabaseGetEmployees = () => {
+  const { data, error } = useSWR('/api/employees', apiGet)
 
-    if (entityList) {
-      setData(entityList)
-    }
-
-    if (entityError?.message) {
-      setError(entityError?.message)
-    }
-  }
-
-  return { getEntities, data, loading, error } 
+  return { data: data as definitions['employees'][] , loading: !data, error }
 }
 
 export const useSupabaseAddEntity = (entityType: keyof definitions) => {

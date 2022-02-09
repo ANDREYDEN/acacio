@@ -3,20 +3,26 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
-import { useGetPosterEmployeesSWR } from '../lib/posterService'
+import { usePosterGetEmployees } from '../lib/posterService'
 
-const CSRPosterEmployees: NextPage = () => {
+const PosterEmployees: NextPage = () => {
     const router = useRouter()
     const user = useUser()
 
-    const { employees, employeesError } = useGetPosterEmployeesSWR()
+    const { employees, employeesLoading, employeesError } = usePosterGetEmployees()
 
     const handleLogOut = async () => {
         await supabase.auth.signOut()
         router.replace('/')
     }
 
-    if (!employees) return (<div>Loading...</div>)
+    if (employeesLoading || !employees) {
+        return (
+            <div id="loader" className="flex justify-center items-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>
+            </div>
+        )
+    }
 
     if (employeesError) return (<div>Error: {employeesError}</div>)
 
@@ -74,4 +80,4 @@ const CSRPosterEmployees: NextPage = () => {
     )
 }
 
-export default CSRPosterEmployees
+export default PosterEmployees

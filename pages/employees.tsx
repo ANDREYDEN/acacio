@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
-import { useSupabaseAddEntity, useSupabaseDeleteEntity, useGetSupabaseEntities } from '../lib/supabaseService'
+import { useSupabaseGetEmployees, useSupabaseAddEntity, useSupabaseDeleteEntity } from '../lib/supabaseService'
 import { definitions } from '../types/database'
 
 const Employees: NextPage = () => {
@@ -14,11 +14,11 @@ const Employees: NextPage = () => {
     const router = useRouter()
     const user = useUser()
     const { 
-        getEntities: getEmployees,
         data: employees, 
         loading: employeesLoading, 
         error: employeesError
-    } = useGetSupabaseEntities('employees')
+    } = useSupabaseGetEmployees()
+    
     const { 
         addEntity: addEmployee, 
         loading: addEmployeeLoading, 
@@ -47,19 +47,14 @@ const Employees: NextPage = () => {
     }
 
     async function addEmployeeAndReload() {
-        addEmployee(employee)
-        setEmployee(emptyEmployee)
-        getEmployees()
+        await addEmployee(employee)
+        router.reload()
     }
 
     async function deleteEmployeeAndReload(id: number) {
-        deleteEmployee(id)
-        getEmployees()
+        await deleteEmployee(id)
+        router.reload()
     }
-
-    useEffect(() => {
-        getEmployees()
-    }, [])
 
     if (!mounted) return (<div></div>)
 
