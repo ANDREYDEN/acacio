@@ -6,8 +6,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
         <Head>
-          <title>Acacio</title>
-          <link rel='icon' href='/favicon.ico'/>
+            <title>Acacio</title>
+            <link rel='icon' href='/favicon.ico'/>
+            <meta
+                name='description'
+                content='BARACACIA admin management tool'
+            />
         </Head>
         <Component {...pageProps} />
     </>
