@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useState } from 'react'
+import useSWR from 'swr'
 import { definitions } from '../types/database'
 
 export const posterInstance = axios.create({
@@ -29,4 +30,27 @@ export function useGetPosterEmployees() {
   }
 
   return { getEmployees, employees, employeesLoading, employeesError } 
+}
+
+async function fetcher(url: string) {
+  const { data } = await posterInstance.get('access.getEmployees')
+  return data
+}
+
+export function useGetPosterEmployeesSWR() {
+  const { data, error } = useSWR('access.getEmployees', fetcher)
+
+  function toSupabaseSchema(data: any) {
+    if (!data) return null
+
+    const posterEmployees = data.response
+    const supabaseEmployees: Partial<definitions['employees']>[] = posterEmployees.map((e: any, i: number) => ({
+      id: i,
+      first_name: e.name,
+      last_name: e.name
+    }))
+    return supabaseEmployees
+  }
+
+  return { employees: toSupabaseSchema(data), employeesError: error }
 }
