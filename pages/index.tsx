@@ -1,15 +1,13 @@
 import { NextPage } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
-import TextInput from '../components/TextInput'
+import LoginForm from '../components/LoginForm'
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
     const [error, setError] = useState<string>('')
     const router = useRouter()
     const user = useUser()
@@ -20,7 +18,7 @@ const Login: NextPage = () => {
         }
     }, [user, router])
 
-    const handleLogin = async () => {
+    const handleLogin = async (email: string, password: string) => {
         try {
             setLoading(true)
             const { error } = await supabase.auth.signIn({ email, password })
@@ -33,7 +31,7 @@ const Login: NextPage = () => {
         }
     }
 
-    const sendPasswordReset = async () => {
+    const sendPasswordReset = async (email: string) => {
         try {
             setLoading(true)
             const { error } = await supabase.auth.api.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/password-reset` })
@@ -59,43 +57,7 @@ const Login: NextPage = () => {
                         <p className='text-error'>{ error }</p>
                     </div>
                 }
-                <form className='flex flex-col'>
-                    <TextInput
-                        type='email'
-                        value={email}
-                        name='email'
-                        label='Email address'
-                        placeholder='Enter your email address'
-                        onChange={email => setEmail(email)}
-                        textInputClass='mb-8'
-                    />
-                    <TextInput
-                        type='password'
-                        value={password}
-                        name='password'
-                        label='Password'
-                        placeholder='Enter your password'
-                        onChange={password => setPassword(password)}
-                        textInputClass='mb-8'
-                    />
-                    <button
-                        onClick={() => handleLogin()}
-                        disabled={loading}
-                        className='bg-primary-blue text-white font-bold rounded py-2 mb-8'
-                    >
-                        <span>{loading ? 'Loading...' : 'Sign In'}</span>
-                    </button>
-                </form>
-                <button
-                    className='underline'
-                    onClick={(e) => {
-                        e.preventDefault()
-                        sendPasswordReset()
-                    }}
-                    disabled={loading}
-                >
-                    Forgot Password?
-                </button>
+                <LoginForm handleLogin={handleLogin} sendPasswordReset={sendPasswordReset} loading={loading} />
             </div>
             <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>
