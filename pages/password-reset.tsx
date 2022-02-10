@@ -30,7 +30,6 @@ const PasswordReset: NextPage = () => {
     return (
         <div className="text-center">
             <div>
-                <p>Sign in via magic link with your email below</p>
                 <div>
                     <input
                         type="password"

@@ -7,13 +7,13 @@ import { useUser } from '../lib/hooks'
 import TextInput from '../components/TextInput'
 
 const Login: NextPage = () => {
-    const [loading, setLoading] = useState(false)
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState<boolean>(false)
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [error, setError] = useState<string>('')
     const router = useRouter()
     const user = useUser()
-    const [error, setError] = useState('')
-    
+
     useEffect(() => {
         if (user) {
             router.replace('/employees')
@@ -49,11 +49,17 @@ const Login: NextPage = () => {
         <div className='h-screen grid grid-cols-7 grid-flow-row-dense'>
             <div className='col-span-3 flex flex-col justify-center mx-24'>
                 <div className='absolute top-16'>
-                    <Image src='/img/Acacio.svg' alt='Logo' width={156} height={31} />
+                    <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 </div>
                 <h1>Welcome back</h1>
                 <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
-                <div>
+                {error &&
+                    <div className='text-center mb-8 border border-error rounded-lg border-dashed px-10 py-6'>
+                        <Image src='/img/error.svg' alt='Logo' width={32} height={32} />
+                        <p className='text-error'>{ error }</p>
+                    </div>
+                }
+                <form className='flex flex-col'>
                     <TextInput
                         type='email'
                         value={email}
@@ -72,18 +78,14 @@ const Login: NextPage = () => {
                         onChange={password => setPassword(password)}
                         textInputClass='mb-8'
                     />
-                </div>
-                <div>{ error }</div>
-                <button
-                    onClick={(e) => {
-                        e.preventDefault()
-                        handleLogin()
-                    }}
-                    disabled={loading}
-                    className='bg-primary-blue text-white font-bold rounded py-2 mb-8'
-                >
-                    <span>{loading ? 'Loading...' : 'Sign In'}</span>
-                </button>
+                    <button
+                        onClick={() => handleLogin()}
+                        disabled={loading}
+                        className='bg-primary-blue text-white font-bold rounded py-2 mb-8'
+                    >
+                        <span>{loading ? 'Loading...' : 'Sign In'}</span>
+                    </button>
+                </form>
                 <button
                     className='underline'
                     onClick={(e) => {
