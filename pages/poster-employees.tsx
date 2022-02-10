@@ -11,7 +11,6 @@ const PosterEmployees: NextPage = () => {
 
     const { employees, employeesLoading, employeesError } = usePosterGetEmployees()
     
-    
     const handleLogOut = async () => {
         await supabase.auth.signOut()
         router.replace('/')
