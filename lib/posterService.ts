@@ -22,18 +22,15 @@ export function usePosterGetEmployees() {
 
   const employeesError = error?.toString()
 
-  function toSupabaseSchema(data: any) {
-    if (!data) return null
-
-    const supabaseEmployees: Partial<definitions['employees']>[] = data.map((e: any, i: number) => ({
-      id: i,
-      first_name: e.name,
-      last_name: e.name
-    }))
-    return supabaseEmployees
+  if (!data) {
+    return { employees: null, employeesLoading: !employeesError, employeesError }
   }
 
-  const employees = toSupabaseSchema(data)
+  const employees: Partial<definitions['employees']>[] = data.map((e: any, i: number) => ({
+    id: i,
+    first_name: e.name,
+    last_name: e.name
+  }))
 
   return { employees, employeesLoading: !employeesError && !employees, employeesError }
 }
