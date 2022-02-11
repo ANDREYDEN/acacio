@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { supabase } from '../client'
+import PrimaryButton from '../components/PrimaryButton'
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
@@ -28,7 +29,7 @@ const PasswordReset: NextPage = () => {
     }
 
     return (
-        <div className="text-center">
+        <div className='text-center'>
             <div>
                 <div>
                     <input
@@ -46,17 +47,7 @@ const PasswordReset: NextPage = () => {
                     />
                 </div>
                 <div className='text-red-500'>{ error }</div>
-                <div>
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault()
-                            handlePasswordReset()
-                        }}
-                        disabled={loading}
-                    >
-                        <span>{loading ? 'Loading...' : 'Reset Password'}</span>
-                    </button>
-                </div>
+                <PrimaryButton label='Reset Password' onClick={handlePasswordReset} loading={loading} />
             </div>
         </div>
     )
