@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
 import LoginForm from '../components/LoginForm'
+import Link from 'next/link'
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -31,18 +32,6 @@ const Login: NextPage = () => {
         }
     }
 
-    const sendPasswordReset = async (email: string) => {
-        try {
-            setLoading(true)
-            const { error } = await supabase.auth.api.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/password-reset` })
-            if (error) throw new Error(error.message)
-        } catch (error: any) {
-            setError(error.error_description || error.message)
-        } finally {
-            setLoading(false)
-        }
-    }
-
     return (
         <div className='h-screen grid grid-cols-7 grid-flow-row-dense'>
             <div className='col-span-3 flex flex-col justify-center mx-24'>
@@ -57,7 +46,10 @@ const Login: NextPage = () => {
                         <p className='text-error'>{ error }</p>
                     </div>
                 }
-                <LoginForm handleLogin={handleLogin} sendPasswordReset={sendPasswordReset} loading={loading} />
+                <LoginForm handleLogin={handleLogin} loading={loading} />
+                <Link href={'/send-password-reset'}>
+                    <span className='underline text-center hover:cursor-pointer'>Forgot Password?</span>
+                </Link>
             </div>
             <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>

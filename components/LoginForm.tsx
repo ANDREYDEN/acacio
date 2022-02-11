@@ -1,53 +1,42 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useForm } from 'react-hook-form'
 import TextInput from './TextInput'
+import PrimaryButton from './PrimaryButton'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
-    sendPasswordReset: (email:string) => Promise<void>
     loading: boolean
 }
 
-const LoginForm: React.FC<ILoginForm> = ({ handleLogin, sendPasswordReset, loading }: ILoginForm) => {
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
-
+const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) => {
+    const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
+    const handleForm = async (data: any) => {
+        await handleLogin(data.email, data.password)
+    }
+    
     return (
-        <form className='flex flex-col'>
+        <form className='flex flex-col' onSubmit={handleSubmit(handleForm)}>
             <TextInput
                 type='email'
-                value={email}
                 name='email'
                 label='Email address'
                 placeholder='Enter your email address'
-                onChange={email => setEmail(email)}
                 textInputClass='mb-8'
+                register={register('email', { required: 'Email is required' })}
+                error={errors?.email && errors?.email?.message}
+                onChange={() => clearErrors()}
             />
             <TextInput
                 type='password'
-                value={password}
                 name='password'
                 label='Password'
                 placeholder='Enter your password'
-                onChange={password => setPassword(password)}
                 textInputClass='mb-8'
+                register={register('password', { required: 'Password is required' })}
+                error={errors?.password && errors?.password?.message}
+                onChange={() => clearErrors()}
             />
-            <button
-                onClick={async () => await handleLogin(email, password)}
-                disabled={loading}
-                className='bg-primary-blue text-white font-bold rounded py-2 mb-8'
-            >
-                <span>{loading ? 'Loading...' : 'Sign In'}</span>
-            </button>
-            <button
-                className='underline'
-                onClick={(e) => {
-                    e.preventDefault()
-                    sendPasswordReset(email)
-                }}
-                disabled={loading}
-            >
-                Forgot Password?
-            </button>
+            <PrimaryButton label='Sign In' loading={loading}/>
         </form>
     )
 }
