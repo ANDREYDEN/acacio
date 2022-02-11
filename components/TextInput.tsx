@@ -2,22 +2,25 @@ import React from 'react'
 
 interface ITextInput {
     type: string
-    value: string
     name: string
     label: string
     placeholder: string
     onChange: (value: string) => void
+    value?: string
+    register?: any
     error?: string
     textInputClass?: string
 }
 
-const TextInput: React.FC<ITextInput> = ({ type, value, label, name, placeholder, onChange, error, textInputClass }: ITextInput) => {
+const TextInput: React.FC<ITextInput> = ({ type, name, label, placeholder, onChange, value,
+                                             register, error, textInputClass }: ITextInput) => {
     return (
         <div className={`flex flex-col text-secondary-text ${textInputClass}`}>
             <label htmlFor={name} className={`mb-2 font-bold ${error ? 'text-error' : ''}`}>
                 {label}
             </label>
             <input
+                {...register}
                 id={name}
                 type={type}
                 placeholder={placeholder}
