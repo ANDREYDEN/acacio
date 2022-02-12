@@ -1,5 +1,7 @@
-import { GetServerSideProps, NextPage } from 'next'
+import { NextPage } from 'next'
+import { useMemo } from 'react'
 import { posterInstance } from '../lib/posterService'
+import { useSortBy, useTable } from 'react-table'
 
 export async function getServerSideProps() {
   try {
@@ -12,43 +14,86 @@ export async function getServerSideProps() {
       }
     }
   } catch(e: any) {
-    return {
-      ingredients: [],
-      error: e.toString()
+    return { 
+      props:
+      {
+        ingredients: [],
+        error: e.toString()
+      }
     }
   }  
 }
 
+type Ingredient = {
+  ingredient_id: string,
+  ingredient_name: string,
+  start: number,
+  end: number
+}
+
 type IngredientsMovementsProps = {
-  ingredients: any[],
+  ingredients: Ingredient[],
   error: string | null
 }
 
 const IngredientsMovements: NextPage<IngredientsMovementsProps> = ({ ingredients, error }) => {
+  const columns = useMemo(
+    () => Object.keys(ingredients[0]).map((key, i) => ({
+      Header: key.split('_').map(word => word[0].toUpperCase() + word.substring(1)).join(' '),
+      accessor: key
+    })),
+    [ingredients]
+  )
+
+  const data = useMemo(
+    () => ingredients, 
+    [ingredients]
+  )
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headers,
+    rows,
+    prepareRow,
+  } = useTable<Ingredient>(
+    {
+      columns,
+      data
+    },
+    useSortBy
+  )
+
   if (error) {
     return (<div>{error}</div>)
   }
+
   return (
     <div>
-      <table className='table-auto'>
-        <tr>
-          <th>Name</th>
-          <th>Start</th>
-          <th>End</th>
-        </tr>
-        {
-          ingredients.map((ingredient: any) => {
+      <table {...getTableProps()} className='table-auto'>
+        <thead>
+          {headers.map((header, i) => (
+            <tr key={i}>
+              <th {...header.getHeaderProps()}>
+                {header.render('Header')}
+              </th>
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map((row, i) => {
+            prepareRow(row)
             return (
-              <tr key={ingredient.ingredient_id}>
-                <td>{ingredient.ingredient_name}</td>
-                <td>{ingredient.start}</td>
-                <td>{ingredient.end}</td>
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <td {...cell.getCellProps()}>
+                    {cell.render('Cell')}
+                  </td>
+                ))}
               </tr>
             )
-          })
-        }
-        <tr>
-        </tr>
+          })}
+        </tbody>
       </table>
     </div>
   )
