@@ -1,9 +1,11 @@
 import { NextPage } from 'next'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { supabase } from '../client'
 import PrimaryButton from '../components/PrimaryButton'
 import TextInput from '../components/TextInput'
 import { useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import ErrorMessage from '../components/ErrorMessage'
 
 const SendPasswordReset: NextPage = () => {
     const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
@@ -14,7 +16,11 @@ const SendPasswordReset: NextPage = () => {
         try {
             setLoading(true)
             const { error } = await supabase.auth.api.resetPasswordForEmail(data.email, { redirectTo: `${window.location.origin}/password-reset` })
-            if (error) throw new Error(error.message)
+            if (error) {
+                throw new Error(error.message)
+            } else {
+                toast('🦄 Check your email for the reset link')
+            }
         } catch (error: any) {
             setError(error.error_description || error.message)
         } finally {
@@ -25,7 +31,7 @@ const SendPasswordReset: NextPage = () => {
     return (
         <div className='flex justify-center text-center mt-8'>
             <form onSubmit={handleSubmit(handleSendPasswordReset)}>
-                <div className='text-red-500'>{ error }</div>
+                {error && <ErrorMessage message={error} errorMessageClass='w-96 mb-8' />}
                 <TextInput
                     type='text'
                     name='email'
@@ -34,7 +40,10 @@ const SendPasswordReset: NextPage = () => {
                     textInputClass='mb-6'
                     register={register('email', { required: 'Email is required' })}
                     error={errors?.email && errors?.email?.message}
-                    onChange={() => clearErrors()}
+                    onChange={() => {
+                        clearErrors()
+                        setError('')
+                    }}
                 />
                 <PrimaryButton label='Send Password Reset Email' loading={loading} />
             </form>

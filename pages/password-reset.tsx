@@ -1,10 +1,11 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 import { supabase } from '../client'
 import PrimaryButton from '../components/PrimaryButton'
 import TextInput from '../components/TextInput'
-import Image from 'next/image'
+import ErrorMessage from '../components/ErrorMessage'
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
@@ -25,7 +26,8 @@ const PasswordReset: NextPage = () => {
             if (!access_token) throw new Error('Invalid access_token')
             const { error } = await supabase.auth.api.updateUser(access_token, { password })
             if (error) throw new Error(error.message)
-            
+
+            toast('🦄 Password has been reset successfully')
             router.replace('/')
         } catch (error: any) {
             setError(error.error_description || error.message)
@@ -36,14 +38,7 @@ const PasswordReset: NextPage = () => {
 
     return (
         <>
-            {error &&
-                <div className='flex justify-center text-center'>
-                    <div className='w-96 my-8 border border-error rounded-lg border-dashed px-10 py-6'>
-                        <Image src='/img/error.svg' alt='Logo' width={32} height={32} />
-                        <p className='text-error'>{ error }</p>
-                    </div>
-                </div>
-            }
+            {error && <ErrorMessage message={error} errorMessageClass='w-96 mb-8' />}
             <div className='flex justify-center text-center mt-8'>
                 <div className='w-96'>
                     <TextInput
