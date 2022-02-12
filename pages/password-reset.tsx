@@ -1,18 +1,24 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { supabase } from '../client'
 import PrimaryButton from '../components/PrimaryButton'
+import TextInput from '../components/TextInput'
+import Image from 'next/image'
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const [error, setError] = useState('')
     const router = useRouter()
 
-    const [error, setError] = useState('')
-
     const handlePasswordReset = async () => {
+        if (password !== confirmPassword) {
+            setError('Passwords should match')
+            return
+        }
+
         try {
             setLoading(true)
             const access_token = supabase.auth.session()?.access_token
@@ -29,27 +35,45 @@ const PasswordReset: NextPage = () => {
     }
 
     return (
-        <div className='text-center'>
-            <div>
-                <div>
-                    <input
-                        type="password"
-                        placeholder="New Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <br />
-                    <input
-                        type="password"
-                        placeholder="Confirm New Password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
+        <>
+            {error &&
+                <div className='flex justify-center text-center'>
+                    <div className='w-96 my-8 border border-error rounded-lg border-dashed px-10 py-6'>
+                        <Image src='/img/error.svg' alt='Logo' width={32} height={32} />
+                        <p className='text-error'>{ error }</p>
+                    </div>
                 </div>
-                <div className='text-red-500'>{ error }</div>
-                <PrimaryButton label='Reset Password' onClick={handlePasswordReset} loading={loading} />
+            }
+            <div className='flex justify-center text-center mt-8'>
+                <div className='w-96'>
+                    <TextInput
+                        type='password'
+                        name='password'
+                        label='Password'
+                        placeholder='Enter New Password'
+                        textInputClass='mb-6'
+                        value={password}
+                        onChange={(val) => {
+                            setPassword(val)
+                            setError('')
+                        }}
+                    />
+                    <TextInput
+                        type='password'
+                        name='confirmPassword'
+                        label='Confirm Password'
+                        placeholder='Confirm New Password'
+                        textInputClass='mb-8'
+                        value={confirmPassword}
+                        onChange={(val) => {
+                            setConfirmPassword(val)
+                            setError('')
+                        }}
+                    />
+                    <PrimaryButton label='Reset Password' onClick={handlePasswordReset} loading={loading} />
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 
