@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import { useMemo } from 'react'
 import { posterInstance } from '../lib/posterService'
-import { useSortBy, useTable } from 'react-table'
+import { Column, useSortBy, useTable } from 'react-table'
 
 export async function getServerSideProps() {
   try {
@@ -24,25 +24,28 @@ export async function getServerSideProps() {
   }  
 }
 
-type Ingredient = {
-  ingredient_id: string,
-  ingredient_name: string,
-  start: number,
+interface Ingredient {
+  ingredient_id: string
+  ingredient_name: string
+  start: number
   end: number
 }
 
-type IngredientsMovementsProps = {
+type IngredientsMovementProps = {
   ingredients: Ingredient[],
   error: string | null
 }
 
-const IngredientsMovements: NextPage<IngredientsMovementsProps> = ({ ingredients, error }) => {
-  const columns = useMemo(
-    () => Object.keys(ingredients[0]).map((key, i) => ({
-      Header: key.split('_').map(word => word[0].toUpperCase() + word.substring(1)).join(' '),
-      accessor: key
-    })),
-    [ingredients]
+const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, error }) => {
+  const columns: Column<Ingredient>[] = useMemo<Column<Ingredient>[]>(
+    () => {
+      const columnAccessors: (keyof Ingredient)[] = ['ingredient_id', 'ingredient_name', 'start', 'end']
+      return columnAccessors.map((accessor, i) => ({
+        Header: accessor.split('_').map(word => word[0].toUpperCase() + word.substring(1)).join(' '),
+        accessor: accessor
+      }))
+    },
+    []
   )
 
   const data = useMemo(
@@ -72,24 +75,32 @@ const IngredientsMovements: NextPage<IngredientsMovementsProps> = ({ ingredients
     <div>
       <table {...getTableProps()} className='table-auto'>
         <thead>
-          {headers.map((header, i) => (
-            <tr key={i}>
-              <th {...header.getHeaderProps()}>
+          <tr>
+            {headers.map((header) => {
+              const {
+                key: headerKey,
+                ...getHeaderProps
+              } = header.getHeaderProps((header as any).getSortByToggleProps())
+              return <th key={headerKey} {...getHeaderProps}>
                 {header.render('Header')}
               </th>
-            </tr>
-          ))}
+            })}
+          </tr>
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
+          {rows.map((row) => {
             prepareRow(row)
+            const { key: rowKey, role: rowRole, ...getRowProps } = row.getRowProps()
             return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                  </td>
-                ))}
+              <tr key={rowKey} {...getRowProps}>
+                {row.cells.map((cell) => {
+                  const { key: cellKey, role: cellRole, ...getCellProps } = cell.getCellProps()
+                  return (
+                    <td key={cellKey} {...getCellProps}>
+                      {cell.render('Cell')}
+                    </td>
+                  )
+                })}
               </tr>
             )
           })}
@@ -99,4 +110,4 @@ const IngredientsMovements: NextPage<IngredientsMovementsProps> = ({ ingredients
   )
 }
 
-export default IngredientsMovements
+export default IngredientsMovement
