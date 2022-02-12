@@ -1,24 +1,26 @@
 import { NextPage } from 'next'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
+import LoginForm from '../components/LoginForm'
+import Link from 'next/link'
+import ErrorMessage from '../components/ErrorMessage'
 
 const Login: NextPage = () => {
-    const [loading, setLoading] = useState(false)
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string>('')
     const router = useRouter()
     const user = useUser()
-    const [error, setError] = useState('')
-    
+
     useEffect(() => {
         if (user) {
             router.replace('/employees')
         }
     }, [user, router])
 
-    const handleLogin = async () => {
+    const handleLogin = async (email: string, password: string) => {
         try {
             setLoading(true)
             const { error } = await supabase.auth.signIn({ email, password })
@@ -31,58 +33,21 @@ const Login: NextPage = () => {
         }
     }
 
-    const sendPasswordReset = async () => {
-        try {
-            setLoading(true)
-            const { error } = await supabase.auth.api.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/password-reset` })
-            if (error) throw new Error(error.message)
-        } catch (error: any) {
-            setError(error.error_description || error.message)
-        } finally {
-            setLoading(false)
-        }
-    }
-
     return (
-        <div className="text-center">
-            <div>
-                <p>Sign in via magic link with your email below</p>
-                <div>
-                    <input
-                        type="email"
-                        placeholder="Your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <br />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+        <div className='h-screen grid grid-cols-7 grid-flow-row-dense'>
+            <div className='col-span-3 flex flex-col justify-center mx-24'>
+                <div className='absolute top-16'>
+                    <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 </div>
-                <div>{ error }</div>
-                <button
-                    onClick={(e) => {
-                        e.preventDefault()
-                        handleLogin()
-                    }}
-                    disabled={loading}
-                >
-                    <span>{loading ? 'Loading...' : 'Log In'}</span>
-                </button>
-                <br />
-                <button
-                    onClick={(e) => {
-                        e.preventDefault()
-                        sendPasswordReset()
-                    }}
-                    disabled={loading}
-                >
-                    Forgot Password?
-                </button>
+                <h1>Welcome back</h1>
+                <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
+                {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
+                <LoginForm handleLogin={handleLogin} loading={loading} />
+                <Link href={'/send-password-reset'}>
+                    <span className='underline text-center hover:cursor-pointer'>Forgot Password?</span>
+                </Link>
             </div>
+            <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>
     )
 }

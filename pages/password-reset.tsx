@@ -1,24 +1,33 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 import { supabase } from '../client'
+import PrimaryButton from '../components/PrimaryButton'
+import TextInput from '../components/TextInput'
+import ErrorMessage from '../components/ErrorMessage'
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const [error, setError] = useState('')
     const router = useRouter()
 
-    const [error, setError] = useState('')
-
     const handlePasswordReset = async () => {
+        if (password !== confirmPassword) {
+            setError('Passwords should match')
+            return
+        }
+
         try {
             setLoading(true)
             const access_token = supabase.auth.session()?.access_token
             if (!access_token) throw new Error('Invalid access_token')
             const { error } = await supabase.auth.api.updateUser(access_token, { password })
             if (error) throw new Error(error.message)
-            
+
+            toast('🦄 Password has been reset successfully')
             router.replace('/')
         } catch (error: any) {
             setError(error.error_description || error.message)
@@ -28,38 +37,38 @@ const PasswordReset: NextPage = () => {
     }
 
     return (
-        <div className="text-center">
-            <div>
-                <p>Sign in via magic link with your email below</p>
-                <div>
-                    <input
-                        type="password"
-                        placeholder="New Password"
+        <>
+            {error && <ErrorMessage message={error} errorMessageClass='w-96 mb-8' />}
+            <div className='flex justify-center text-center mt-8'>
+                <div className='w-96'>
+                    <TextInput
+                        type='password'
+                        name='password'
+                        label='Password'
+                        placeholder='Enter New Password'
+                        textInputClass='mb-6'
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <br />
-                    <input
-                        type="password"
-                        placeholder="Confirm New Password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                </div>
-                <div className='text-red-500'>{ error }</div>
-                <div>
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault()
-                            handlePasswordReset()
+                        onChange={(val) => {
+                            setPassword(val)
+                            setError('')
                         }}
-                        disabled={loading}
-                    >
-                        <span>{loading ? 'Loading...' : 'Reset Password'}</span>
-                    </button>
+                    />
+                    <TextInput
+                        type='password'
+                        name='confirmPassword'
+                        label='Confirm Password'
+                        placeholder='Confirm New Password'
+                        textInputClass='mb-8'
+                        value={confirmPassword}
+                        onChange={(val) => {
+                            setConfirmPassword(val)
+                            setError('')
+                        }}
+                    />
+                    <PrimaryButton label='Reset Password' onClick={handlePasswordReset} loading={loading} />
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

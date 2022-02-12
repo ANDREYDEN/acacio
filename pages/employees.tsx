@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { supabase } from '../client'
@@ -75,11 +74,6 @@ const Employees: NextPage = () => {
     return (
         <div className="flex flex-col items-center justify-center py-2">
             <div>
-                <Head>
-                    <title>Acacio</title>
-                    <link rel="icon" href="/favicon.ico"/>
-                </Head>
-
                 <div>User Email: {user.email}</div>
                 <button onClick={handleLogOut}>Log Out</button>
 
