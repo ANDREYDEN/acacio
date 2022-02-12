@@ -2,6 +2,8 @@ import { NextPage } from 'next'
 import { useMemo } from 'react'
 import { posterInstance } from '../lib/posterService'
 import { Column, useSortBy, useTable } from 'react-table'
+import { snakeCaseToPascalCase } from '../lib/utils'
+import { Ingredient } from '../lib/posterTypes'
 
 export async function getServerSideProps() {
   try {
@@ -24,13 +26,6 @@ export async function getServerSideProps() {
   }  
 }
 
-interface Ingredient {
-  ingredient_id: string
-  ingredient_name: string
-  start: number
-  end: number
-}
-
 type IngredientsMovementProps = {
   ingredients: Ingredient[],
   error: string | null
@@ -41,7 +36,7 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
     () => {
       const columnAccessors: (keyof Ingredient)[] = ['ingredient_id', 'ingredient_name', 'start', 'end']
       return columnAccessors.map((accessor, i) => ({
-        Header: accessor.split('_').map(word => word[0].toUpperCase() + word.substring(1)).join(' '),
+        Header: snakeCaseToPascalCase(accessor),
         accessor: accessor
       }))
     },
