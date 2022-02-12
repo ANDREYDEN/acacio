@@ -4,6 +4,7 @@ import { posterInstance } from '../lib/posterService'
 import { Column, useSortBy, useTable } from 'react-table'
 import { snakeCaseToPascalCase } from '../lib/utils'
 import { Ingredient } from '../lib/posterTypes'
+import ErrorMessage from '../components/ErrorMessage'
 
 export async function getServerSideProps() {
   try {
@@ -48,13 +49,7 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
     [ingredients]
   )
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headers,
-    rows,
-    prepareRow,
-  } = useTable<Ingredient>(
+  const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<Ingredient>(
     {
       columns,
       data
@@ -63,7 +58,7 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
   )
 
   if (error) {
-    return (<div>{error}</div>)
+    return <ErrorMessage message={error} errorMessageClass='mt-6' />
   }
 
   return (
