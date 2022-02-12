@@ -6,6 +6,7 @@ import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
 import LoginForm from '../components/LoginForm'
 import Link from 'next/link'
+import ErrorMessage from '../components/ErrorMessage'
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -40,12 +41,7 @@ const Login: NextPage = () => {
                 </div>
                 <h1>Welcome back</h1>
                 <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
-                {error &&
-                    <div className='text-center mb-8 border border-error rounded-lg border-dashed px-10 py-6'>
-                        <Image src='/img/error.svg' alt='Logo' width={32} height={32} />
-                        <p className='text-error'>{ error }</p>
-                    </div>
-                }
+                {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />
                 <Link href={'/send-password-reset'}>
                     <span className='underline text-center hover:cursor-pointer'>Forgot Password?</span>
