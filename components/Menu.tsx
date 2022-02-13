@@ -4,29 +4,34 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Home, IconProps, Setting, TickSquare, User } from 'react-iconly'
 
-const AppRoutes: Record<string, { route: string, icon: ReactElement<IconProps> }> = {
+const AppRoutes: Record<string, { route: string, icon: ReactElement<IconProps>, iconFilled: ReactElement<IconProps> }> = {
     Sales: {
-        route: '/sales',
-        icon: <Home />
+        route: '/reports',
+        icon: <Home />,
+        iconFilled: <Home filled={true} />
     },
     People: {
         route: '/employees',
         icon: <User />,
+        iconFilled: <User filled={true} />
     },
     Inventory: {
-        route: '/inventory',
+        route: '/ingredients-movement',
         icon: <TickSquare />,
+        iconFilled: <TickSquare filled={true} />
     },
     Settings: {
         route: '/settings',
         icon: <Setting />,
+        iconFilled: <Setting filled={true} />
     },
 }
 
 const Menu: React.FC = ({ children }) => {
     const router = useRouter()
+    const currentRoute = router.route
 
-    if (router.route === '/') {
+    if (currentRoute === '/') {
         return (<>{ children }</>)
     }
     
@@ -41,7 +46,7 @@ const Menu: React.FC = ({ children }) => {
                       const currentItem = AppRoutes[pageName]
                       return (
                           <li key={index} className='flex'>
-                              {currentItem.icon}
+                              {currentRoute === currentItem.route ? currentItem.iconFilled :currentItem.icon}
                               <h5 className='pl-6'><Link href={currentItem.route}>{pageName}</Link></h5>
                           </li>
                       )

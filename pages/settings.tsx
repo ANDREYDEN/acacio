@@ -19,7 +19,7 @@ const Settings: NextPage = () => {
     }
 
     return (
-      <div className='w-full grid place-items-center text-center'>
+      <div className='text-center'>
           <div>
               <p className='mb-4'><b>User Email:</b> {user.email}</p>
               <PrimaryButton label='Log Out' onClick={handleLogOut} />
