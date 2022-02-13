@@ -1,19 +1,6 @@
-import axios from 'axios'
 import { useState } from 'react'
-import useSWR from 'swr'
-import { supabase } from '../client'
-import { definitions } from '../types/database'
-
-async function apiGet(url: string) {
-  const { data } = await axios.get(url)
-  return data
-}
-
-export const useSupabaseGetEmployees = () => {
-  const { data, error } = useSWR('/api/employees', apiGet)
-
-  return { data: data as definitions['employees'][] , loading: !data, error }
-}
+import { supabase } from '../../../client'
+import { definitions } from '../../../types/database'
 
 export const useSupabaseAddEntity = (entityType: keyof definitions) => {
   const [loading, setLoading] = useState(false)

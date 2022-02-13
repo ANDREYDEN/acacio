@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "next lint --fix",
-    "update-types": "npx openapi-typescript $NEXT_PUBLIC_SUPABASE_URL/rest/v1/?apikey=$NEXT_PUBLIC_SUPABASE_API_KEY --output types/database/index.ts"
+    "update-types": "npx openapi-typescript '${NEXT_PUBLIC_SUPABASE_URL}/rest/v1/?apikey=${NEXT_PUBLIC_SUPABASE_API_KEY}' --output types/database/index.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.29.4",
