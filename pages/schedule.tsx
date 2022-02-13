@@ -1,9 +1,8 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { supabase } from '../client'
+import { useCallback, useEffect, useState } from 'react'
 import { useUser } from '../lib/hooks'
-import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetShifts } from '../lib/services/supabase'
+import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
 import { definitions } from '../types/database'
 
 const Shifts: NextPage = () => {
@@ -17,7 +16,11 @@ const Shifts: NextPage = () => {
       loading: shiftsLoading, 
       error: shiftsError
   } = useSupabaseGetShifts()
-  
+  const { 
+      data: employees, 
+      loading: employeesLoading, 
+      error: employeesError
+  } = useSupabaseGetEmployees()
   const { 
       addEntity: addShift, 
       loading: addShiftLoading, 
@@ -37,12 +40,14 @@ const Shifts: NextPage = () => {
   }
   const [shift, setShift] = useState<Partial<definitions['shifts']>>(emptyShift)
 
-  const { employee_id, duration, date } = shift
-
-  const handleLogOut = async () => {
-      await supabase.auth.signOut()
-      router.replace('/')
-  }
+  const { duration, date } = shift
+  const employeeName = useCallback(
+    (employeeId: number | undefined) => {
+      if (!employeeId) return 'Employee not found'
+      return employees.find((e) => e.id === employeeId)?.first_name
+    },
+    [employees]
+  )
 
   async function addShiftAndReload() {
       await addShift(shift)
@@ -56,7 +61,7 @@ const Shifts: NextPage = () => {
 
   if (!mounted) return (<div></div>)
 
-  if (!user || shiftsLoading || addShiftLoading || deleteShiftLoading) {
+  if (!user || shiftsLoading || employeesLoading || addShiftLoading || deleteShiftLoading) {
       return (
           <div id="loader" className="flex justify-center items-center">
               <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>
@@ -72,11 +77,12 @@ const Shifts: NextPage = () => {
 
   return (
       <div className="flex flex-col items-center justify-center py-2">
+        {shiftsError && (<div>Error fetching shifts: {shiftsError}</div>)}
+        {employeesError && (<div>Error fetching employees: {employeesError}</div>)}
+        {addShiftError && (<div>Error adding shift: {addShiftError}</div>)}
+        {deleteShiftError && (<div>Error deleting shift: {deleteShiftError}</div>)}
           <div>
-              <div>User Email: {user.email}</div>
-              <button onClick={handleLogOut}>Log Out</button>
-
-              <div className="flex flex-wrap items-center justify-around mt-6">
+              <div className="flex flex-col flex-wrap items-center justify-around mt-6">
                   <div className="p-8 mt-6 border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600">
                       <div className="w-full max-w-sm">
                           <form className="bg-white rounded px-8 pt-6 pb-8 mb-4">
@@ -85,24 +91,21 @@ const Shifts: NextPage = () => {
                                       className="block text-gray-700 text-sm font-bold mb-2"
                                       htmlFor="employee_id"
                                   >
-                                      First Name
+                                      Employee
                                   </label>
-                                  <input
-                                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                      id="employee_id"
-                                      type="number"
-                                      value={employee_id?.toString()}
-                                      onChange={(e) =>
-                                          setShift({ ...shift, employee_id: +e.target.value })
-                                      }
-                                  />
+                                  <select onChange={(e) => setShift({ ...shift, employee_id: +e.target.value })} value={shift.employee_id}>
+                                    <option value="0">Select Employee</option>
+                                    {employees.map((employee) => (
+                                      <option key={employee.id} value={employee.id}>{employee.first_name} {employee.last_name}</option>
+                                    ))}
+                                  </select>
                               </div>
                               <div className="mb-4">
                                   <label
                                       className="block text-gray-700 text-sm font-bold mb-2"
                                       htmlFor="duration"
                                   >
-                                      Last Name
+                                      Shift Duration
                                   </label>
                                   <input
                                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -120,7 +123,7 @@ const Shifts: NextPage = () => {
                                       className="block text-gray-700 text-sm font-bold mb-2"
                                       htmlFor="date"
                                   >
-                                      BirthDate
+                                      Shift Date
                                   </label>
                                   <input
                                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -151,7 +154,7 @@ const Shifts: NextPage = () => {
                           <tbody>
                           <tr>
                               <th className="bg-blue-400 border text-left px-4 py-4">
-                                  Employee Id
+                                  Employee
                               </th>
                               <th className="bg-blue-400 border text-left px-4 py-4">
                                   Duration
@@ -166,8 +169,7 @@ const Shifts: NextPage = () => {
                           </tr>
                           {shifts?.map((shift, index) => (
                                   <tr key={shift.id}>
-                                      <td className="border px-4 py-4">{index + 1}</td>
-                                      <td className="border px-4 py-4">{shift.employee_id}</td>
+                                      <td className="border px-4 py-4">{employeeName(shift.employee_id)}</td>
                                       <td className="border px-8 py-4">{shift.duration}</td>
                                       <td className="border px-8 py-4">{shift.date}</td>
                                       <td className="border px-8 py-4">

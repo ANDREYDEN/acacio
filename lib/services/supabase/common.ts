@@ -8,6 +8,9 @@ export const useSupabaseAddEntity = (entityType: keyof definitions) => {
 
   const addEntity = async (entity: Partial<definitions[typeof entityType]>) => {
     setLoading(true)
+    if (entity.id === 0) {
+      delete entity.id
+    }
     const { error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).insert(entity)
     setLoading(false)
 
