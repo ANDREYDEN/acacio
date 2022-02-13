@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
+import { useSWRConfig } from 'swr'
 import { useUser } from '../lib/hooks'
 import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
 import { definitions } from '../types/database'
@@ -9,8 +9,8 @@ const Shifts: NextPage = () => {
   useEffect(() => setMounted(true), [])
   const [mounted, setMounted] = useState(false)
 
-  const router = useRouter()
   const user = useUser()
+  const { mutate } = useSWRConfig()
   const { 
       data: shifts, 
       loading: shiftsLoading, 
@@ -40,7 +40,6 @@ const Shifts: NextPage = () => {
   }
   const [shift, setShift] = useState<Partial<definitions['shifts']>>(emptyShift)
 
-  const { duration, date } = shift
   const employeeName = useCallback(
     (employeeId: number | undefined) => {
       if (!employeeId) return 'Employee not found'
@@ -51,12 +50,12 @@ const Shifts: NextPage = () => {
 
   async function addShiftAndReload() {
       await addShift(shift)
-      router.reload()
+      mutate('/api/shifts')
   }
 
   async function deleteShiftAndReload(id: number) {
       await deleteShift(id)
-      router.reload()
+      mutate('/api/shifts')
   }
 
   if (!mounted) return (<div></div>)
@@ -111,7 +110,7 @@ const Shifts: NextPage = () => {
                                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                       id="duration"
                                       type="number"
-                                      value={duration?.toString()}
+                                      value={shift.duration?.toString()}
                                       onChange={(e) =>
                                           setShift({ ...shift, duration: +e.target.value })
                                       }
@@ -129,7 +128,7 @@ const Shifts: NextPage = () => {
                                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                       id="date"
                                       type="date"
-                                      value={date?.toString()}
+                                      value={shift.date?.toString()}
                                       onChange={(e) =>
                                           setShift({ ...shift, date: e.target.value })
                                       }
