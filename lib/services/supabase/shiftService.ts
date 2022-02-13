@@ -8,7 +8,7 @@ async function apiGet(url: string) {
 }
 
 export const useSupabaseGetShifts = () => {
-  const { data, error } = useSWR('/api/shifts', apiGet)
+  const { data, error, mutate } = useSWR('/api/shifts', apiGet)
 
-  return { data: data as definitions['shifts'][] , loading: !data, error }
+  return { data: data as definitions['shifts'][], loading: !data, error, mutate }
 }

@@ -1,6 +1,5 @@
 import { NextPage } from 'next'
 import { useCallback, useEffect, useState } from 'react'
-import { useSWRConfig } from 'swr'
 import { useUser } from '../lib/hooks'
 import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
 import { definitions } from '../types/database'
@@ -10,11 +9,11 @@ const Shifts: NextPage = () => {
   const [mounted, setMounted] = useState(false)
 
   const user = useUser()
-  const { mutate } = useSWRConfig()
   const { 
       data: shifts, 
       loading: shiftsLoading, 
-      error: shiftsError
+      error: shiftsError,
+      mutate: revalidateShifts
   } = useSupabaseGetShifts()
   const { 
       data: employees, 
@@ -49,18 +48,20 @@ const Shifts: NextPage = () => {
   )
 
   async function addShiftAndReload() {
-      await addShift(shift)
-      mutate('/api/shifts')
+    revalidateShifts([...shifts, shift])
+    await addShift(shift)
+    revalidateShifts()
   }
 
   async function deleteShiftAndReload(id: number) {
-      await deleteShift(id)
-      mutate('/api/shifts')
+    revalidateShifts(shifts.filter(shift => shift.id !== id))
+    await deleteShift(id)
+    revalidateShifts()
   }
 
   if (!mounted) return (<div></div>)
 
-  if (!user || shiftsLoading || employeesLoading || addShiftLoading || deleteShiftLoading) {
+  if (!user || shiftsLoading || employeesLoading) {
       return (
           <div id="loader" className="flex justify-center items-center">
               <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>
@@ -147,6 +148,8 @@ const Shifts: NextPage = () => {
                           </form>
                       </div>
                   </div>
+                  
+                  {(addShiftLoading || deleteShiftLoading) && 'Loading...'}
 
                   <div className="p-2 mt-6 w-96 rounded-xl focus:text-blue-600">
                       <table className="shadow-lg bg-white">
