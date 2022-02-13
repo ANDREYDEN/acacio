@@ -69,12 +69,6 @@ const Shifts: NextPage = () => {
       )
   }
 
-  if (shiftsError) {
-      return (
-          <div>Error while fetching shifts: {shiftsError}</div>
-      )
-  }
-
   return (
       <div className="flex flex-col items-center justify-center py-2">
         {shiftsError && (<div>Error fetching shifts: {shiftsError}</div>)}
@@ -169,7 +163,7 @@ const Shifts: NextPage = () => {
                                   Action
                               </th>
                           </tr>
-                          {shifts?.map((shift, index) => (
+                          {shifts?.map((shift) => (
                                   <tr key={shift.id}>
                                       <td className="border px-4 py-4">{employeeName(shift.employee_id)}</td>
                                       <td className="border px-8 py-4">{shift.duration}</td>
