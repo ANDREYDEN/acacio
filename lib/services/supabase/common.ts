@@ -1,27 +1,20 @@
 import axios from 'axios'
 import { useState } from 'react'
-import useSWR from 'swr'
-import { supabase } from '../client'
-import { definitions } from '../types/database'
+import { supabase } from '../../../client'
+import { definitions } from '../../../types/database'
 
-async function apiGet(url: string) {
+export async function apiGet(url: string) {
   const { data } = await axios.get(url)
   return data
 }
 
-export const useSupabaseGetEmployees = () => {
-  const { data, error } = useSWR('/api/employees', apiGet)
-
-  return { data: data as definitions['employees'][] , loading: !data, error }
-}
-
-export const useSupabaseAddEntity = (entityType: keyof definitions) => {
+export const useSupabaseUpsertEntity = (entityType: keyof definitions) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const addEntity = async (entity: Partial<definitions[typeof entityType]>) => {
+  const upsertEntity = async (entity: Partial<definitions[typeof entityType]>) => {
     setLoading(true)
-    const { error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).insert(entity)
+    const { error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).upsert(entity)
     setLoading(false)
 
     if (entityError?.message) {
@@ -29,7 +22,7 @@ export const useSupabaseAddEntity = (entityType: keyof definitions) => {
     }
   }
 
-  return { addEntity, loading, error } 
+  return { upsertEntity, loading, error } 
 }
 
 export const useSupabaseDeleteEntity = (entityType: keyof definitions) => {

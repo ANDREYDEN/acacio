@@ -117,6 +117,105 @@ export interface paths {
       };
     };
   };
+  '/shifts': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.shifts.id'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          date?: parameters['rowFilter.shifts.date'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          created_at?: parameters['rowFilter.shifts.created_at'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['shifts'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** shifts */
+          shifts?: definitions['shifts'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.shifts.id'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          date?: parameters['rowFilter.shifts.date'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          created_at?: parameters['rowFilter.shifts.created_at'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.shifts.id'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          date?: parameters['rowFilter.shifts.date'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          created_at?: parameters['rowFilter.shifts.created_at'];
+        };
+        body: {
+          /** shifts */
+          shifts?: definitions['shifts'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
 }
 
 export interface definitions {
@@ -142,6 +241,30 @@ export interface definitions {
     salary?: number;
     /** Format: double precision */
     coefficient?: number;
+  };
+  /** @description The work shifts for each employee */
+  shifts: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
+     */
+    employee_id?: number;
+    /** Format: timestamp without time zone */
+    date?: string;
+    /** Format: smallint */
+    duration?: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
   };
 }
 
@@ -194,6 +317,18 @@ export interface parameters {
   'rowFilter.employees.salary': string;
   /** Format: double precision */
   'rowFilter.employees.coefficient': string;
+  /** @description shifts */
+  'body.shifts': definitions['shifts'];
+  /** Format: bigint */
+  'rowFilter.shifts.id': string;
+  /** Format: bigint */
+  'rowFilter.shifts.employee_id': string;
+  /** Format: timestamp without time zone */
+  'rowFilter.shifts.date': string;
+  /** Format: smallint */
+  'rowFilter.shifts.duration': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.shifts.created_at': string;
 }
 
 export interface operations {}

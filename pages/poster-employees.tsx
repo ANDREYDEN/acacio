@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
-import { usePosterGetEmployees } from '../lib/posterService'
+import { usePosterGetEmployees } from '../lib/services/poster/posterService'
 
 const PosterEmployees: NextPage = () => {
     const router = useRouter()
