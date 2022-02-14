@@ -39,7 +39,7 @@ const Login: NextPage = () => {
                 <div className='absolute top-16'>
                     <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 </div>
-                <h1>Welcome back</h1>
+                <h2>Welcome back</h2>
                 <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
                 {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />

@@ -11,11 +11,22 @@
         font-family: 'Manrope';
         src: url(../public/fonts/Manrope-VariableFont_wght.ttf);
     }
-    h1 {
+    h2 {
         @apply font-header;
         @apply text-4xl;
         @apply font-bold;
         @apply text-black;
+    }
+    h3 {
+        @apply font-header;
+        @apply text-3xl;
+        @apply font-bold;
+        @apply text-black;
+    }
+    h5 {
+        @apply font-header;
+        @apply text-xl;
+        @apply font-bold;
     }
     body {
         @apply font-body;

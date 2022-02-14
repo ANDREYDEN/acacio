@@ -21,7 +21,7 @@ export async function getServerSideProps() {
       props:
       {
         ingredients: [],
-        error: e.toString()
+        error: e.message
       }
     }
   }  
@@ -58,7 +58,7 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
   )
 
   if (error) {
-    return <ErrorMessage message={error} errorMessageClass='mt-6' />
+    return <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
   }
 
   return (
