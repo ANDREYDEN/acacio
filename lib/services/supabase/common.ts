@@ -2,16 +2,13 @@ import { useState } from 'react'
 import { supabase } from '../../../client'
 import { definitions } from '../../../types/database'
 
-export const useSupabaseAddEntity = (entityType: keyof definitions) => {
+export const useSupabaseUpsertEntity = (entityType: keyof definitions) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const addEntity = async (entity: Partial<definitions[typeof entityType]>) => {
+  const upsertEntity = async (entity: Partial<definitions[typeof entityType]>) => {
     setLoading(true)
-    if (entity.id === 0) {
-      delete entity.id
-    }
-    const { error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).insert(entity)
+    const { error: entityError } = await supabase.from<definitions[typeof entityType]>(entityType).upsert(entity)
     setLoading(false)
 
     if (entityError?.message) {
@@ -19,7 +16,7 @@ export const useSupabaseAddEntity = (entityType: keyof definitions) => {
     }
   }
 
-  return { addEntity, loading, error } 
+  return { upsertEntity, loading, error } 
 }
 
 export const useSupabaseDeleteEntity = (entityType: keyof definitions) => {

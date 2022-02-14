@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { supabase } from '../client'
 import { useUser } from '../lib/hooks'
-import { useSupabaseGetEmployees, useSupabaseAddEntity, useSupabaseDeleteEntity } from '../lib/services/supabase'
+import { useSupabaseGetEmployees, useSupabaseUpsertEntity, useSupabaseDeleteEntity } from '../lib/services/supabase'
 import { definitions } from '../types/database'
 
 const Employees: NextPage = () => {
@@ -19,10 +19,10 @@ const Employees: NextPage = () => {
     } = useSupabaseGetEmployees()
     
     const { 
-        addEntity: addEmployee, 
+        upsertEntity: addEmployee, 
         loading: addEmployeeLoading, 
         error: addEmployeeError 
-    } = useSupabaseAddEntity('employees')
+    } = useSupabaseUpsertEntity('employees')
     const { 
         deleteEntity: deleteEmployee, 
         loading: deleteEmployeeLoading, 

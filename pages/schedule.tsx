@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import { useCallback, useEffect, useState } from 'react'
 import { useUser } from '../lib/hooks'
-import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
+import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
 import { definitions } from '../types/database'
 
 const Shifts: NextPage = () => {
@@ -21,10 +21,10 @@ const Shifts: NextPage = () => {
       error: employeesError
   } = useSupabaseGetEmployees()
   const { 
-      addEntity: addShift, 
+      upsertEntity: addShift, 
       loading: addShiftLoading, 
       error: addShiftError 
-  } = useSupabaseAddEntity('shifts')
+  } = useSupabaseUpsertEntity('shifts')
   const { 
       deleteEntity: deleteShift, 
       loading: deleteShiftLoading, 
@@ -48,8 +48,9 @@ const Shifts: NextPage = () => {
   )
 
   async function addShiftAndReload() {
+    const { id, ...shiftProperties } = shift
     revalidateShifts([...shifts, shift])
-    await addShift(shift)
+    await addShift(shiftProperties)
     revalidateShifts()
   }
 
