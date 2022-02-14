@@ -4,7 +4,16 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Home, IconProps, Setting, TickSquare, User } from 'react-iconly'
 
-const AppRoutes: Record<string, { route: string, icon: ReactElement<IconProps>, iconFilled: ReactElement<IconProps> }> = {
+interface IRouteProps {
+    route: string,
+    icon: ReactElement<IconProps>,
+    iconFilled: ReactElement<IconProps>,
+    subRoutes?: Record<string, string>
+}
+
+type AppRoutesType = Record<string, IRouteProps>
+
+const AppRoutes: AppRoutesType = {
     Sales: {
         route: '/reports',
         icon: <Home />,
@@ -13,7 +22,12 @@ const AppRoutes: Record<string, { route: string, icon: ReactElement<IconProps>, 
     People: {
         route: '/employees',
         icon: <User />,
-        iconFilled: <User filled={true} />
+        iconFilled: <User filled={true} />,
+        subRoutes: {
+            Employees: '',
+            Shifts: '/shifts',
+            Salary: '/salary',
+        }
     },
     Inventory: {
         route: '/ingredients-movement',
@@ -34,6 +48,24 @@ const Menu: React.FC = ({ children }) => {
     if (currentRoute === '/') {
         return (<>{ children }</>)
     }
+
+    const SubRoutesList = (currentItem: any) => {
+        return (
+            <ul className='ml-6 mt-2'>
+                {Object.keys(currentItem.subRoutes).map((route, index) => {
+                    const currentSubItem = currentItem.subRoutes[route]
+                    const fullPath = `${currentItem.route}${currentSubItem}`
+                    return (
+                        <li key={index} className='mb-2'>
+                            <h6 className={`pl-6 ${currentRoute === fullPath ? 'underline' : ''}`}>
+                                <Link href={fullPath}>{route}</Link>
+                            </h6>
+                        </li>
+                    )
+                })}
+            </ul>
+        )
+    }
     
   return (
       <div className='flex'>
@@ -41,14 +73,17 @@ const Menu: React.FC = ({ children }) => {
               <div className='absolute top-16'>
                   <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
               </div>
-              <ul className='space-y-8 text-primary-blue font-header font-extrabold'>
+              <ul className='text-primary-blue font-header font-extrabold'>
                   {Object.keys(AppRoutes).map((pageName, index) => {
                       const currentItem = AppRoutes[pageName]
                       return (
-                          <li key={index} className='flex'>
-                              {currentRoute === currentItem.route ? currentItem.iconFilled :currentItem.icon}
-                              <h5 className='pl-6'><Link href={currentItem.route}>{pageName}</Link></h5>
-                          </li>
+                          <div key={index} className='mb-8'>
+                              <li className='flex'>
+                                  {currentRoute === currentItem.route ? currentItem.iconFilled :currentItem.icon}
+                                  <h5 className='pl-6'><Link href={currentItem.route}>{pageName}</Link></h5>
+                              </li>
+                              {currentItem.subRoutes && SubRoutesList(currentItem)}
+                          </div>
                       )
                   })}
               </ul>

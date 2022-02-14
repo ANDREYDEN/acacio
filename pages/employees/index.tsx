@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees } from '../lib/supabaseService'
-import { definitions } from '../types/database'
-import Loader from '../components/Loader'
+import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees } from '../../lib/supabaseService'
+import { definitions } from '../../types/database'
+import Loader from '../../components/Loader'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
