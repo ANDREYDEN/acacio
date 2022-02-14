@@ -1,11 +1,6 @@
-import axios from 'axios'
 import useSWR from 'swr'
 import { definitions } from '../../../types/database'
-
-async function apiGet(url: string) {
-  const { data } = await axios.get(url)
-  return data
-}
+import { apiGet } from './common'
 
 export const useSupabaseGetShifts = () => {
   const { data, error, mutate } = useSWR('/api/shifts', apiGet)

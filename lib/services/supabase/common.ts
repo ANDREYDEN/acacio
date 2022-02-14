@@ -1,6 +1,12 @@
+import axios from 'axios'
 import { useState } from 'react'
 import { supabase } from '../../../client'
 import { definitions } from '../../../types/database'
+
+export async function apiGet(url: string) {
+  const { data } = await axios.get(url)
+  return data
+}
 
 export const useSupabaseUpsertEntity = (entityType: keyof definitions) => {
   const [loading, setLoading] = useState(false)
