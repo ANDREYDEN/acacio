@@ -1,13 +1,14 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { useSupabaseAddEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees } from '../../lib/supabaseService'
 import { definitions } from '../../types/database'
 import Loader from '../../components/Loader'
+import { useSupabaseGetEmployees, useSupabaseUpsertEntity, useSupabaseDeleteEntity } from '../../lib/services/supabase'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
     const [mounted, setMounted] = useState(false)
+
     const router = useRouter()
     const {
         data: employees, 
@@ -15,10 +16,10 @@ const Employees: NextPage = () => {
         error: employeesError
     } = useSupabaseGetEmployees()
     const { 
-        addEntity: addEmployee, 
+        upsertEntity: addEmployee,
         loading: addEmployeeLoading, 
         error: addEmployeeError 
-    } = useSupabaseAddEntity('employees')
+    } = useSupabaseUpsertEntity('employees')
     const { 
         deleteEntity: deleteEmployee, 
         loading: deleteEmployeeLoading, 
