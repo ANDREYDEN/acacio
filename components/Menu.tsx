@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { Home, IconProps, Setting, TickSquare, User } from 'react-iconly'
+import { ChevronDown, ChevronUp, Home, IconProps, Setting, TickSquare, User } from 'react-iconly'
 
 interface IRouteProps {
     route: string,
@@ -43,6 +43,7 @@ const AppRoutes: AppRoutesType = {
 
 const Menu: React.FC = ({ children }) => {
     const router = useRouter()
+    const [subRoutesOpened, setSubRoutesOpened] = useState(false)
     const currentRoute = router.route
 
     if (currentRoute === '/') {
@@ -66,7 +67,7 @@ const Menu: React.FC = ({ children }) => {
             </ul>
         )
     }
-    
+
   return (
       <div className='flex'>
           <nav className='grid place-items-center h-screen w-64 bg-light-green mr-12'>
@@ -81,8 +82,13 @@ const Menu: React.FC = ({ children }) => {
                               <li className='flex'>
                                   {currentRoute === currentItem.route ? currentItem.iconFilled :currentItem.icon}
                                   <h5 className='pl-6'><Link href={currentItem.route}>{pageName}</Link></h5>
+                                  {currentItem.subRoutes &&
+                                      <div className='mt-1.5 ml-1' onClick={() => setSubRoutesOpened(!subRoutesOpened)}>
+                                          {subRoutesOpened ? <ChevronDown stroke='bold' size='small' /> : <ChevronUp stroke='bold' size='small' />}
+                                      </div>
+                                  }
                               </li>
-                              {currentItem.subRoutes && SubRoutesList(currentItem)}
+                              {currentItem.subRoutes && subRoutesOpened && SubRoutesList(currentItem)}
                           </div>
                       )
                   })}
