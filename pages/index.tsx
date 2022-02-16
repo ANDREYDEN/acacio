@@ -42,11 +42,11 @@ const Login: NextPage = () => {
                     <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 </div>
                 <h2>{t('login.welcome')}</h2>
-                <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
+                <p className='mb-10 text-dark-grey'>{t('login.please_sign')}</p>
                 {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />
-                <Link href={'/send-password-reset'}>
-                    <span className='underline text-center hover:cursor-pointer'>Forgot Password?</span>
+                <Link href={'/send-password-reset'} passHref>
+                    <span className='underline text-center hover:cursor-pointer'>{t('login.forgot_password')}</span>
                 </Link>
                 <div>
                     <button onClick={() => i18n.changeLanguage('ru')}>Russian</button>
