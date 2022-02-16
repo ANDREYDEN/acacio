@@ -5,5 +5,6 @@ import { apiGet } from './common'
 export const useSupabaseGetEmployees = () => {
   const { data, error } = useSWR('/api/employees', apiGet)
 
-  return { data: data as definitions['employees'][] , loading: !data, error }
+  const definedData = data ? data as definitions['employees'][] : []
+  return { data: definedData, loading: !data, error }
 }

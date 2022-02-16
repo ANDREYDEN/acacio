@@ -5,5 +5,6 @@ import { apiGet } from './common'
 export const useSupabaseGetShifts = () => {
   const { data, error, mutate } = useSWR('/api/shifts', apiGet)
 
-  return { data: data as definitions['shifts'][], loading: !data, error, mutate }
+  const definedData = data ? data as definitions['shifts'][] : []
+  return { data: definedData, loading: !data, error, mutate }
 }
