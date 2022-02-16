@@ -13,7 +13,8 @@ const Shifts: NextPage = () => {
   const [mounted, setMounted] = useState(false)
   const user = useUser()
 
-  const [month, setMonth] = useState(dayjs().month())
+  // a dayjs object that represents the current month and year
+  const [month, setMonth] = useState(dayjs())
 
   const { 
       data: shifts, 
@@ -74,7 +75,7 @@ const Shifts: NextPage = () => {
     revalidateShifts()
   }
 
-  const monthDays = getMonthDays(month)
+  const monthDays = getMonthDays(month.month())
   const firstHalfOfMonth = monthDays.slice(0, 15)
   const secondHalfOfMonth = monthDays.slice(15)
   
@@ -116,9 +117,9 @@ const Shifts: NextPage = () => {
                 {(shiftsLoading || addShiftLoading || deleteShiftLoading) && 'Loading...'}
 
                 <div>
-                    <button className='border-2 p-1' onClick={() => setMonth((month - 1) % 12)}>{'<'}</button>
-                    <span className='w-32'>{dayjs().month(month).format('MMMM')}</span>
-                    <button className='border-2 p-1' onClick={() => setMonth((month + 1) % 12)}>{'>'}</button>
+                    <button className='border-2 p-1' onClick={() => setMonth(month.subtract(1, 'month'))}>{'<'}</button>
+                    <span className='w-32'>{month.format('MMMM YYYY')}</span>
+                    <button className='border-2 p-1' onClick={() => setMonth(month.add(1, 'month'))}>{'>'}</button>
                 </div>
 
                 <ScheduleTable 
