@@ -7,11 +7,15 @@ export function snakeCaseToPascalCase(input: string): string {
     .join(' ')
 }
 
-export function getMonthDays(month: number): dayjs.Dayjs[] {
-  const currentMonth = dayjs().month(month).startOf('month')
+/**
+ * Returns a list of days in a month
+ * @param month a dayjs date representing the current month
+ * @returns a list of dayjs dates - days in the provided month
+ */
+export function getMonthDays(month: dayjs.Dayjs): dayjs.Dayjs[] {
   const dateRange = []
-  for (let date = 1; date <= currentMonth.daysInMonth(); date++) {
-    dateRange.push(currentMonth.date(date))
+  for (let date = 1; date <= month.daysInMonth(); date++) {
+    dateRange.push(month.date(date))
   }
   return dateRange
 }

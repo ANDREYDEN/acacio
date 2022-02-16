@@ -38,6 +38,7 @@ const Shifts: NextPage = () => {
     error: deleteShiftError 
   } = useSupabaseDeleteEntity('shifts')
 
+  // a map of employee_id => total work hours for this month
   const monthTotalByEmployee: Record<string, number> = useMemo(() => {
       return employees.reduce((res, employee) => ({
         ...res,
@@ -51,9 +52,15 @@ const Shifts: NextPage = () => {
       return shifts.find((otherShift) => employee_id === otherShift.employee_id && dayjs(date).isSame(dayjs(otherShift.date), 'date'))
   }, [shifts])
 
+  /**
+   * Inserts/Updates/Deletes the provided shift
+   * - if a `shift` already exists
+   *   - if the `duration` is 0 - DELETE
+   *   - otherwise - UPDATE
+   * - otherwise INSERT
+   * @param shift the shift to manipualte
+   */
   async function modifyShiftAndReload(shift: Partial<definitions['shifts']>) {
-    // if we already have a shift for the same employee on the same date - update that
-    // otherwise - insert (without an id)
     const existingShift = matchingShift(shift.date, shift.employee_id)
     
     if (existingShift) {
@@ -75,7 +82,8 @@ const Shifts: NextPage = () => {
     revalidateShifts()
   }
 
-  const monthDays = getMonthDays(month.month())
+  // TODO: fetch appropriate data based on updated designs (rn it's showing 2 tables)
+  const monthDays = getMonthDays(month)
   const firstHalfOfMonth = monthDays.slice(0, 15)
   const secondHalfOfMonth = monthDays.slice(15)
   
