@@ -2,30 +2,44 @@ import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { Column, useTable } from 'react-table'
 import { ScheduleTableRow } from '../../../interfaces'
+import { definitions } from '../../../types/database'
+import ScheduleTableCell from './ScheduleTableCell'
 
 
 interface IScheduleTable {
   dateColumns: dayjs.Dayjs[]
   data: ScheduleTableRow[]
+  onCellSubmit: (shift: definitions['shifts']) => void
 }
 
-const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data }: IScheduleTable) => {
-  const columns: Column<ScheduleTableRow>[] = useMemo<Column<ScheduleTableRow>[]>(
+const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubmit }: IScheduleTable) => {
+  const columns: Column<ScheduleTableRow>[] = useMemo(
     () => [
       {
         Header: 'Name',
-        accessor: 'name'
+        accessor: 'employee',
+        Cell: ({ value: employee }: { value: definitions['employees'] }) => <b>{employee?.first_name ?? 'Some Employee'}</b>
       },
-        ...dateColumns.map((date) => ({
+      ...dateColumns.map((date) => ({
+        accessor: date.unix().toString(),
         Header: date.format('dd, MMM D'),
-        accessor: date.unix().toString()
+        Cell: ({ value, cell }: { value: number, cell: any }) => {
+          const matchingEmployee = cell.row.cells[0].value
+          
+          return <ScheduleTableCell value={value} onBlur={(cellValue: number) => onCellSubmit({
+            id: 0,
+            employee_id: matchingEmployee.id,
+            duration: cellValue,
+            date: date.toString()
+          })}/>
+        }
       })),
       {
         Header: 'Month Total',
         accessor: 'total'
       }
     ],
-    [dateColumns]
+    [dateColumns, onCellSubmit]
   )
 
   const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<ScheduleTableRow>({

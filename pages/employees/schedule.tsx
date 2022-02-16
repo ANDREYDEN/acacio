@@ -30,47 +30,47 @@ const Shifts: NextPage = () => {
       error: addShiftError 
   } = useSupabaseUpsertEntity('shifts')
   const { 
-      deleteEntity: deleteShift, 
-      loading: deleteShiftLoading, 
-      error: deleteShiftError 
+    deleteEntity: deleteShift, 
+    loading: deleteShiftLoading, 
+    error: deleteShiftError 
   } = useSupabaseDeleteEntity('shifts')
 
-  const emptyShift: definitions['shifts'] = {
-      id: 0,
-      employee_id: 0,
-      duration: 0,
-      date: new Date().toDateString()
-  }
-  const [shift, setShift] = useState<Partial<definitions['shifts']>>(emptyShift)
 
-  const employeeName = useCallback(
-    (employeeId: number | undefined) => {
-      if (!employeeId) return 'Employee not found'
-      return employees.find((e) => e.id === employeeId)?.first_name
-    },
-    [employees]
-  )
-
-  async function addShiftAndReload() {
-    const { id, ...shiftProperties } = shift
-    revalidateShifts([...shifts, shift])
-    await addShift(shiftProperties)
-    revalidateShifts()
+  function matchingShift(date?: string | dayjs.Dayjs, employee_id?: number) {
+      return shifts.find((otherShift) => employee_id === otherShift.employee_id && dayjs(date).isSame(dayjs(otherShift.date), 'date'))
   }
 
-  async function deleteShiftAndReload(id: number) {
-    revalidateShifts(shifts.filter(shift => shift.id !== id))
-    await deleteShift(id)
+  async function addShiftAndReload(shift: Partial<definitions['shifts']>) {
+    // if we already have a shift for the same employee on the same date - update that
+    // otherwise - insert (without an id)
+    const existingShift = matchingShift(shift.date, shift.employee_id)
+    
+    if (existingShift) {
+        if (existingShift.duration === shift.duration) return
+
+        shift.id = existingShift.id
+        if (shift.duration === 0) {
+            revalidateShifts(shifts.filter((s) => s.id !== shift.id))
+            await deleteShift(shift.id)
+        } else {
+            revalidateShifts([...shifts, shift])
+            await addShift(shift)    
+        }
+    } else {
+        delete shift['id']
+        revalidateShifts([...shifts, shift])
+        await addShift(shift)
+    }
     revalidateShifts()
   }
 
   const dateRange = nextTwoWeeks()
   
   const tableData: ScheduleTableRow[] = employees.map((employee) => ({
-      name: employee.first_name ?? 'Some employee',
+      employee,
       total: 0,
       ...dateRange.reduce((acc, date) => {
-        const shift = shifts.find((shift) => shift.employee_id === employee.id && dayjs(shift.date).diff(date, 'day') === 0)
+        const shift = matchingShift(date, employee.id)
         return {
             ...acc,
             [date.unix().toString()]: shift ? (shift.duration ?? 0) : 0
@@ -97,75 +97,13 @@ const Shifts: NextPage = () => {
         {deleteShiftError && (<div>Error deleting shift: {deleteShiftError}</div>)}
         <div>
             <div className="flex flex-col flex-wrap items-center justify-around mt-6">
-                <div className="p-8 mt-6 border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600">
-                    <div className="w-full max-w-sm">
-                        <form className="bg-white rounded px-8 pt-6 pb-8 mb-4">
-                            <div className="mb-4">
-                                <label
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                    htmlFor="employee_id"
-                                >
-                                    Employee
-                                </label>
-                                <select onChange={(e) => setShift({ ...shift, employee_id: +e.target.value })} value={shift.employee_id}>
-                                <option value="0">Select Employee</option>
-                                {employees.map((employee) => (
-                                    <option key={employee.id} value={employee.id}>{employee.first_name} {employee.last_name}</option>
-                                ))}
-                                </select>
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                    htmlFor="duration"
-                                >
-                                    Shift Duration
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    id="duration"
-                                    type="number"
-                                    value={shift.duration?.toString()}
-                                    onChange={(e) =>
-                                        setShift({ ...shift, duration: +e.target.value })
-                                    }
-                                />
-                            </div>
-
-                            <div className="mb-4">
-                                <label
-                                    className="block text-gray-700 text-sm font-bold mb-2"
-                                    htmlFor="date"
-                                >
-                                    Shift Date
-                                </label>
-                                <input
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    id="date"
-                                    type="date"
-                                    value={shift.date?.toString()}
-                                    onChange={(e) =>
-                                        setShift({ ...shift, date: e.target.value })
-                                    }
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                                <button
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                    type="button"
-                                    onClick={addShiftAndReload}
-                                >
-                                    Add Shift
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                
                 {(addShiftLoading || deleteShiftLoading) && 'Loading...'}
 
-                <ScheduleTable dateColumns={dateRange} data={tableData} />
+                <ScheduleTable 
+                    dateColumns={dateRange} 
+                    data={tableData} 
+                    onCellSubmit={addShiftAndReload}
+                />
             </div>
         </div>
     </div>
