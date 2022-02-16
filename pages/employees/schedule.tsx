@@ -1,10 +1,10 @@
 import dayjs from 'dayjs'
 import { NextPage } from 'next'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ScheduleTable from '../../components/employees/schedule/ScheduleTable'
 import { ScheduleTableRow } from '../../interfaces'
 import { useUser } from '../../lib/hooks'
-import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../../lib/services/supabase'
+import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '../../lib/services/supabase'
 import { nextTwoWeeks } from '../../lib/utils'
 import { definitions } from '../../types/database'
 
@@ -35,12 +35,20 @@ const Shifts: NextPage = () => {
     error: deleteShiftError 
   } = useSupabaseDeleteEntity('shifts')
 
+  const monthTotalByEmployee: Record<string, number> = useMemo(() => {
+      return employees.reduce((res, employee) => ({
+        ...res,
+        [employee.id]: shifts
+            .filter((shift) => shift.employee_id === employee.id)
+            .reduce((acc, shift) => acc + (shift.duration ?? 0), 0)
+      }), {})
+  }, [employees, shifts])
 
   function matchingShift(date?: string | dayjs.Dayjs, employee_id?: number) {
       return shifts.find((otherShift) => employee_id === otherShift.employee_id && dayjs(date).isSame(dayjs(otherShift.date), 'date'))
   }
 
-  async function addShiftAndReload(shift: Partial<definitions['shifts']>) {
+  async function modifyShiftAndReload(shift: Partial<definitions['shifts']>) {
     // if we already have a shift for the same employee on the same date - update that
     // otherwise - insert (without an id)
     const existingShift = matchingShift(shift.date, shift.employee_id)
@@ -68,7 +76,7 @@ const Shifts: NextPage = () => {
   
   const tableData: ScheduleTableRow[] = employees.map((employee) => ({
       employee,
-      total: 0,
+      total: monthTotalByEmployee[employee.id.toString()],
       ...dateRange.reduce((acc, date) => {
         const shift = matchingShift(date, employee.id)
         return {
@@ -102,7 +110,7 @@ const Shifts: NextPage = () => {
                 <ScheduleTable 
                     dateColumns={dateRange} 
                     data={tableData} 
-                    onCellSubmit={addShiftAndReload}
+                    onCellSubmit={modifyShiftAndReload}
                 />
             </div>
         </div>
