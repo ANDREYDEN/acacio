@@ -7,12 +7,14 @@ import { useUser } from '../lib/hooks'
 import LoginForm from '../components/LoginForm'
 import Link from 'next/link'
 import ErrorMessage from '../components/ErrorMessage'
+import { useTranslation } from 'react-i18next'
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('')
     const router = useRouter()
     const user = useUser()
+    const { t, i18n } = useTranslation()
 
     useEffect(() => {
         if (user) {
@@ -39,13 +41,17 @@ const Login: NextPage = () => {
                 <div className='absolute top-16'>
                     <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 </div>
-                <h2>Welcome back</h2>
+                <h2>{t('login.welcome')}</h2>
                 <p className='mb-10 text-dark-grey'>Welcome back! Please, sign in</p>
                 {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />
                 <Link href={'/send-password-reset'}>
                     <span className='underline text-center hover:cursor-pointer'>Forgot Password?</span>
                 </Link>
+                <div>
+                    <button onClick={() => i18n.changeLanguage('ru')}>Russian</button>
+                    <button onClick={() => i18n.changeLanguage('en')}>English</button>
+                </div>
             </div>
             <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>
