@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
 import { useCallback, useEffect, useState } from 'react'
-import { useUser } from '../lib/hooks'
-import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
-import { definitions } from '../types/database'
+import { useUser } from '../../lib/hooks'
+import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../../lib/services/supabase'
+import { definitions } from '../../types/database'
 
 const Shifts: NextPage = () => {
   useEffect(() => setMounted(true), [])
