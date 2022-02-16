@@ -7,12 +7,11 @@ export function snakeCaseToPascalCase(input: string): string {
     .join(' ')
 }
 
-export function nextTwoWeeks() {
-  let runningDay = dayjs().startOf('week')
-  const dateRange: dayjs.Dayjs[] = []
-  for (let i = 0; i < 14; i++) {
-    dateRange.push(runningDay)
-    runningDay = runningDay.add(1, 'day')
+export function getMonthDays(month: number): dayjs.Dayjs[] {
+  const currentMonth = dayjs().month(month).startOf('month')
+  const dateRange = []
+  for (let date = 1; date <= currentMonth.daysInMonth(); date++) {
+    dateRange.push(currentMonth.date(date))
   }
   return dateRange
 }
