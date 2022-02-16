@@ -14,7 +14,7 @@ const Login: NextPage = () => {
     const [error, setError] = useState<string>('')
     const router = useRouter()
     const user = useUser()
-    const { t, i18n } = useTranslation()
+    const { t } = useTranslation()
 
     useEffect(() => {
         if (user) {
@@ -48,10 +48,6 @@ const Login: NextPage = () => {
                 <Link href={'/send-password-reset'} passHref>
                     <span className='underline text-center hover:cursor-pointer'>{t('login.forgot_password')}</span>
                 </Link>
-                <div>
-                    <button onClick={() => i18n.changeLanguage('ru')}>Russian</button>
-                    <button onClick={() => i18n.changeLanguage('en')}>English</button>
-                </div>
             </div>
             <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>
