@@ -1,11 +1,12 @@
 import { NextPage } from 'next'
 import { supabase } from '../client'
 import { useRouter } from 'next/router'
-import { useUser } from '../lib/hooks'
+import { useMounted, useUser } from '../lib/hooks'
 import Loader from '../components/Loader'
 import PrimaryButton from '../components/PrimaryButton'
 
 const Settings: NextPage = () => {
+    const { mounted } = useMounted()
     const user = useUser()
     const router = useRouter()
 
@@ -14,7 +15,7 @@ const Settings: NextPage = () => {
         router.replace('/')
     }
 
-    if (!user) {
+    if (!user || !mounted) {
         return (<Loader />)
     }
 
