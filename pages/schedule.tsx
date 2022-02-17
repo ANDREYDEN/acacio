@@ -1,12 +1,11 @@
 import { NextPage } from 'next'
 import { useCallback, useEffect, useState } from 'react'
-import { useUser } from '../lib/hooks'
+import { useMounted, useUser } from '../lib/hooks'
 import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
 import { definitions } from '../types/database'
 
 const Shifts: NextPage = () => {
-  useEffect(() => setMounted(true), [])
-  const [mounted, setMounted] = useState(false)
+  const { mounted } = useMounted()
 
   const user = useUser()
   const { 
@@ -60,9 +59,7 @@ const Shifts: NextPage = () => {
     revalidateShifts()
   }
 
-  if (!mounted) return (<div></div>)
-
-  if (!user || shiftsLoading || employeesLoading) {
+  if (!mounted || !user || shiftsLoading || employeesLoading) {
       return (
           <div id="loader" className="flex justify-center items-center">
               <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>

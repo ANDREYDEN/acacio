@@ -3,18 +3,18 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../client'
-import { useUser } from '../lib/hooks'
+import { useTranslation, useUser } from '../lib/hooks'
 import LoginForm from '../components/LoginForm'
 import Link from 'next/link'
 import ErrorMessage from '../components/ErrorMessage'
-import { useTranslation } from 'react-i18next'
+
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('')
     const router = useRouter()
     const user = useUser()
-    const { t } = useTranslation()
+    const content = useTranslation()
 
     useEffect(() => {
         if (user) {
@@ -41,13 +41,17 @@ const Login: NextPage = () => {
                 <div className='absolute top-16'>
                     <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 </div>
-                <h2>{t('login.welcome')}</h2>
-                <p className='mb-10 text-dark-grey'>{t('login.please_sign')}</p>
+                <h2>{content.login.welcome}</h2>
+                <p className='mb-10 text-dark-grey'>{content.login.please_sign}</p>
                 {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />
                 <Link href={'/send-password-reset'} passHref>
-                    <span className='underline text-center hover:cursor-pointer'>{t('login.forgot_password')}</span>
+                    <span className='underline text-center hover:cursor-pointer'>{content.login.forgot_password}</span>
                 </Link>
+                <div>
+                    <Link href={router.asPath} locale='ru-UA'>Russian</Link>
+                    <Link href={router.asPath} locale='en-CA'>English</Link>
+                </div>
             </div>
             <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>
