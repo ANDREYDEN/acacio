@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import TextInput from './TextInput'
 import PrimaryButton from './PrimaryButton'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from '../lib/hooks'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
@@ -11,7 +11,7 @@ interface ILoginForm {
 
 const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) => {
     const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
-    const { t } = useTranslation()
+    const content = useTranslation()
 
     const handleForm = async (data: any) => {
         await handleLogin(data.email, data.password)
@@ -22,24 +22,24 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
             <TextInput
                 type='email'
                 name='email'
-                label={t('login.form.email_label')}
-                placeholder={t('login.form.email_label')}
+                label={content.login.form.email_label}
+                placeholder={content.login.form.email_label}
                 textInputClass='mb-8'
-                register={register('email', { required: t('login.form.email_required') as string })}
+                register={register('email', { required: content.login.form.email_required })}
                 error={errors?.email && errors?.email?.message}
                 onChange={() => clearErrors()}
             />
             <TextInput
                 type='password'
                 name='password'
-                label={t('login.form.password_label')}
-                placeholder={t('login.form.password_placeholder')}
+                label={content.login.form.password_label}
+                placeholder={content.login.form.password_placeholder}
                 textInputClass='mb-8'
-                register={register('password', { required: t('login.form.password_required') as string })}
+                register={register('password', { required: content.login.form.password_required })}
                 error={errors?.password && errors?.password?.message}
                 onChange={() => clearErrors()}
             />
-            <PrimaryButton label={t('login.form.button')} loading={loading}/>
+            <PrimaryButton label={content.login.form.button} loading={loading}/>
         </form>
     )
 }

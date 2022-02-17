@@ -4,16 +4,12 @@ import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Menu from '../components/Menu'
-import '../i18n'
-import { useTranslation } from 'react-i18next'
 
 function MyApp({ Component, pageProps }: AppProps) {
-    const { t } = useTranslation()
-
   return (
     <Menu>
         <Head>
-            <title>{t('main.title')}</title>
+            <title>Acacio</title>
             <link rel='icon' href={'/favicon.ico'}/>
             <meta
                 name='description'
