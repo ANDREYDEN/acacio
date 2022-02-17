@@ -2,26 +2,13 @@ import React, { useState } from 'react'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
-import { useForm } from 'react-hook-form'
-import { supabase } from '@client'
-import { Button, ConfirmationModal, ErrorMessage, Loader, TextInput } from '@components'
-import { useMounted } from '@lib/hooks'
-import { enforceAuthenticated } from '@lib/utils'
-
-export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
-    props: {
-        ...await serverSideTranslations(context.locale, ['settings', 'common']),
-    },
-}))
+import { useMounted, useUser } from '../lib/hooks'
+import Loader from '../components/Loader'
+import PrimaryButton from '../components/PrimaryButton'
 
 const Settings: NextPage = () => {
     const { mounted } = useMounted()
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
-    const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+    const user = useUser()
     const router = useRouter()
     const { t } = useTranslation('settings')
 
@@ -44,22 +31,8 @@ const Settings: NextPage = () => {
         return <Image src='/img/radiobox_unchecked.svg' width={18} height={18} alt='LanguageUnChecked' />
     }
 
-    const handleForm = async (data: any) => {
-        setError('')
-        try {
-            setLoading(true)
-            if (data.newPassword !== data.confirmPassword) {
-                throw new Error(t('password.match_error').toString())
-            }
-
-            const { error } = await supabase.auth.update({ password: data.newPassword })
-            if (error) throw new Error(error.message)
-            setShowConfirmationModal(true)
-        } catch (error: any) {
-            setError(error.error_description || error.message)
-        } finally {
-            setLoading(false)
-        }
+    if (!user || !mounted) {
+        return (<Loader />)
     }
 
     return (
