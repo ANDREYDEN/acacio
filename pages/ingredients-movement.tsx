@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
 import { useMemo } from 'react'
-import { posterInstance } from '@services/poster/posterService'
+import { posterInstance } from '@services/poster'
 import { Column, useSortBy, useTable } from 'react-table'
 import { snakeCaseToPascalCase } from '@lib/utils'
 import { Ingredient } from '@lib/posterTypes'
