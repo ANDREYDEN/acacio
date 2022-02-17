@@ -1,10 +1,10 @@
 import { NextPage } from 'next'
 import { useMemo } from 'react'
-import { posterInstance } from '../lib/services/poster/posterService'
+import { posterInstance } from '@services/poster'
 import { Column, useSortBy, useTable } from 'react-table'
-import { snakeCaseToPascalCase } from '../lib/utils'
-import { Ingredient } from '../lib/posterTypes'
-import ErrorMessage from '../components/ErrorMessage'
+import { snakeCaseToPascalCase } from '@lib/utils'
+import { Ingredient } from '@lib/posterTypes'
+import ErrorMessage from '@components/ErrorMessage'
 
 export async function getServerSideProps() {
     try {
@@ -19,10 +19,10 @@ export async function getServerSideProps() {
     } catch(e: any) {
         return { 
             props:
-      {
-          ingredients: [],
-          error: e.message
-      }
+            {
+                ingredients: [],
+                error: e.message
+            }
         }
     }  
 }

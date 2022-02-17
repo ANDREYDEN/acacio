@@ -1,8 +1,9 @@
 import { NextPage } from 'next'
 import { useCallback, useState } from 'react'
-import { useMounted, useUser } from '../lib/hooks'
-import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
-import { definitions } from '../types/database'
+import { useMounted, useUser } from '@lib/hooks'
+import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '@services/supabase'
+import { definitions } from '@types'
+import Loader from '@components/Loader'
 
 const Shifts: NextPage = () => {
     const { mounted } = useMounted()
@@ -61,11 +62,7 @@ const Shifts: NextPage = () => {
     }
 
     if (!mounted || !user || shiftsLoading || employeesLoading) {
-        return (
-            <div id="loader" className="flex justify-center items-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"/>
-            </div>
-        )
+        return (<Loader />)
     }
 
     return (
@@ -149,17 +146,17 @@ const Shifts: NextPage = () => {
                             <tbody>
                                 <tr>
                                     <th className="bg-blue-400 border text-left px-4 py-4">
-                                  Employee
+                                        Employee
                                     </th>
                                     <th className="bg-blue-400 border text-left px-4 py-4">
-                                  Duration
+                                        Duration
                                     </th>
                                     <th className="bg-blue-400 border text-left px-8 py-4">
-                                  Date
+                                        Date
                                     </th>
 
                                     <th className="bg-blue-400 border text-left px-4 py-4">
-                                  Action
+                                        Action
                                     </th>
                                 </tr>
                                 {shifts?.map((shift) => (
