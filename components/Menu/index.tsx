@@ -37,7 +37,7 @@ const Menu: React.FC = ({ children }) => {
     const router = useRouter()
     const currentRoute = router.route
 
-    if (currentRoute === '/') {
+    if (currentRoute === '/' || currentRoute === '/send-password-reset') {
         return (<>{ children }</>)
     }
 
