@@ -1,8 +1,9 @@
 import { NextPage } from 'next'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useMounted, useUser } from '@lib/hooks'
 import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '@services/supabase'
 import { definitions } from '@types'
+import Loader from '@components/Loader'
 
 const Shifts: NextPage = () => {
   const { mounted } = useMounted()
@@ -60,11 +61,7 @@ const Shifts: NextPage = () => {
   }
 
   if (!mounted || !user || shiftsLoading || employeesLoading) {
-      return (
-          <div id="loader" className="flex justify-center items-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>
-          </div>
-      )
+      return (<Loader />)
   }
 
   return (
