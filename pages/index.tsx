@@ -1,11 +1,11 @@
 import { NextPage } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { supabase } from '@client'
 import { useTranslation, useUser } from '@lib/hooks'
 import LoginForm from '@components/LoginForm'
-import Link from 'next/link'
 import ErrorMessage from '@components/ErrorMessage'
 
 const Login: NextPage = () => {

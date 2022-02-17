@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import TextInput from './TextInput'
 import PrimaryButton from './PrimaryButton'
-import { useTranslation } from '../lib/hooks'
+import { useTranslation } from '@lib/hooks'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
