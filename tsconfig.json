@@ -21,7 +21,7 @@
       "@lib/*": ["lib/*"],
       "@services/*": ["lib/services/*"],
       "@client": ["client.js"],
-      "@types/*": ["types/*"],
+      "@types": ["types/database"],
       "@styles/*": ["styles/*"]
     }
   },

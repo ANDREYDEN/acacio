@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { posterInstance } from '@/lib/services/poster/posterService'
+import { posterInstance } from '@services/poster/posterService'
 
 export default async function handler(
   req: NextApiRequest,

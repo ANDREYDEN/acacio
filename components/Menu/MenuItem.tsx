@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { ChevronDown, ChevronUp } from 'react-iconly'
 import SubRoutesList from './SubRoutesList'
-import { IMenuItem } from '@/interfaces'
+import { IMenuItem } from '@interfaces'
 
 const MenuItem: React.FC<IMenuItem> = ({ currentItem, currentRoute, pageName }: IMenuItem) => {
     const [subRoutesOpened, setSubRoutesOpened] = useState(false)

@@ -1,9 +1,9 @@
 import { NextPage } from 'next'
-import { supabase } from '@/client'
+import { supabase } from '@client'
 import { useRouter } from 'next/router'
-import { useMounted, useUser } from '@/lib/hooks'
-import Loader from '@/components/Loader'
-import PrimaryButton from '@/components/PrimaryButton'
+import { useMounted, useUser } from '@lib/hooks'
+import Loader from '@components/Loader'
+import PrimaryButton from '@components/PrimaryButton'
 
 const Settings: NextPage = () => {
     const { mounted } = useMounted()

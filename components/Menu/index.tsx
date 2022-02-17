@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Home, Setting, TickSquare, User } from 'react-iconly'
-import { AppRoutesType } from '@/interfaces'
+import { AppRoutesType } from '@interfaces'
 import MenuItem from './MenuItem'
 
 const AppRoutes: AppRoutesType = {

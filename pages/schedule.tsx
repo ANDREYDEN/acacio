@@ -1,8 +1,8 @@
 import { NextPage } from 'next'
 import { useCallback, useEffect, useState } from 'react'
-import { useMounted, useUser } from '@/lib/hooks'
-import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '@/lib/services/supabase'
-import { definitions } from '@/types/database'
+import { useMounted, useUser } from '@lib/hooks'
+import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '@services/supabase'
+import { definitions } from '@types'
 
 const Shifts: NextPage = () => {
   const { mounted } = useMounted()

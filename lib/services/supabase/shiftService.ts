@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { definitions } from '@/types/database'
+import { definitions } from '@types'
 import { apiGet } from './common'
 
 export const useSupabaseGetShifts = () => {
