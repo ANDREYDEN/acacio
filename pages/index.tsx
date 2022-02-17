@@ -2,11 +2,11 @@ import { NextPage } from 'next'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import { supabase } from '../client'
-import { useUser } from '../lib/hooks'
-import LoginForm from '../components/LoginForm'
+import { supabase } from '@/client'
+import { useUser } from '@/lib/hooks'
+import LoginForm from '@/components/LoginForm'
 import Link from 'next/link'
-import ErrorMessage from '../components/ErrorMessage'
+import ErrorMessage from '@/components/ErrorMessage'
 
 const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)

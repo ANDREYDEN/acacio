@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
-import { IRouteProps } from '../../interfaces'
+import { IRouteProps } from '@/interfaces'
 
 const SubRoutesList = (currentItem: IRouteProps, currentRoute: string) => {
     if (!currentItem.subRoutes) {

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '../../client'
-import { definitions } from '../../types/database'
+import { supabase } from '@/client'
+import { definitions } from '@/types/database'
 
 export default async function handler(
   req: NextApiRequest,

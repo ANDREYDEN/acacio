@@ -1,8 +1,8 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { supabase } from '../client'
-import { useUser } from '../lib/hooks'
-import { usePosterGetEmployees } from '../lib/services/poster/posterService'
+import { supabase } from '@/client'
+import { useUser } from '@/lib/hooks'
+import { usePosterGetEmployees } from '@/lib/services/poster/posterService'
 
 const PosterEmployees: NextPage = () => {
     const router = useRouter()

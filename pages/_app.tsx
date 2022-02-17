@@ -1,9 +1,9 @@
-import '../styles/globals.css'
+import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import Menu from '../components/Menu'
+import Menu from '@/components/Menu'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
