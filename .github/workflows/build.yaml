@@ -2,6 +2,7 @@ on:
   pull_request:
     branches: 
     - main 
+    - dev
 name: Build and Lint
 jobs:
   test_and_build:
