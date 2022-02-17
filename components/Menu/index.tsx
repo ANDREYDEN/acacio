@@ -41,26 +41,26 @@ const Menu: React.FC = ({ children }) => {
         return (<>{ children }</>)
     }
 
-  return (
-      <div className='flex'>
-          <nav className='grid place-items-center h-screen w-64 bg-light-green mr-12'>
-              <div className='absolute top-16'>
-                  <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
-              </div>
-              <ul className='text-primary-blue font-header font-extrabold'>
-                  {Object.keys(AppRoutes).map((pageName, index) => {
-                      const currentItem = AppRoutes[pageName]
-                      return (
-                          <div key={index} className='mb-8'>
-                              <MenuItem currentItem={currentItem} currentRoute={currentRoute} pageName={pageName} />
-                          </div>
-                      )
-                  })}
-              </ul>
-          </nav>
-          { children }
-      </div>
-  )
+    return (
+        <div className='flex'>
+            <nav className='grid place-items-center h-screen w-64 bg-light-green mr-12'>
+                <div className='absolute top-16'>
+                    <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
+                </div>
+                <ul className='text-primary-blue font-header font-extrabold'>
+                    {Object.keys(AppRoutes).map((pageName, index) => {
+                        const currentItem = AppRoutes[pageName]
+                        return (
+                            <div key={index} className='mb-8'>
+                                <MenuItem currentItem={currentItem} currentRoute={currentRoute} pageName={pageName} />
+                            </div>
+                        )
+                    })}
+                </ul>
+            </nav>
+            { children }
+        </div>
+    )
 }
 
 export default Menu

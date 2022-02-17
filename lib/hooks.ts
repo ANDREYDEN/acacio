@@ -5,30 +5,30 @@ import ru from '../translations/ru/translation.json'
 import en from '../translations/en/translation.json'
 
 export const useUser = () => {
-  const router = useRouter()
-  const user = supabase.auth.user()
+    const router = useRouter()
+    const user = supabase.auth.user()
 
-  useEffect(() => {
-    if (!user && router.route !== '/') {
-      router.replace('/')
-    }
-  }, [router, user])
+    useEffect(() => {
+        if (!user && router.route !== '/') {
+            router.replace('/')
+        }
+    }, [router, user])
 
-  return user
+    return user
 }
 
 export const useTranslation = () => {
-  const { locale } = useRouter()
+    const { locale } = useRouter()
 
-  if (locale === 'ru-UA') {
-    return ru
-  }
+    if (locale === 'ru-UA') {
+        return ru
+    }
 
-  return en
+    return en
 }
 
 export const useMounted = () => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  return { mounted }
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
+    return { mounted }
 }
