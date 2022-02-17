@@ -1,30 +1,10 @@
 import React, { useMemo, useState } from 'react'
 import type { NextPage } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { Column } from 'exceljs'
-import {
-    Button,
-    ConfirmationModal,
-    DeletionModal,
-    ErrorMessage,
-    Loader,
-    EmployeeModal,
-    EmployeesTable,
-    SearchBar
-} from '@components'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { definitions } from '@types'
-import exportToXLSX from '@lib/services/exportService'
-import { enforceAuthenticated, fullName } from '@lib/utils'
-import { IEmployeesTableRow } from '@interfaces'
-import { useMounted } from '@lib/hooks'
-import { useSupabaseDeleteEntity, useSupabaseGetEntity, useSupabaseUpsertEntity } from '@services/supabase'
-
-export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
-    props: {
-        ...await serverSideTranslations(context.locale, ['employees', 'common']),
-    },
-}))
+import Loader from '@components/Loader'
+import { useSupabaseGetEmployees, useSupabaseUpsertEntity, useSupabaseDeleteEntity } from '@services/supabase'
 
 const Employees: NextPage = () => {
     const { mounted } = useMounted()

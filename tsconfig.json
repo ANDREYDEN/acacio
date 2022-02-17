@@ -18,7 +18,6 @@
     "paths": {
       "@interfaces": ["interfaces"],
       "@components/*": ["components/*"],
-      "@components": ["components"],
       "@lib/*": ["lib/*"],
       "@services/*": ["lib/services/*"],
       "@client": ["client.js"],

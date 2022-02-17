@@ -3,22 +3,13 @@ import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { supabase } from '../client'
-import { useTranslation, useUser } from '../lib/hooks'
-import LoginForm from '../components/LoginForm'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
 import { supabase } from '@client'
-import { ErrorMessage, Loader, LoginForm } from '@components'
-import { useMounted } from '@lib/hooks'
-
-export const getServerSideProps = async (context: any) => ({
-    props: {
-        ...await serverSideTranslations(context.locale, ['login', 'common']),
-    },
-})
+import { useTranslation, useUser } from '@lib/hooks'
+import LoginForm from '@components/LoginForm'
+import ErrorMessage from '@components/ErrorMessage'
 
 const Login: NextPage = () => {
     const { mounted } = useMounted()

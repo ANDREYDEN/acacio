@@ -16,6 +16,7 @@ import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import useSWR from 'swr'
+import { definitions } from '@types'
 
 export const posterInstance = axios.create({
     baseURL: 'https://joinposter.com/api/',

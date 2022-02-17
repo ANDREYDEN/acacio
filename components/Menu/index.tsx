@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { Home, Logout, Setting, TickSquare, User } from 'react-iconly'
+import { Home, Setting, TickSquare, User } from 'react-iconly'
 import { AppRoutesType } from '@interfaces'
 import MenuItem from './MenuItem'
 import { supabase } from '@client'
