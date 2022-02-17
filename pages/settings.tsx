@@ -20,12 +20,12 @@ const Settings: NextPage = () => {
     }
 
     return (
-      <div className='text-center'>
-          <div>
-              <p className='mb-4'><b>User Email:</b> {user.email}</p>
-              <PrimaryButton label='Log Out' onClick={handleLogOut} />
-          </div>
-      </div>
+        <div className='text-center'>
+            <div>
+                <p className='mb-4'><b>User Email:</b> {user.email}</p>
+                <PrimaryButton label='Log Out' onClick={handleLogOut} />
+            </div>
+        </div>
     )
 }
 
