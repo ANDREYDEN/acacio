@@ -4,13 +4,12 @@ import { useRouter } from 'next/router'
 import { useMounted, useUser } from '../lib/hooks'
 import Loader from '../components/Loader'
 import PrimaryButton from '../components/PrimaryButton'
-import { useTranslation } from 'react-i18next'
+import Link from 'next/link'
 
 const Settings: NextPage = () => {
     const { mounted } = useMounted()
     const user = useUser()
     const router = useRouter()
-    const { i18n } = useTranslation()
 
     const handleLogOut = async () => {
         await supabase.auth.signOut()
@@ -28,8 +27,8 @@ const Settings: NextPage = () => {
               <PrimaryButton label='Log Out' onClick={handleLogOut} />
           </div>
           <div>
-              <button onClick={() => i18n.changeLanguage('ru')}>Russian</button>
-              <button onClick={() => i18n.changeLanguage('en')}>English</button>
+              <Link href={router.asPath} locale='ru-UA'>Russian</Link>
+              <Link href={router.asPath} locale='en-CA'>English</Link>
           </div>
       </div>
     )

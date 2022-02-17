@@ -8,7 +8,6 @@ import LoginForm from '../components/LoginForm'
 import Link from 'next/link'
 import ErrorMessage from '../components/ErrorMessage'
 
-
 const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('')
@@ -48,10 +47,6 @@ const Login: NextPage = () => {
                 <Link href={'/send-password-reset'} passHref>
                     <span className='underline text-center hover:cursor-pointer'>{content.login.forgot_password}</span>
                 </Link>
-                <div>
-                    <Link href={router.asPath} locale='ru-UA'>Russian</Link>
-                    <Link href={router.asPath} locale='en-CA'>English</Link>
-                </div>
             </div>
             <div className='bg-cover bg-login col-span-4 shadow-2xl' />
         </div>
