@@ -32,27 +32,27 @@ const PosterEmployees: NextPage = () => {
                     <div className='p-2 mt-6 w-96 rounded-xl focus:text-blue-600'>
                         <table className='shadow-lg bg-white'>
                             <tbody>
-                            <tr>
-                                <th className='bg-blue-400 border text-left px-4 py-4'>
+                                <tr>
+                                    <th className='bg-blue-400 border text-left px-4 py-4'>
                                     Id
-                                </th>
-                                <th className='bg-blue-400 border text-left px-4 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-4 py-4'>
                                     First Name
-                                </th>
-                                <th className='bg-blue-400 border text-left px-8 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-8 py-4'>
                                     Last Name
-                                </th>
-                                <th className='bg-blue-400 border text-left px-8 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-8 py-4'>
                                     BirthDate
-                                </th>
-                                <th className='bg-blue-400 border text-left px-14 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-14 py-4'>
                                     Salary
-                                </th>
-                                <th className='bg-blue-400 border text-left px-16 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-16 py-4'>
                                     Coefficient
-                                </th>
-                            </tr>
-                            {employees!.map((employee, index) => (
+                                    </th>
+                                </tr>
+                                {employees!.map((employee, index) => (
                                     <tr key={employee.id}>
                                         <td className='border px-4 py-4'>{index + 1}</td>
                                         <td className='border px-4 py-4'>{employee.first_name}</td>

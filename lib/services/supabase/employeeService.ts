@@ -3,7 +3,7 @@ import { definitions } from '@types'
 import { apiGet } from './common'
 
 export const useSupabaseGetEmployees = () => {
-  const { data, error } = useSWR('/api/employees', apiGet)
+    const { data, error } = useSWR('/api/employees', apiGet)
 
-  return { data: data as definitions['employees'][] , loading: !data, error }
+    return { data: data as definitions['employees'][] , loading: !data, error }
 }
