@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../client'
 
 export const useUser = () => {
@@ -13,4 +13,10 @@ export const useUser = () => {
   }, [router, user])
 
   return user
+}
+
+export const useMounted = () => {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  return { mounted }
 }
