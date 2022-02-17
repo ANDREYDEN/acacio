@@ -16,12 +16,13 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/interfaces": ["interfaces"],
-      "@/components/*": ["components/*"],
-      "@/lib/*": ["lib/*"],
-      "@/client": ["client.js"],
-      "@/types/*": ["types/*"],
-      "@/styles/*": ["styles/*"]
+      "@interfaces": ["interfaces"],
+      "@components/*": ["components/*"],
+      "@lib/*": ["lib/*"],
+      "@services/*": ["lib/services/*"],
+      "@client": ["client.js"],
+      "@types/*": ["types/*"],
+      "@styles/*": ["styles/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
