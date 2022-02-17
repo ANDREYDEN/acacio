@@ -8,8 +8,6 @@ import Menu from '@components/Menu'
 import { useUpdateAuthCookie } from '@lib/hooks'
 
 function MyApp({ Component, pageProps }: AppProps) {
-    useUpdateAuthCookie()
-
     return (
         <Menu>
             <Head>

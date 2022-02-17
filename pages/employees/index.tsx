@@ -138,53 +138,163 @@ const Employees: NextPage = () => {
     }
 
     return (
-        <div className='flex flex-col items-center'>
-            {showEmployeeModal &&
-                <EmployeeModal
-                    employee={employeeForModal()}
-                    onUpsertEmployee={updateEmployees}
-                    onSuccess={toggleModal}
-                    onClose={() => setShowEmployeeModal(false)}
-                    employeeRoles={employeeRoles}
-                />}
-            {showAddConfirmationModal && !upsertEmployeeError &&
-                <ConfirmationModal
-                    header={t('add_confirmation_modal.header')}
-                    toggleModal={setShowAddConfirmationModal}
-                    message={t('add_confirmation_modal.message')}
-                />
-            }
-            {employeeIdToDelete &&
-                <DeletionModal
-                    header={t('deletion_modal.header')}
-                    onClose={() => setEmployeeIdToDelete(undefined)}
-                    action={onDeleteEmployee}
-                    message={confirmationMessage()}
-                />
-            }
-            {showDeleteConfirmationModal && !deleteEmployeeError &&
-                <ConfirmationModal
-                    header={t('deletion_modal.confirmation_header')}
-                    toggleModal={setShowDeleteConfirmationModal}
-                    message={t('deletion_modal.confirmation_message')}
-                />
-            }
+        <div className='flex flex-col items-center justify-center py-2'>
+            <div>
+                <div className='flex flex-wrap items-center justify-around mt-6'>
+                    <div className='p-8 mt-6 border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600'>
+                        <div className='w-full max-w-sm'>
+                            <form className='bg-white rounded px-8 pt-6 pb-8 mb-4'>
+                                <div className='mb-4'>
+                                    <label
+                                        className='block text-gray-700 text-sm font-bold mb-2'
+                                        htmlFor='first_name'
+                                    >
+                                        First Name
+                                    </label>
+                                    <input
+                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                        id='first_name'
+                                        type='text'
+                                        value={first_name?.toString()}
+                                        onChange={(e) =>
+                                            setEmployee({ ...employee, first_name: e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div className='mb-4'>
+                                    <label
+                                        className='block text-gray-700 text-sm font-bold mb-2'
+                                        htmlFor='last_name'
+                                    >
+                                        Last Name
+                                    </label>
+                                    <input
+                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                        id='last_name'
+                                        type='text'
+                                        value={last_name?.toString()}
+                                        onChange={(e) =>
+                                            setEmployee({ ...employee, last_name: e.target.value })
+                                        }
+                                    />
+                                </div>
 
-            <div className='w-full flex justify-between items-center mb-6'>
-                <h3>{t('header')}</h3>
-                <div className='flex space-x-4'>
-                    <SearchBar searchValue={searchValue} onValueChange={setSearchValue} />
-                    <Button
-                        label={t('export', { ns: 'common' })}
-                        variant='secondary'
-                        buttonClass='w-56'
-                        onClick={handleExport}
-                    />
-                    <Button
-                        label={t('add_employee')}
-                        buttonClass='w-56'
-                        onClick={() => setShowEmployeeModal(prevState => !prevState)}
-                    />
+                                <div className='mb-4'>
+                                    <label
+                                        className='block text-gray-700 text-sm font-bold mb-2'
+                                        htmlFor='date_of_birth'
+                                    >
+                                        BirthDate
+                                    </label>
+                                    <input
+                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                        id='date_of_birth'
+                                        type='date'
+                                        value={date_of_birth?.toString()}
+                                        onChange={(e) =>
+                                            setEmployee({ ...employee, date_of_birth: e.target.value })
+                                        }
+                                    />
+                                </div>
+
+                                <div className='mb-4'>
+                                    <label
+                                        className='block text-gray-700 text-sm font-bold mb-2'
+                                        htmlFor='Salary'
+                                    >
+                                        Salary
+                                    </label>
+                                    <input
+                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                        id='salary'
+                                        type='number'
+                                        value={salary}
+                                        onChange={(e) =>
+                                            setEmployee({ ...employee, salary: +e.target.value })
+                                        }
+                                    />
+                                </div>
+
+                                <div className='mb-4'>
+                                    <label
+                                        className='block text-gray-700 text-sm font-bold mb-2'
+                                        htmlFor='Coefficient'
+                                    >
+                                        Coefficient
+                                    </label>
+                                    <input
+                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+                                        id='coefficient'
+                                        type='number'
+                                        value={coefficient?.toString()}
+                                        onChange={(e) =>
+                                            setEmployee({ ...employee, coefficient: +e.target.value })
+                                        }
+                                    />
+                                </div>
+                                <div className='flex items-center justify-between'>
+                                    <button
+                                        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                                        type='button'
+                                        onClick={addEmployeeAndReload}
+                                    >
+                                        Add Employee
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div className='p-2 mt-6 w-96 rounded-xl focus:text-blue-600'>
+                        <table className='shadow-lg bg-white'>
+                            <tbody>
+                                <tr>
+                                    <th className='bg-blue-400 border text-left px-4 py-4'>
+                                    Id
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-4 py-4'>
+                                    First Name
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-8 py-4'>
+                                    Last Name
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-8 py-4'>
+                                    BirthDate
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-14 py-4'>
+                                    Salary
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-16 py-4'>
+                                    Coefficient
+                                    </th>
+
+                                    <th className='bg-blue-400 border text-left px-4 py-4'>
+                                    Action
+                                    </th>
+                                </tr>
+                                {employees?.map((employee, index) => (
+                                    <tr key={employee.id}>
+                                        <td className='border px-4 py-4'>{index + 1}</td>
+                                        <td className='border px-4 py-4'>{employee.first_name}</td>
+                                        <td className='border px-8 py-4'>{employee.last_name}</td>
+                                        <td className='border px-8 py-4'>{employee.date_of_birth}</td>
+                                        <td className='border px-8 py-4'>{employee.salary}</td>
+                                        <td className='border px-8 py-4'>{employee.coefficient}</td>
+                                        <td className='border px-8 py-4'>
+                                            {' '}
+                                            <button
+                                                className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+                                                type='button'
+                                                onClick={() => deleteEmployeeAndReload(employee.id)}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

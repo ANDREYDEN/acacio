@@ -8,8 +8,8 @@ interface IErrorMessage {
 
 const ErrorMessage: React.FC<IErrorMessage> = ({ message, errorMessageClass }: IErrorMessage) => {
     return <div className='flex justify-center text-center'>
-        <div className={`border border-error rounded-lg border-dashed px-10 py-6 w-full ${errorMessageClass}`}>
-            <Image src='/img/error.svg' alt='Error' width={24} height={24} />
+        <div className={`border border-error rounded-lg border-dashed px-10 py-6 ${errorMessageClass}`}>
+            <Image src='/img/error.svg' alt='Logo' width={32} height={32} />
             <p className='text-error'>{ message }</p>
         </div>
     </div>

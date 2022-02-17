@@ -10,13 +10,6 @@ export async function apiGet(url: string) {
     return data
 }
 
-export const useSupabaseGetEntity = <T>(entityType: keyof definitions) => {
-    const { data, error, mutate } = useSWR(`/api/${convertToKebabCase(entityType)}`, apiGet)
-
-    const definedData = data ? data as T[] : []
-    return { data: definedData, loading: !data, error: error?.toString(), mutate }
-}
-
 export const useSupabaseUpsertEntity = (entityType: keyof definitions) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)

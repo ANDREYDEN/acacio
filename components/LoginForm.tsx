@@ -1,7 +1,9 @@
 import React from 'react'
 import { useTranslation } from 'next-i18next'
 import { useForm } from 'react-hook-form'
-import { Button,TextInput } from '@components'
+import TextInput from './TextInput'
+import PrimaryButton from './PrimaryButton'
+import { useTranslation } from '../lib/hooks'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
@@ -9,14 +11,8 @@ interface ILoginForm {
 }
 
 const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) => {
-    const { t } = useTranslation('login')
-    const defaultValues = {
-        email: '',
-        password: ''
-    }
-    const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('email', { required: t('form.email_required').toString() })
-    register('password', { required: t('form.password_required').toString() })
+    const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
+    const content = useTranslation()
 
     const handleForm = async (data: any) => {
         await handleLogin(data.email, data.password)
@@ -27,22 +23,24 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
             <TextInput
                 type='email'
                 name='email'
-                label={t('form.email_label')}
-                placeholder={t('form.email_label')}
+                label={content.login.form.email_label}
+                placeholder={content.login.form.email_label}
                 textInputClass='mb-8'
-                control={control}
-                trigger={trigger}
+                register={register('email', { required: content.login.form.email_required })}
+                error={errors?.email && errors?.email?.message}
+                onChange={() => clearErrors()}
             />
             <TextInput
                 type='password'
                 name='password'
-                label={t('form.password_label')}
-                placeholder={t('form.password_placeholder')}
+                label={content.login.form.password_label}
+                placeholder={content.login.form.password_placeholder}
                 textInputClass='mb-8'
-                control={control}
-                trigger={trigger}
+                register={register('password', { required: content.login.form.password_required })}
+                error={errors?.password && errors?.password?.message}
+                onChange={() => clearErrors()}
             />
-            <Button label={t('form.button')} loading={loading} buttonClass='mb-8' />
+            <PrimaryButton label={content.login.form.button} loading={loading}/>
         </form>
     )
 }

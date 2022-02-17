@@ -12,18 +12,8 @@ interface ITextInput {
     textInputClass?: string
 }
 
-const TextInput: React.FC<ITextInput> = ({
-    type, name, label, placeholder, value = '', textInputClass, control, trigger
-}: ITextInput) => {
-    const { field, fieldState, formState: { errors } } = useController({ name, control })
-    const error = errors[name]?.message
-
-    useEffect(() => {
-        if (field.value !== value && !fieldState.isTouched) {
-            trigger(name, { shouldFocus: true })
-        }
-    }, [value, field.value, fieldState.isTouched, trigger, name])
-
+const TextInput: React.FC<ITextInput> = ({ type, name, label, placeholder, onChange, value,
+    register, error, textInputClass }: ITextInput) => {
     return (
         <div className={`flex flex-col ${textInputClass}`}>
             <label htmlFor={name} className={`mb-2 font-bold ${error ? 'text-error' : ''}`}>

@@ -46,17 +46,17 @@ const Menu: React.FC = ({ children }) => {
     const is404Page = Object.values(AppRoutes).every(ar => {
         if (!ar.subRoutes) return ar.route !== currentRoute
 
-        return Object.values(ar.subRoutes ?? []).every(sr => `${ar.route}${sr}` !== currentRoute)
-    })
-    if (currentRoute === '/' || currentRoute === '/send-password-reset' || is404Page) {
+    if (currentRoute === '/' || currentRoute === '/send-password-reset') {
         return (<>{ children }</>)
     }
 
     return (
-        <div className='grid grid-cols-[14rem_1fr]'>
-            <nav className='grid place-items-center sticky top-0 h-screen w-56 bg-light-green p-4'>
-                <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
-                <ul className='text-primary-blue font-header font-extrabold py-6'>
+        <div className='flex'>
+            <nav className='grid place-items-center h-screen w-64 bg-light-green mr-12'>
+                <div className='absolute top-16'>
+                    <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
+                </div>
+                <ul className='text-primary-blue font-header font-extrabold'>
                     {Object.keys(AppRoutes).map((pageName, index) => {
                         const currentItem = AppRoutes[pageName]
                         return (
@@ -66,12 +66,8 @@ const Menu: React.FC = ({ children }) => {
                         )
                     })}
                 </ul>
-                <button className='flex' onClick={handleLogOut}>
-                    <Logout style={{ color: '#010446' }} />
-                    <h5 className='ml-4 text-primary-blue'>Log Out</h5>
-                </button>
             </nav>
-            <div className='pt-12 px-12 pb-8 overflow-hidden'>{ children }</div>
+            { children }
         </div>
     )
 }
