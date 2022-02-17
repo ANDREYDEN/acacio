@@ -13,7 +13,7 @@ interface ITextInput {
 }
 
 const TextInput: React.FC<ITextInput> = ({ type, name, label, placeholder, onChange, value,
-                                             register, error, textInputClass }: ITextInput) => {
+    register, error, textInputClass }: ITextInput) => {
     return (
         <div className={`flex flex-col text-secondary-text ${textInputClass}`}>
             <label htmlFor={name} className={`mb-2 font-bold ${error ? 'text-error' : ''}`}>
