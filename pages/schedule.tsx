@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useMounted, useUser } from '../lib/hooks'
-import { useSupabaseUpsertEntity, useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts } from '../lib/services/supabase'
+import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '../lib/services/supabase'
 import { definitions } from '../types/database'
 
 const Shifts: NextPage = () => {
@@ -47,6 +47,7 @@ const Shifts: NextPage = () => {
   )
 
   async function addShiftAndReload() {
+    // eslint-disable-next-line no-unused-vars
     const { id, ...shiftProperties } = shift
     revalidateShifts([...shifts, shift])
     await addShift(shiftProperties)

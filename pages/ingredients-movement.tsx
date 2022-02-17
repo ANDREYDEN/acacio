@@ -36,7 +36,7 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
   const columns: Column<Ingredient>[] = useMemo<Column<Ingredient>[]>(
     () => {
       const columnAccessors: (keyof Ingredient)[] = ['ingredient_id', 'ingredient_name', 'start', 'end']
-      return columnAccessors.map((accessor, i) => ({
+      return columnAccessors.map((accessor) => ({
         Header: snakeCaseToPascalCase(accessor),
         accessor: accessor
       }))
@@ -80,11 +80,11 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
         <tbody {...getTableBodyProps()}>
           {rows.map((row) => {
             prepareRow(row)
-            const { key: rowKey, role: rowRole, ...getRowProps } = row.getRowProps()
+            const { key: rowKey, ...getRowProps } = row.getRowProps()
             return (
               <tr key={rowKey} {...getRowProps}>
                 {row.cells.map((cell) => {
-                  const { key: cellKey, role: cellRole, ...getCellProps } = cell.getCellProps()
+                  const { key: cellKey, ...getCellProps } = cell.getCellProps()
                   return (
                     <td key={cellKey} {...getCellProps}>
                       {cell.render('Cell')}
