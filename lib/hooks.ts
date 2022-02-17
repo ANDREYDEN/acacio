@@ -32,9 +32,3 @@ export const useMounted = () => {
     useEffect(() => setMounted(true), [])
     return { mounted }
 }
-
-export const useMounted = () => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  return { mounted }
-}
