@@ -87,25 +87,25 @@ const Shifts: NextPage = () => {
     const firstHalfOfMonth = monthDays.slice(0, 15)
     const secondHalfOfMonth = monthDays.slice(15)
   
-    const getTableData = useCallback(
-        (dateRange: dayjs.Dayjs[]): ScheduleTableRow[] => 
-            employees.map((employee) => ({
+    const getTableData = useCallback((dateRange: dayjs.Dayjs[]): ScheduleTableRow[] => 
+        employees.map((employee) => {
+            const shiftsDurationForEmployeeByDate = dateRange.reduce((acc, date) => {
+                const shift = matchingShift(date, employee.id)
+                return {
+                    ...acc,
+                    [date.unix().toString()]: shift ? (shift.duration ?? 0) : 0
+                }
+            }, {})
+            const row = {
                 employee,
                 total: monthTotalByEmployee[employee.id.toString()],
-                ...dateRange.reduce((acc, date) => {
-                    const shift = matchingShift(date, employee.id)
-                    return {
-                        ...acc,
-                        [date.unix().toString()]: shift ? (shift.duration ?? 0) : 0
-                    }
-                }, {})
-            })), 
-        [employees, matchingShift, monthTotalByEmployee]
-    )
+                ...shiftsDurationForEmployeeByDate
+            }
+            return row
+        }), 
+    [employees, matchingShift, monthTotalByEmployee])
   
-    if (!mounted) return (<div></div>)
-
-    if (!user || employeesLoading) {
+    if (!mounted || !user || employeesLoading) {
         return <Loader />
     }
 

@@ -22,10 +22,10 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
             ...dateColumns.map((date) => ({
                 accessor: date.unix().toString(),
                 Header: date.format('dd, MMM D'),
-                Cell: ({ value, cell }: { value: number, cell: any }) => {
-                    const matchingEmployee = cell.row.cells[0].value
+                Cell: (cellState: any) => {
+                    const matchingEmployee = cellState.cell.row.cells[0].value
           
-                    return <ScheduleTableCell value={value} onBlur={(cellValue: number) => onCellSubmit({
+                    return <ScheduleTableCell value={cellState.value} onBlur={(cellValue: number) => onCellSubmit({
                         id: 0,
                         employee_id: matchingEmployee.id,
                         duration: cellValue,
