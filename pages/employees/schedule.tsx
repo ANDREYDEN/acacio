@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { NextPage } from 'next'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import ScheduleTable from '../../components/employees/schedule/ScheduleTable'
+import Loader from '../../components/Loader'
 import { ScheduleTableRow } from '../../interfaces'
 import { useUser } from '../../lib/hooks'
 import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '../../lib/services/supabase'
@@ -28,9 +29,9 @@ const Shifts: NextPage = () => {
       error: employeesError
   } = useSupabaseGetEmployees()
   const { 
-      upsertEntity: addShift, 
-      loading: addShiftLoading, 
-      error: addShiftError 
+      upsertEntity: upsertShift, 
+      loading: upsertShiftLoading, 
+      error: upsertShiftError 
   } = useSupabaseUpsertEntity('shifts')
   const { 
     deleteEntity: deleteShift, 
@@ -72,12 +73,12 @@ const Shifts: NextPage = () => {
             await deleteShift(shift.id)
         } else {
             revalidateShifts([...shifts, shift])
-            await addShift(shift)    
+            await upsertShift(shift)    
         }
     } else {
         delete shift['id']
         revalidateShifts([...shifts, shift])
-        await addShift(shift)
+        await upsertShift(shift)
     }
     revalidateShifts()
   }
@@ -107,22 +108,18 @@ const Shifts: NextPage = () => {
   if (!mounted) return (<div></div>)
 
   if (!user || employeesLoading) {
-      return (
-          <div id="loader" className="flex justify-center items-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3"></div>
-          </div>
-      )
+      return <Loader />
   }
 
   return (
       <div className="flex flex-col items-center justify-center py-2">
         {shiftsError && (<div>Error fetching shifts: {shiftsError}</div>)}
         {employeesError && (<div>Error fetching employees: {employeesError}</div>)}
-        {addShiftError && (<div>Error adding shift: {addShiftError}</div>)}
+        {upsertShiftError && (<div>Error adding shift: {upsertShiftError}</div>)}
         {deleteShiftError && (<div>Error deleting shift: {deleteShiftError}</div>)}
         <div>
             <div className="flex flex-col flex-wrap items-center justify-around mt-6">
-                {(shiftsLoading || addShiftLoading || deleteShiftLoading) && 'Loading...'}
+                {(shiftsLoading || upsertShiftLoading || deleteShiftLoading) && 'Loading...'}
 
                 <div>
                     <button className='border-2 p-1' onClick={() => setMonth(month.subtract(1, 'month'))}>{'<'}</button>
