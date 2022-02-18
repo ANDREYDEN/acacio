@@ -1,60 +1,40 @@
-import { Button, ErrorMessage, Loader, ScheduleTable } from '@components'
-import { ScheduleTableRow } from '@interfaces'
-import { enforceAuthenticated, fullName, getMonthDays, modifyEntityAndReload } from '@lib/utils'
-import exportToXLSX from '@services/exportService'
-import {
-    useSupabaseDeleteEntity,
-    useSupabaseGetEntity,
-    useSupabaseGetShifts,
-    useSupabaseUpsertEntity
-} from '@services/supabase'
-import { definitions } from '@types'
 import dayjs from 'dayjs'
-import 'dayjs/locale/ru'
-import * as utc from 'dayjs/plugin/utc'
-import { Column } from 'exceljs'
 import { NextPage } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
-import React, { useCallback, useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'react-iconly'
-
-dayjs.extend(utc.default)
-
-export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
-    props: {
-        ...await serverSideTranslations(context.locale, ['schedule', 'common']),
-    },
-}))
+import { useCallback, useMemo, useState } from 'react'
+import ScheduleTable from '../../components/employees/schedule/ScheduleTable'
+import Loader from '../../components/Loader'
+import { ScheduleTableRow } from '../../interfaces'
+import { useMounted, useUser } from '../../lib/hooks'
+import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '../../lib/services/supabase'
+import { getMonthDays } from '../../lib/utils'
+import { definitions } from '../../types/database'
 
 const Shifts: NextPage = () => {
-    const { t } = useTranslation('schedule')
-    const router = useRouter()
+    const { mounted } = useMounted()
+    const user = useUser()
 
-    const currentLocale = router.locale?.split('-')[0] ?? 'en'
-    dayjs().locale(currentLocale)
-    
     // a dayjs object that represents the current month and year
-    const [month, setMonth] = useState(dayjs.utc().startOf('month'))
+    const [month, setMonth] = useState(dayjs())
 
     const { 
         data: shifts, 
         loading: shiftsLoading, 
         error: shiftsError,
         mutate: revalidateShifts
-    } = useSupabaseGetShifts(month)    
+    } = useSupabaseGetShifts(month)
     const { 
         data: employees, 
         loading: employeesLoading, 
         error: employeesError
-    } = useSupabaseGetEntity<definitions['employees']>('employees')
+    } = useSupabaseGetEmployees()
     const { 
         upsertEntity: upsertShift, 
+        loading: upsertShiftLoading, 
         error: upsertShiftError 
     } = useSupabaseUpsertEntity('shifts')
     const { 
         deleteEntity: deleteShift, 
+        loading: deleteShiftLoading, 
         error: deleteShiftError 
     } = useSupabaseDeleteEntity('shifts')
 
@@ -72,102 +52,92 @@ const Shifts: NextPage = () => {
         return shifts.find((otherShift) => employee_id === otherShift.employee_id && dayjs(date).isSame(dayjs(otherShift.date), 'date'))
     }, [shifts])
 
-    const modifyShiftAndReload = useCallback((shift: Partial<definitions['shifts']>) =>
-        modifyEntityAndReload(shift, shifts, revalidateShifts, upsertShift, deleteShift, shift.duration === 0),
-    [deleteShift, revalidateShifts, shifts, upsertShift]
-    )
+    /**
+   * Inserts/Updates/Deletes the provided shift
+   * - if a `shift` already exists
+   *   - if the `duration` is 0 - DELETE
+   *   - otherwise - UPDATE
+   * - otherwise INSERT
+   * @param shift the shift to manipualte
+   */
+    async function modifyShiftAndReload(shift: Partial<definitions['shifts']>) {
+        const existingShift = matchingShift(shift.date, shift.employee_id)
+    
+        if (existingShift) {
+            if (existingShift.duration === shift.duration) return
 
+            shift.id = existingShift.id
+            if (shift.duration === 0) {
+                revalidateShifts(shifts.filter((s) => s.id !== shift.id))
+                await deleteShift(shift.id)
+            } else {
+                revalidateShifts([...shifts, shift])
+                await upsertShift(shift)    
+            }
+        } else {
+            delete shift['id']
+            revalidateShifts([...shifts, shift])
+            await upsertShift(shift)
+        }
+        revalidateShifts()
+    }
+
+    // TODO: fetch appropriate data based on updated designs (rn it's showing 2 tables)
     const monthDays = getMonthDays(month)
+    const firstHalfOfMonth = monthDays.slice(0, 15)
+    const secondHalfOfMonth = monthDays.slice(15)
   
-    const tableData: ScheduleTableRow[] = useMemo(() => 
+    const getTableData = useCallback((dateRange: dayjs.Dayjs[]): ScheduleTableRow[] => 
         employees.map((employee) => {
-            const shiftsDurationForEmployeeByDate = monthDays.reduce((acc, date) => {
+            const shiftsDurationForEmployeeByDate = dateRange.reduce((acc, date) => {
                 const shift = matchingShift(date, employee.id)
                 return {
                     ...acc,
-                    [date.unix().toString()]: {
-                        duration: shift?.duration ?? 0,
-                        onChange: (cellValue: number) => modifyShiftAndReload({
-                            id: shift?.id ?? undefined,
-                            employee_id: employee.id,
-                            duration: cellValue,
-                            date: date.toString()
-                        })
-                    }
+                    [date.unix().toString()]: shift ? (shift.duration ?? 0) : 0
                 }
             }, {})
             const row = {
-                employeeName: fullName(employee),
+                employee,
                 total: monthTotalByEmployee[employee.id.toString()],
                 ...shiftsDurationForEmployeeByDate
             }
             return row
         }), 
-    [employees, matchingShift, modifyShiftAndReload, monthDays, monthTotalByEmployee])
-
-    const handleExport = async () => {
-        const exportData = tableData.map(row => Object.entries(row).reduce((acc, [key, value]) => ({
-            ...acc,
-            [key]: typeof value === 'object' ? value.duration : value
-        }), []))
-        const datesHeaders: Partial<Column>[] = monthDays.map(date => ({
-            key: date.unix().toString(),
-            header: date.format('dd DD'),
-            width: 7
-        }))
-        const columns: Partial<Column>[] = [
-            { key: 'employeeName', header: t('table.name').toString(), width: 20 },
-            { key: 'total', header: t('table.total').toString(), width: 15 },
-            ...datesHeaders
-        ]
-        await exportToXLSX(exportData, columns, `Schedule ${month.format('MMM YYYY')}`)
+    [employees, matchingShift, monthTotalByEmployee])
+  
+    if (!mounted || !user || employeesLoading) {
+        return <Loader />
     }
 
-    const loading = employeesLoading || shiftsLoading
-
-    const loadingError = shiftsError || employeesError
-    const updatingError = upsertShiftError || deleteShiftError
-    if (loadingError) return <ErrorMessage message={loadingError} />
-
     return (
-        <div className='flex flex-col'>
-            <div className='w-full flex justify-between items-center mb-6'>
-                <div>
-                    <h3>{t('header')}</h3>
-                    <span className='font-bold'>
-                        {month.format('MMMM')[0]?.toUpperCase()}
-                        {month.format('MMMM').slice(1)}, {month.format('YYYY')}
-                    </span>
-                </div>
+        <div className="flex flex-col items-center justify-center py-2">
+            {shiftsError && (<div>Error fetching shifts: {shiftsError}</div>)}
+            {employeesError && (<div>Error fetching employees: {employeesError}</div>)}
+            {upsertShiftError && (<div>Error adding shift: {upsertShiftError}</div>)}
+            {deleteShiftError && (<div>Error deleting shift: {deleteShiftError}</div>)}
+            <div>
+                <div className="flex flex-col flex-wrap items-center justify-around mt-6">
+                    {(shiftsLoading || upsertShiftLoading || deleteShiftLoading) && 'Loading...'}
 
-                <div className='flex items-center'>
-                    <button
-                        className='w-14 h-11 border border-r-0 border-grey rounded-bl-md rounded-tl-md'
-                        onClick={() => setMonth(month.subtract(1, 'month'))}
-                    >
-                        {<ChevronLeft style={{ marginLeft: 15 }} />}
-                    </button>
-                    <button
-                        className='w-14 h-11 border border-grey rounded-br-md rounded-tr-md'
-                        onClick={() => setMonth(month.add(1, 'month'))}
-                    >
-                        {<ChevronRight style={{ marginLeft: 15 }} />}
-                    </button>
-                    <Button
-                        label={t('export', { ns: 'common' })}
-                        variant='secondary'
-                        buttonClass='w-52 ml-8'
-                        onClick={handleExport}
+                    <div>
+                        <button className='border-2 p-1' onClick={() => setMonth(month.subtract(1, 'month'))}>{'<'}</button>
+                        <span className='w-32'>{month.format('MMMM YYYY')}</span>
+                        <button className='border-2 p-1' onClick={() => setMonth(month.add(1, 'month'))}>{'>'}</button>
+                    </div>
+
+                    <ScheduleTable 
+                        dateColumns={firstHalfOfMonth} 
+                        data={getTableData(firstHalfOfMonth)} 
+                        onCellSubmit={modifyShiftAndReload}
+                    />
+
+                    <ScheduleTable 
+                        dateColumns={secondHalfOfMonth} 
+                        data={getTableData(secondHalfOfMonth)} 
+                        onCellSubmit={modifyShiftAndReload}
                     />
                 </div>
             </div>
-
-            {updatingError && <ErrorMessage message={`Error updating shifts: ${updatingError}`} errorMessageClass='mb-8' />}
-
-            {loading 
-                ? <Loader />
-                : <ScheduleTable dateColumns={monthDays} data={tableData} />
-            }
         </div>
     )
 }
