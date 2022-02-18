@@ -1,10 +1,9 @@
 import dayjs from 'dayjs'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Column, useTable } from 'react-table'
 import { ScheduleTableRow } from '../../../interfaces'
 import { definitions } from '../../../types/database'
 import ScheduleTableCell from './ScheduleTableCell'
-
 
 interface IScheduleTable {
   dateColumns: dayjs.Dayjs[]
@@ -61,11 +60,11 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
         <tbody {...getTableBodyProps()}>
             {rows.map((row) => {
                 prepareRow(row)
-                const { key: rowKey, role: rowRole, ...getRowProps } = row.getRowProps()
+                const { key: rowKey, ...getRowProps } = row.getRowProps()
                 return (
                     <tr key={rowKey} {...getRowProps}>
                         {row.cells.map((cell) => {
-                            const { key: cellKey, role: cellRole, ...getCellProps } = cell.getCellProps()
+                            const { key: cellKey, ...getCellProps } = cell.getCellProps()
                             return (
                                 <td key={cellKey} {...getCellProps}>
                                     {cell.render('Cell')}
