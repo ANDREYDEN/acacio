@@ -1,8 +1,9 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { supabase } from '../client'
-import { useUser } from '../lib/hooks'
-import { usePosterGetEmployees } from '../lib/services/poster/posterService'
+import { supabase } from '@client'
+import { useUser } from '@lib/hooks'
+import { usePosterGetEmployees } from '@services/poster'
+import Loader from '@components/Loader'
 
 const PosterEmployees: NextPage = () => {
     const router = useRouter()
@@ -16,11 +17,7 @@ const PosterEmployees: NextPage = () => {
     }
     
     if (employeesLoading) {
-        return (
-            <div id='loader' className='flex justify-center items-center'>
-                <div className='animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500 mt-3' />
-            </div>
-        )
+        return (<Loader />)
     }
     
     if (employeesError) return (<div>{employeesError}</div>)
@@ -35,27 +32,27 @@ const PosterEmployees: NextPage = () => {
                     <div className='p-2 mt-6 w-96 rounded-xl focus:text-blue-600'>
                         <table className='shadow-lg bg-white'>
                             <tbody>
-                            <tr>
-                                <th className='bg-blue-400 border text-left px-4 py-4'>
+                                <tr>
+                                    <th className='bg-blue-400 border text-left px-4 py-4'>
                                     Id
-                                </th>
-                                <th className='bg-blue-400 border text-left px-4 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-4 py-4'>
                                     First Name
-                                </th>
-                                <th className='bg-blue-400 border text-left px-8 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-8 py-4'>
                                     Last Name
-                                </th>
-                                <th className='bg-blue-400 border text-left px-8 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-8 py-4'>
                                     BirthDate
-                                </th>
-                                <th className='bg-blue-400 border text-left px-14 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-14 py-4'>
                                     Salary
-                                </th>
-                                <th className='bg-blue-400 border text-left px-16 py-4'>
+                                    </th>
+                                    <th className='bg-blue-400 border text-left px-16 py-4'>
                                     Coefficient
-                                </th>
-                            </tr>
-                            {employees!.map((employee, index) => (
+                                    </th>
+                                </tr>
+                                {employees!.map((employee, index) => (
                                     <tr key={employee.id}>
                                         <td className='border px-4 py-4'>{index + 1}</td>
                                         <td className='border px-4 py-4'>{employee.first_name}</td>

@@ -1,11 +1,13 @@
 import { NextPage } from 'next'
-import { supabase } from '../client'
+import { supabase } from '@client'
 import { useRouter } from 'next/router'
-import { useUser } from '../lib/hooks'
-import Loader from '../components/Loader'
-import PrimaryButton from '../components/PrimaryButton'
+import { useMounted, useUser } from '@lib/hooks'
+import Loader from '@components/Loader'
+import PrimaryButton from '@components/PrimaryButton'
+import Link from 'next/link'
 
 const Settings: NextPage = () => {
+    const { mounted } = useMounted()
     const user = useUser()
     const router = useRouter()
 
@@ -14,17 +16,21 @@ const Settings: NextPage = () => {
         router.replace('/')
     }
 
-    if (!user) {
+    if (!user || !mounted) {
         return (<Loader />)
     }
 
     return (
-      <div className='text-center'>
-          <div>
-              <p className='mb-4'><b>User Email:</b> {user.email}</p>
-              <PrimaryButton label='Log Out' onClick={handleLogOut} />
-          </div>
-      </div>
+        <div className='text-center'>
+            <div>
+                <p className='mb-4'><b>User Email:</b> {user.email}</p>
+                <PrimaryButton label='Log Out' onClick={handleLogOut} />
+            </div>
+            <div>
+                <Link href={router.asPath} locale='ru-UA'>Russian</Link>
+                <Link href={router.asPath} locale='en-CA'>English</Link>
+            </div>
+        </div>
     )
 }
 
