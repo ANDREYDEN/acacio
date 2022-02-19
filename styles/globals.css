@@ -23,6 +23,12 @@
         @apply font-bold;
         @apply text-black;
     }
+    h4 {
+        @apply font-header;
+        @apply text-2xl;
+        @apply font-bold;
+        @apply text-primary-blue;
+    }
     h5 {
         @apply font-header;
         @apply text-xl;
