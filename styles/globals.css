@@ -34,6 +34,10 @@
         @apply text-xl;
         @apply font-bold;
     }
+    h6 {
+        @apply font-header;
+        @apply font-bold;
+    }
     body {
         @apply font-body;
     }
