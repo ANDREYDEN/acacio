@@ -1,8 +1,8 @@
+import { useTranslation } from '@lib/hooks'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import TextInput from './TextInput'
 import PrimaryButton from './PrimaryButton'
-import { useTranslation } from '@lib/hooks'
+import TextInput from './TextInput'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
@@ -10,7 +10,12 @@ interface ILoginForm {
 }
 
 const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) => {
-    const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
+    const { register, formState: { errors }, handleSubmit, clearErrors, setValue, trigger, control } = useForm({
+        defaultValues: {
+            'email': '',
+            'password': ''
+        }
+    })
     const content = useTranslation()
 
     const handleForm = async (data: any) => {
@@ -28,6 +33,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 register={register('email', { required: content.login.form.email_required })}
                 error={errors?.email && errors?.email?.message}
                 onChange={() => clearErrors()}
+                {...{ control, trigger }}
             />
             <TextInput
                 type='password'
@@ -38,6 +44,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 register={register('password', { required: content.login.form.password_required })}
                 error={errors?.password && errors?.password?.message}
                 onChange={() => clearErrors()}
+                {...{ control, trigger }}
             />
             <PrimaryButton label={content.login.form.button} loading={loading}/>
         </form>
