@@ -1,15 +1,17 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { definitions } from '@types'
+import React, { useEffect, useState } from 'react'
 import Loader from '@components/Loader'
 import { useSupabaseGetEmployees, useSupabaseUpsertEntity, useSupabaseDeleteEntity } from '@services/supabase'
+import PrimaryButton from '@components/PrimaryButton'
+import AddEmployeeModal from '@components/employees/index/AddEmployeeModal'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
     const [mounted, setMounted] = useState(false)
-
+    const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false)
     const router = useRouter()
+
     const {
         data: employees, 
         loading: employeesLoading, 
@@ -26,36 +28,18 @@ const Employees: NextPage = () => {
         error: deleteEmployeeError 
     } = useSupabaseDeleteEntity('employees')
 
-    const emptyEmployee = {
-        first_name: '',
-        last_name: '',
-        date_of_birth: '',
-        salary: 0,
-        coefficient: 0,
-    }
-    const [employee, setEmployee] = useState<Partial<definitions['employees']>>(emptyEmployee)
-
-    const { first_name, last_name, date_of_birth, salary, coefficient } = employee
-
-    async function addEmployeeAndReload() {
-        await addEmployee(employee)
-        router.reload()
-    }
-
     async function deleteEmployeeAndReload(id: number) {
         await deleteEmployee(id)
         router.reload()
     }
 
-    if (!mounted) return (<div />)
-
-    if (employeesLoading || addEmployeeLoading || deleteEmployeeLoading) {
-        return (<Loader />)
+    if (!mounted || employeesLoading || addEmployeeLoading || deleteEmployeeLoading) {
+        return <Loader />
     }
 
-    if (employeesError) {
+    if (employeesError || addEmployeeError || deleteEmployeeError) {
         return (
-            <div>Error while fetching employees: {employeesError}</div>
+            <div>An error occurred: {employeesError || addEmployeeError || deleteEmployeeError}</div>
         )
     }
 
@@ -63,109 +47,8 @@ const Employees: NextPage = () => {
         <div className='flex flex-col items-center justify-center py-2'>
             <div>
                 <div className='flex flex-wrap items-center justify-around mt-6'>
-                    <div className='p-8 mt-6 border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600'>
-                        <div className='w-full max-w-sm'>
-                            <form className='bg-white rounded px-8 pt-6 pb-8 mb-4'>
-                                <div className='mb-4'>
-                                    <label
-                                        className='block text-gray-700 text-sm font-bold mb-2'
-                                        htmlFor='first_name'
-                                    >
-                                        First Name
-                                    </label>
-                                    <input
-                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                                        id='first_name'
-                                        type='text'
-                                        value={first_name?.toString()}
-                                        onChange={(e) =>
-                                            setEmployee({ ...employee, first_name: e.target.value })
-                                        }
-                                    />
-                                </div>
-                                <div className='mb-4'>
-                                    <label
-                                        className='block text-gray-700 text-sm font-bold mb-2'
-                                        htmlFor='last_name'
-                                    >
-                                        Last Name
-                                    </label>
-                                    <input
-                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                                        id='last_name'
-                                        type='text'
-                                        value={last_name?.toString()}
-                                        onChange={(e) =>
-                                            setEmployee({ ...employee, last_name: e.target.value })
-                                        }
-                                    />
-                                </div>
-
-                                <div className='mb-4'>
-                                    <label
-                                        className='block text-gray-700 text-sm font-bold mb-2'
-                                        htmlFor='date_of_birth'
-                                    >
-                                        BirthDate
-                                    </label>
-                                    <input
-                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                                        id='date_of_birth'
-                                        type='date'
-                                        value={date_of_birth?.toString()}
-                                        onChange={(e) =>
-                                            setEmployee({ ...employee, date_of_birth: e.target.value })
-                                        }
-                                    />
-                                </div>
-
-                                <div className='mb-4'>
-                                    <label
-                                        className='block text-gray-700 text-sm font-bold mb-2'
-                                        htmlFor='Salary'
-                                    >
-                                        Salary
-                                    </label>
-                                    <input
-                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                                        id='salary'
-                                        type='number'
-                                        value={salary}
-                                        onChange={(e) =>
-                                            setEmployee({ ...employee, salary: +e.target.value })
-                                        }
-                                    />
-                                </div>
-
-                                <div className='mb-4'>
-                                    <label
-                                        className='block text-gray-700 text-sm font-bold mb-2'
-                                        htmlFor='Coefficient'
-                                    >
-                                        Coefficient
-                                    </label>
-                                    <input
-                                        className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
-                                        id='coefficient'
-                                        type='number'
-                                        value={coefficient?.toString()}
-                                        onChange={(e) =>
-                                            setEmployee({ ...employee, coefficient: +e.target.value })
-                                        }
-                                    />
-                                </div>
-                                <div className='flex items-center justify-between'>
-                                    <button
-                                        className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                                        type='button'
-                                        onClick={addEmployeeAndReload}
-                                    >
-                                        Add Employee
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    <PrimaryButton label='Add employee' onClick={() => setShowAddEmployeeModal(prevState => !prevState)} />
+                    {showAddEmployeeModal && <AddEmployeeModal addEmployee={addEmployee} toggleModal={setShowAddEmployeeModal} />}
 
                     <div className='p-2 mt-6 w-96 rounded-xl focus:text-blue-600'>
                         <table className='shadow-lg bg-white'>

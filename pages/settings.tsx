@@ -17,7 +17,7 @@ const Settings: NextPage = () => {
     }
 
     if (!user || !mounted) {
-        return (<Loader />)
+        return <Loader />
     }
 
     return (

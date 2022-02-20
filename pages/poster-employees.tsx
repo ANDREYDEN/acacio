@@ -17,7 +17,7 @@ const PosterEmployees: NextPage = () => {
     }
     
     if (employeesLoading) {
-        return (<Loader />)
+        return <Loader />
     }
     
     if (employeesError) return (<div>{employeesError}</div>)
