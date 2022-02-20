@@ -5,6 +5,7 @@ import Loader from '@components/Loader'
 import { useSupabaseGetEmployees, useSupabaseUpsertEntity, useSupabaseDeleteEntity } from '@services/supabase'
 import PrimaryButton from '@components/PrimaryButton'
 import AddEmployeeModal from '@components/employees/index/AddEmployeeModal'
+import ErrorMessage from '@components/ErrorMessage'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
@@ -38,9 +39,7 @@ const Employees: NextPage = () => {
     }
 
     if (employeesError || addEmployeeError || deleteEmployeeError) {
-        return (
-            <div>An error occurred: {employeesError || addEmployeeError || deleteEmployeeError}</div>
-        )
+        return <ErrorMessage message={employeesError || addEmployeeError || deleteEmployeeError} />
     }
 
     return (

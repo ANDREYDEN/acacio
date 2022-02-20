@@ -4,15 +4,15 @@ interface ITextInput {
     type: string
     name: string
     label: string
-    placeholder: string
     onChange: (value: string) => void
+    placeholder?: string
     value?: string
     register?: any
     error?: string
     textInputClass?: string
 }
 
-const TextInput: React.FC<ITextInput> = ({ type, name, label, placeholder, onChange, value,
+const TextInput: React.FC<ITextInput> = ({ type, name, label, onChange, placeholder, value,
     register, error, textInputClass }: ITextInput) => {
     return (
         <div className={`flex flex-col text-secondary-text ${textInputClass}`}>

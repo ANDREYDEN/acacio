@@ -13,7 +13,7 @@ const Modal: React.FC<IModal> = ({ header, children, closable, footer, toggler }
     return (
         <>
             <div
-                className='grid place-items-center overflow-y-auto fixed inset-0 z-50'
+                className='grid place-items-center py-6 overflow-y-auto fixed inset-0 z-50'
                 onClick={toggler}
             >
                 <div className='w-auto p-10 rounded-xl shadow-2xl flex flex-col bg-white'
