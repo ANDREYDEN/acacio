@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { supabase } from '@client'
-import PrimaryButton from '@components/PrimaryButton'
+import Button from '@components/Button'
 import TextInput from '@components/TextInput'
 import ErrorMessage from '@components/ErrorMessage'
 
@@ -65,7 +65,7 @@ const PasswordReset: NextPage = () => {
                             setError('')
                         }}
                     />
-                    <PrimaryButton label='Reset Password' onClick={handlePasswordReset} loading={loading} />
+                    <Button label='Reset Password' onClick={handlePasswordReset} loading={loading} />
                 </div>
             </div>
         </>

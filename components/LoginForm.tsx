@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import TextInput from './TextInput'
-import PrimaryButton from './PrimaryButton'
+import Button from './Button'
 import { useTranslation } from '@lib/hooks'
 
 interface ILoginForm {
@@ -39,7 +39,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 error={errors?.password && errors?.password?.message}
                 onChange={() => clearErrors()}
             />
-            <PrimaryButton label={content.login.form.button} loading={loading}/>
+            <Button label={content.login.form.button} loading={loading}/>
         </form>
     )
 }

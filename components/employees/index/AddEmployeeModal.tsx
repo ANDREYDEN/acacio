@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Modal from '@components/Modal'
-import PrimaryButton from '@components/PrimaryButton'
+import Button from '@components/Button'
 import { definitions } from '@types'
 import { useRouter } from 'next/router'
 import TextInput from '@components/TextInput'
@@ -89,7 +89,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
                 error={errors?.coefficient && errors?.coefficient?.message}
                 onChange={() => clearErrors()}
             />
-            <PrimaryButton label='Add Employee' loading={loading} />
+            <Button label='Add Employee' loading={loading} buttonClass='w-full' />
         </form>
     </Modal>
 }

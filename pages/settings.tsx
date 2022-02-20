@@ -1,10 +1,10 @@
 import { NextPage } from 'next'
-import { supabase } from '@client'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
+import { supabase } from '@client'
 import { useMounted, useUser } from '@lib/hooks'
 import Loader from '@components/Loader'
-import PrimaryButton from '@components/PrimaryButton'
-import Link from 'next/link'
+import Button from '@components/Button'
 
 const Settings: NextPage = () => {
     const { mounted } = useMounted()
@@ -24,7 +24,7 @@ const Settings: NextPage = () => {
         <div className='text-center'>
             <div>
                 <p className='mb-4'><b>User Email:</b> {user.email}</p>
-                <PrimaryButton label='Log Out' onClick={handleLogOut} />
+                <Button label='Log Out' onClick={handleLogOut} />
             </div>
             <div>
                 <Link href={router.asPath} locale='ru-UA'>Russian</Link>

@@ -1,7 +1,7 @@
 import { NextPage } from 'next'
 import React, { useState } from 'react'
 import { supabase } from '@client'
-import PrimaryButton from '@components/PrimaryButton'
+import Button from '@components/Button'
 import TextInput from '@components/TextInput'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
@@ -45,7 +45,7 @@ const SendPasswordReset: NextPage = () => {
                         setError('')
                     }}
                 />
-                <PrimaryButton label='Send Password Reset Email' loading={loading} />
+                <Button label='Send Password Reset Email' loading={loading} />
             </form>
         </div>
     )
