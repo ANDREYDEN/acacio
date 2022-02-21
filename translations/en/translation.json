@@ -16,6 +16,9 @@
 		"sign_in": "Sign In",
 		"welcome": "Welcome back"
 	},
+	"reset_password": {
+		"password_required":"Password is required"
+	},
 	"main": {
 		"title": "Acacio"
 	}

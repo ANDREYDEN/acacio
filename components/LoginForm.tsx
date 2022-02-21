@@ -12,8 +12,8 @@ interface ILoginForm {
 const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) => {
     const content = useTranslation()
     const defaultValues = {
-        'email': '',
-        'password': ''
+        email: '',
+        password: ''
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
     register('email', { required: content.login.form.email_required })
@@ -24,7 +24,9 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
     }
     
     return (
-        <form className='flex flex-col' onSubmit={handleSubmit(handleForm)}>
+        <form 
+            className='flex flex-col' 
+            onSubmit={handleSubmit(handleForm)}>
             <TextInput
                 type='email'
                 name='email'
