@@ -14,6 +14,7 @@ const Table: React.FC<ITable> = ({ headers, data, actionsList }: ITable) => {
                     </tr>
                 </thead>
                 <tbody>
+                    {/*TODO: make table more generic*/}
                     {data?.map((entity, index) => (
                         <tr key={entity.id} className={index === data.length - 1 ? '' : 'border-b'}>
                             <td className='px-8 py-5'>{entity.first_name} {entity.last_name}</td>

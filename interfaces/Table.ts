@@ -8,6 +8,7 @@ export interface IActionsList {
 
 export interface ITable {
     headers: string[]
+    // TODO: make table more generic
     data: definitions['employees'][]
     actionsList?: Array<IActionsList>
 }

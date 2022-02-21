@@ -14,6 +14,7 @@ const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
     const [mounted, setMounted] = useState(false)
     const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false)
+    // TODO: add editEmployeeModal
     const [showEditEmployeeModal, setShowEditEmployeeModal] = useState(false)
     const router = useRouter()
     const content = useTranslation()
@@ -34,6 +35,7 @@ const Employees: NextPage = () => {
         error: deleteEmployeeError 
     } = useSupabaseDeleteEntity('employees')
 
+    // TODO: add deleteEmployeeModal for confirmation
     async function deleteEmployeeAndReload(id: number) {
         await deleteEmployee(id)
         router.reload()
