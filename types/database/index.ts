@@ -12,6 +12,198 @@ export interface paths {
       };
     };
   };
+  '/bonuses': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.bonuses.id'];
+          created_at?: parameters['rowFilter.bonuses.created_at'];
+          employee_id?: parameters['rowFilter.bonuses.employee_id'];
+          amount?: parameters['rowFilter.bonuses.amount'];
+          reason?: parameters['rowFilter.bonuses.reason'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['bonuses'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** bonuses */
+          bonuses?: definitions['bonuses'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.bonuses.id'];
+          created_at?: parameters['rowFilter.bonuses.created_at'];
+          employee_id?: parameters['rowFilter.bonuses.employee_id'];
+          amount?: parameters['rowFilter.bonuses.amount'];
+          reason?: parameters['rowFilter.bonuses.reason'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.bonuses.id'];
+          created_at?: parameters['rowFilter.bonuses.created_at'];
+          employee_id?: parameters['rowFilter.bonuses.employee_id'];
+          amount?: parameters['rowFilter.bonuses.amount'];
+          reason?: parameters['rowFilter.bonuses.reason'];
+        };
+        body: {
+          /** bonuses */
+          bonuses?: definitions['bonuses'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  '/employee_roles': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.employee_roles.id'];
+          name?: parameters['rowFilter.employee_roles.name'];
+          created_at?: parameters['rowFilter.employee_roles.created_at'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['employee_roles'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** employee_roles */
+          employee_roles?: definitions['employee_roles'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.employee_roles.id'];
+          name?: parameters['rowFilter.employee_roles.name'];
+          created_at?: parameters['rowFilter.employee_roles.created_at'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.employee_roles.id'];
+          name?: parameters['rowFilter.employee_roles.name'];
+          created_at?: parameters['rowFilter.employee_roles.created_at'];
+        };
+        body: {
+          /** employee_roles */
+          employee_roles?: definitions['employee_roles'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   '/employees': {
     get: {
       parameters: {
@@ -20,9 +212,10 @@ export interface paths {
           created_at?: parameters['rowFilter.employees.created_at'];
           first_name?: parameters['rowFilter.employees.first_name'];
           last_name?: parameters['rowFilter.employees.last_name'];
-          date_of_birth?: parameters['rowFilter.employees.date_of_birth'];
+          role_id?: parameters['rowFilter.employees.role_id'];
+          birth_date?: parameters['rowFilter.employees.birth_date'];
           salary?: parameters['rowFilter.employees.salary'];
-          coefficient?: parameters['rowFilter.employees.coefficient'];
+          income_percentage?: parameters['rowFilter.employees.income_percentage'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -77,9 +270,10 @@ export interface paths {
           created_at?: parameters['rowFilter.employees.created_at'];
           first_name?: parameters['rowFilter.employees.first_name'];
           last_name?: parameters['rowFilter.employees.last_name'];
-          date_of_birth?: parameters['rowFilter.employees.date_of_birth'];
+          role_id?: parameters['rowFilter.employees.role_id'];
+          birth_date?: parameters['rowFilter.employees.birth_date'];
           salary?: parameters['rowFilter.employees.salary'];
-          coefficient?: parameters['rowFilter.employees.coefficient'];
+          income_percentage?: parameters['rowFilter.employees.income_percentage'];
         };
         header: {
           /** Preference */
@@ -98,9 +292,10 @@ export interface paths {
           created_at?: parameters['rowFilter.employees.created_at'];
           first_name?: parameters['rowFilter.employees.first_name'];
           last_name?: parameters['rowFilter.employees.last_name'];
-          date_of_birth?: parameters['rowFilter.employees.date_of_birth'];
+          role_id?: parameters['rowFilter.employees.role_id'];
+          birth_date?: parameters['rowFilter.employees.birth_date'];
           salary?: parameters['rowFilter.employees.salary'];
-          coefficient?: parameters['rowFilter.employees.coefficient'];
+          income_percentage?: parameters['rowFilter.employees.income_percentage'];
         };
         body: {
           /** employees */
@@ -122,10 +317,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.shifts.id'];
-          employee_id?: parameters['rowFilter.shifts.employee_id'];
-          date?: parameters['rowFilter.shifts.date'];
-          duration?: parameters['rowFilter.shifts.duration'];
           created_at?: parameters['rowFilter.shifts.created_at'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          date?: parameters['rowFilter.shifts.date'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -177,10 +372,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.shifts.id'];
-          employee_id?: parameters['rowFilter.shifts.employee_id'];
-          date?: parameters['rowFilter.shifts.date'];
-          duration?: parameters['rowFilter.shifts.duration'];
           created_at?: parameters['rowFilter.shifts.created_at'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          date?: parameters['rowFilter.shifts.date'];
         };
         header: {
           /** Preference */
@@ -196,10 +391,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.shifts.id'];
-          employee_id?: parameters['rowFilter.shifts.employee_id'];
-          date?: parameters['rowFilter.shifts.date'];
-          duration?: parameters['rowFilter.shifts.duration'];
           created_at?: parameters['rowFilter.shifts.created_at'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          date?: parameters['rowFilter.shifts.date'];
         };
         body: {
           /** shifts */
@@ -219,6 +414,47 @@ export interface paths {
 }
 
 export interface definitions {
+  /** @description Extra money bonuses assigned to employees */
+  bonuses: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
+     */
+    employee_id: number;
+    /** Format: double precision */
+    amount: number;
+    /** Format: text */
+    reason?: string;
+  };
+  /** @description Role descriptions for employees */
+  employee_roles: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /** Format: text */
+    name: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+  };
+  /** @description Describes bar employees */
   employees: {
     /**
      * Format: bigint
@@ -232,17 +468,23 @@ export interface definitions {
      */
     created_at?: string;
     /** Format: text */
-    first_name?: string;
+    first_name: string;
     /** Format: text */
     last_name?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employee_roles.id`.<fk table='employee_roles' column='id'/>
+     */
+    role_id: number;
     /** Format: date */
-    date_of_birth?: string;
+    birth_date?: string;
     /** Format: double precision */
-    salary?: number;
-    /** Format: double precision */
-    coefficient?: number;
+    salary: number;
+    /** Format: smallint */
+    income_percentage: number;
   };
-  /** @description The work shifts for each employee */
+  /** @description Work shifts for employees */
   shifts: {
     /**
      * Format: bigint
@@ -251,20 +493,20 @@ export interface definitions {
      */
     id: number;
     /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
-     */
-    employee_id?: number;
-    /** Format: timestamp without time zone */
-    date?: string;
-    /** Format: smallint */
-    duration?: number;
-    /**
      * Format: timestamp with time zone
      * @default now()
      */
     created_at?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
+     */
+    employee_id: number;
+    /** Format: smallint */
+    duration: number;
+    /** Format: date */
+    date: string;
   };
 }
 
@@ -301,6 +543,26 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description bonuses */
+  'body.bonuses': definitions['bonuses'];
+  /** Format: bigint */
+  'rowFilter.bonuses.id': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.bonuses.created_at': string;
+  /** Format: bigint */
+  'rowFilter.bonuses.employee_id': string;
+  /** Format: double precision */
+  'rowFilter.bonuses.amount': string;
+  /** Format: text */
+  'rowFilter.bonuses.reason': string;
+  /** @description employee_roles */
+  'body.employee_roles': definitions['employee_roles'];
+  /** Format: bigint */
+  'rowFilter.employee_roles.id': string;
+  /** Format: text */
+  'rowFilter.employee_roles.name': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.employee_roles.created_at': string;
   /** @description employees */
   'body.employees': definitions['employees'];
   /** Format: bigint */
@@ -311,24 +573,26 @@ export interface parameters {
   'rowFilter.employees.first_name': string;
   /** Format: text */
   'rowFilter.employees.last_name': string;
+  /** Format: bigint */
+  'rowFilter.employees.role_id': string;
   /** Format: date */
-  'rowFilter.employees.date_of_birth': string;
+  'rowFilter.employees.birth_date': string;
   /** Format: double precision */
   'rowFilter.employees.salary': string;
-  /** Format: double precision */
-  'rowFilter.employees.coefficient': string;
+  /** Format: smallint */
+  'rowFilter.employees.income_percentage': string;
   /** @description shifts */
   'body.shifts': definitions['shifts'];
   /** Format: bigint */
   'rowFilter.shifts.id': string;
-  /** Format: bigint */
-  'rowFilter.shifts.employee_id': string;
-  /** Format: timestamp without time zone */
-  'rowFilter.shifts.date': string;
-  /** Format: smallint */
-  'rowFilter.shifts.duration': string;
   /** Format: timestamp with time zone */
   'rowFilter.shifts.created_at': string;
+  /** Format: bigint */
+  'rowFilter.shifts.employee_id': string;
+  /** Format: smallint */
+  'rowFilter.shifts.duration': string;
+  /** Format: date */
+  'rowFilter.shifts.date': string;
 }
 
 export interface operations {}
