@@ -1,4 +1,9 @@
 {
+	"employees": {
+		"index": {
+			"header": "Employees"
+		}
+	},
 	"login": {
 		"email": "Email address",
 		"forgot_password": "Forgot Password?",

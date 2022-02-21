@@ -1,4 +1,9 @@
 {
+	"employees": {
+		"index": {
+			"header": "Сотрудники"
+		}
+	},
 	"login": {
 		"email": "Адрес электронной почты",
 		"forgot_password": "Забыли пароль?",
