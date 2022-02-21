@@ -20,5 +20,8 @@
 		"please_sign": "Welcome back! Please, sign in",
 		"sign_in": "Sign In",
 		"welcome": "Welcome back"
+	},
+	"reset_password": {
+		"password_required":"Password is required"
 	}
 }

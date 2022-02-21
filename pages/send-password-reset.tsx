@@ -8,7 +8,11 @@ import { toast } from 'react-toastify'
 import ErrorMessage from '@components/ErrorMessage'
 
 const SendPasswordReset: NextPage = () => {
-    const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
+    const defaultValues = {
+        email: ''
+    }
+    const { register, handleSubmit, control, trigger } = useForm({ defaultValues })
+    register('email', { required: 'Email is required' })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
@@ -38,12 +42,8 @@ const SendPasswordReset: NextPage = () => {
                     label='Email address'
                     placeholder='Enter your email address'
                     textInputClass='mb-6'
-                    register={register('email', { required: 'Email is required' })}
-                    error={errors?.email && errors?.email?.message}
-                    onChange={() => {
-                        clearErrors()
-                        setError('')
-                    }}
+                    control={control}
+                    trigger={trigger}
                 />
                 <Button label='Send Password Reset Email' loading={loading} />
             </form>
