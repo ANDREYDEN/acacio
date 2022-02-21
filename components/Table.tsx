@@ -7,8 +7,8 @@ const Table: React.FC<ITable> = ({ headers, data, actionsList }: ITable) => {
             <table className='w-full'>
                 <thead>
                     <tr>
-                        {headers.map(header =>
-                            <th key={header} className='py-6 px-8 text-left border-b'>
+                        {headers.map((header, index) =>
+                            <th key={index} className='py-6 px-8 text-left border-b'>
                                 <h6>{header}</h6>
                             </th>)}
                     </tr>

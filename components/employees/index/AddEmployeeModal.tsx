@@ -13,9 +13,29 @@ interface IAddEmployeeModal {
 }
 
 const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModal }: IAddEmployeeModal) => {
-    const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+
+    const defaultValues = {
+        first_name: '',
+        last_name: '',
+        date_of_birth: '',
+        salary: '',
+        coefficient: '',
+    }
+    const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
+    register('first_name', { required: 'First name is required' })
+    register('last_name', { required: 'Last name is required' })
+    register('date_of_birth')
+    register('salary', {
+        required: 'Salary is required',
+        min: { value: 0, message: 'Cannot be negative' }
+    })
+    register('coefficient', {
+        required: 'Coefficient is required',
+        min: { value: 0, message: 'Cannot be less than 0' },
+        max: { value: 100, message: 'Cannot be more than 100' }
+    })
 
     const handleAddEmployee = async (data: any) => {
         setLoading(true)
@@ -46,9 +66,8 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
                 label='First Name'
                 placeholder='Enter employee’s first name'
                 textInputClass='mb-6'
-                register={register('first_name', { required: 'First name is required' })}
-                error={errors?.first_name && errors?.first_name?.message}
-                onChange={() => clearErrors()}
+                control={control}
+                trigger={trigger}
             />
             <TextInput
                 type='text'
@@ -56,18 +75,16 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
                 label='Last Name'
                 placeholder='Enter employee’s last name'
                 textInputClass='mb-6'
-                register={register('last_name', { required: 'Last name is required' })}
-                error={errors?.last_name && errors?.last_name?.message}
-                onChange={() => clearErrors()}
+                control={control}
+                trigger={trigger}
             />
             <TextInput
                 type='date'
                 name='date_of_birth'
                 label='Birth date'
                 textInputClass='mb-6'
-                register={register('date_of_birth')}
-                error={errors?.date_of_birth && errors?.date_of_birth?.message}
-                onChange={() => clearErrors()}
+                control={control}
+                trigger={trigger}
             />
             <TextInput
                 type='number'
@@ -75,9 +92,8 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
                 label='Salary'
                 placeholder='0$/hr'
                 textInputClass='mb-6'
-                register={register('salary', { required: 'Salary is required' })}
-                error={errors?.salary && errors?.salary?.message}
-                onChange={() => clearErrors()}
+                control={control}
+                trigger={trigger}
             />
             <TextInput
                 type='double'
@@ -85,9 +101,8 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
                 label='Income Percentage'
                 placeholder='0.00%'
                 textInputClass='mb-10'
-                register={register('coefficient', { required: 'Coefficient is required' })}
-                error={errors?.coefficient && errors?.coefficient?.message}
-                onChange={() => clearErrors()}
+                control={control}
+                trigger={trigger}
             />
             <Button label='Add Employee' loading={loading} buttonClass='w-full' />
         </form>
