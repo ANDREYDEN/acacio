@@ -10,13 +10,12 @@ interface ILoginForm {
 }
 
 const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) => {
-    const { register, formState: { errors }, handleSubmit, clearErrors, setValue, trigger, control } = useForm({
-        defaultValues: {
-            'email': '',
-            'password': ''
-        }
-    })
     const content = useTranslation()
+    const defaultValues = {
+        'email': '',
+        'password': ''
+    }
+    const { register, formState: { errors }, handleSubmit, trigger, control } = useForm({ defaultValues })
 
     const handleForm = async (data: any) => {
         await handleLogin(data.email, data.password)
@@ -32,7 +31,6 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 textInputClass='mb-8'
                 register={register('email', { required: content.login.form.email_required })}
                 error={errors?.email && errors?.email?.message}
-                onChange={() => clearErrors()}
                 {...{ control, trigger }}
             />
             <TextInput
@@ -43,7 +41,6 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 textInputClass='mb-8'
                 register={register('password', { required: content.login.form.password_required })}
                 error={errors?.password && errors?.password?.message}
-                onChange={() => clearErrors()}
                 {...{ control, trigger }}
             />
             <PrimaryButton label={content.login.form.button} loading={loading}/>

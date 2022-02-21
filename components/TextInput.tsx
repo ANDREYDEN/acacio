@@ -6,24 +6,20 @@ interface ITextInput {
     name: string
     label: string
     placeholder: string
-    onChange: (value: string) => void
     value?: string
     register?: any
+    control: any
+    trigger: any
     error?: string
     textInputClass?: string
-    control: Control<FieldValues, object>
-    trigger: UseFormTrigger<FieldValues>
 }
 
 const TextInput: React.FC<ITextInput> = ({ 
     type, name, label, placeholder, onChange, value = '', register, error, textInputClass, control, trigger
 }: ITextInput) => {
     const { field, fieldState } = useController({ name, control })
-    // field.onChange = onChange // <--- this is breaking stuff
 
     useEffect(() => {
-        console.log({ value, actual: field.value })
-            
         if (field.value !== value && !fieldState.isTouched) {
             trigger(name, { shouldFocus: true })
         }
