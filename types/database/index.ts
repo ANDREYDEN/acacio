@@ -625,7 +625,7 @@ export interface definitions {
      * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
      */
     employee_id: number;
-    /** Format: bigint */
+    /** Format: double precision */
     amount: number;
     /** Format: text */
     reason?: string;
@@ -671,53 +671,10 @@ export interface definitions {
     role_id: number;
     /** Format: date */
     birth_date?: string;
-    /** Format: bigint */
+    /** Format: double precision */
     salary: number;
-    /** Format: numeric */
+    /** Format: smallint */
     income_percentage: number;
-  };
-  prepaid_expenses: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at?: string;
-    /** Format: bigint */
-    amount?: number;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
-     */
-    employee_id?: number;
-  };
-  /** @description Retentions for employees from inventorization */
-  retentions: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at?: string;
-    /** Format: bigint */
-    amount?: number;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
-     */
-    employee_id?: number;
   };
   /** @description Work shifts for employees */
   shifts: {
@@ -786,7 +743,7 @@ export interface parameters {
   'rowFilter.bonuses.created_at': string;
   /** Format: bigint */
   'rowFilter.bonuses.employee_id': string;
-  /** Format: bigint */
+  /** Format: double precision */
   'rowFilter.bonuses.amount': string;
   /** Format: text */
   'rowFilter.bonuses.reason': string;
@@ -812,30 +769,10 @@ export interface parameters {
   'rowFilter.employees.role_id': string;
   /** Format: date */
   'rowFilter.employees.birth_date': string;
-  /** Format: bigint */
+  /** Format: double precision */
   'rowFilter.employees.salary': string;
-  /** Format: numeric */
+  /** Format: smallint */
   'rowFilter.employees.income_percentage': string;
-  /** @description prepaid_expenses */
-  'body.prepaid_expenses': definitions['prepaid_expenses'];
-  /** Format: bigint */
-  'rowFilter.prepaid_expenses.id': string;
-  /** Format: timestamp with time zone */
-  'rowFilter.prepaid_expenses.created_at': string;
-  /** Format: bigint */
-  'rowFilter.prepaid_expenses.amount': string;
-  /** Format: bigint */
-  'rowFilter.prepaid_expenses.employee_id': string;
-  /** @description retentions */
-  'body.retentions': definitions['retentions'];
-  /** Format: bigint */
-  'rowFilter.retentions.id': string;
-  /** Format: timestamp with time zone */
-  'rowFilter.retentions.created_at': string;
-  /** Format: bigint */
-  'rowFilter.retentions.amount': string;
-  /** Format: bigint */
-  'rowFilter.retentions.employee_id': string;
   /** @description shifts */
   'body.shifts': definitions['shifts'];
   /** Format: bigint */

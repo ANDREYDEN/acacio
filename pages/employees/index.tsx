@@ -77,7 +77,7 @@ const Employees: NextPage = () => {
                 </div>
             </div>
             <Table
-                headers={['Name', 'Birth date', 'Salary', 'Income Percentage', '', '']}
+                headers={['Name', 'Birth date', 'Salary', 'Revenue %', '', '']}
                 data={employees}
                 actionsList={employeesActions}
             />
