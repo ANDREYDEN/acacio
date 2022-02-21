@@ -6,19 +6,21 @@ import { supabase } from '@client'
 import PrimaryButton from '@components/PrimaryButton'
 import TextInput from '@components/TextInput'
 import ErrorMessage from '@components/ErrorMessage'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from '@lib/hooks'
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const router = useRouter()
-    const { t } = useTranslation('resetPassword')
+    const content = useTranslation()
 
     const defaultValues = {
         password: '',
         confirmPassword: ''
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('password', { required: t('password_required').toString() })
+    register('password', { required: content.reset_password.password_required })
 
     const handleForm = async (data: any) => {
         await handlePasswordReset(data.password, data.confirmPassword)
@@ -69,7 +71,7 @@ const PasswordReset: NextPage = () => {
                         control={control}
                         trigger={trigger}
                     />
-                    <Button label='Reset Password' loading={loading} />
+                    <PrimaryButton label='Reset Password' loading={loading} />
                 </form>
             </div>
         </>
