@@ -7,12 +7,16 @@ import Button from '@components/Button'
 import AddEmployeeModal from '@components/employees/index/AddEmployeeModal'
 import ErrorMessage from '@components/ErrorMessage'
 import Table from '@components/Table'
+import { IActionsList } from '@interfaces'
+import { useTranslation } from '@lib/hooks'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
     const [mounted, setMounted] = useState(false)
     const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false)
+    const [showEditEmployeeModal, setShowEditEmployeeModal] = useState(false)
     const router = useRouter()
+    const content = useTranslation()
 
     const {
         data: employees, 
@@ -43,11 +47,16 @@ const Employees: NextPage = () => {
         return <ErrorMessage message={employeesError || addEmployeeError || deleteEmployeeError} />
     }
 
+    const employeesActions: Array<IActionsList> = [
+        { label: 'Edit', action: () => setShowEditEmployeeModal(true) },
+        { label: 'Delete', action: deleteEmployeeAndReload, textColor: 'error' }
+    ]
+
     return (
         <div className='flex flex-col items-center py-2 lg:mr-20 mr-10'>
             {showAddEmployeeModal && <AddEmployeeModal addEmployee={addEmployee} toggleModal={setShowAddEmployeeModal} />}
             <div className='w-full flex justify-between'>
-                <h3>Employees</h3>
+                <h3>{content.employees.index.header}</h3>
                 <div className='space-x-8'>
                     <Button label='Export' variant='secondary' buttonClass='w-40' />
                     <Button
@@ -58,9 +67,9 @@ const Employees: NextPage = () => {
                 </div>
             </div>
             <Table
-                headers={['Full Name', 'Role', 'Birth date', 'Salary', 'Income Percentage', '', '']}
+                headers={['Name', 'Birth date', 'Salary', 'Income Percentage', '', '']}
                 data={employees}
-                action={deleteEmployeeAndReload}
+                actionsList={employeesActions}
             />
         </div>
     )

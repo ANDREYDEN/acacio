@@ -1,46 +1,42 @@
 import React from 'react'
-import { definitions } from '@types'
+import { ITable } from '@interfaces'
 
-interface ITable {
-    headers: string[]
-    data: definitions['employees'][]
-    action?: (entityId: number) => Promise<void>
-}
-
-const Table: React.FC<ITable> = ({ headers, data, action }: ITable) => {
+const Table: React.FC<ITable> = ({ headers, data, actionsList }: ITable) => {
     return (
-        <table>
-            <thead>
-                <tr>
-                    {headers.map(header =>
-                        <th key='header' className='bg-blue-400 border text-left px-4 py-4'>
-                            {header}
-                        </th>)}
-                </tr>
-            </thead>
-            <tbody>
-                {data?.map((employee, index) => (
-                    <tr key={employee.id}>
-                        <td className='border px-4 py-4'>{index + 1}</td>
-                        <td className='border px-4 py-4'>{employee.first_name}</td>
-                        <td className='border px-8 py-4'>{employee.last_name}</td>
-                        <td className='border px-8 py-4'>{employee.date_of_birth}</td>
-                        <td className='border px-8 py-4'>{employee.salary}</td>
-                        <td className='border px-8 py-4'>{employee.coefficient}</td>
-                        {action && <td className='border px-8 py-4'>
-                            {' '}
-                            <button
-                                className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
-                                type='button'
-                                onClick={() => action(employee.id)}
-                            >
-                            Delete
-                            </button>
-                        </td>}
+        <div className='border rounded-lg w-full'>
+            <table className='w-full'>
+                <thead>
+                    <tr>
+                        {headers.map(header =>
+                            <th key={header} className='py-6 px-8 text-left border-b'>
+                                <h6>{header}</h6>
+                            </th>)}
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {data?.map((entity, index) => (
+                        <tr key={entity.id} className={index === data.length - 1 ? '' : 'border-b'}>
+                            <td className='px-8 py-5'>{entity.first_name} {entity.last_name}</td>
+                            {/*TODO: fetch roles*/}
+                            {/*<td className='px-8 py-5'>employee.role</td>*/}
+                            <td className='px-8 py-5'>{entity.date_of_birth}</td>
+                            <td className='px-8 py-5'>{entity.salary}</td>
+                            <td className='px-8 py-5'>{entity.coefficient}</td>
+                            {actionsList && actionsList.map(actionItem =>
+                                <td key={actionItem.label} className='px-8 py-5'>
+                                    <button
+                                        className={`text-${actionItem.textColor ?? 'black'} underline`}
+                                        type='button'
+                                        onClick={() => actionItem.action(entity.id)}
+                                    >
+                                        {actionItem.label}
+                                    </button>
+                                </td>)}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     )
 }
 
