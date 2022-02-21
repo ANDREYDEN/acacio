@@ -42,7 +42,8 @@ const SendPasswordReset: NextPage = () => {
                     label='Email address'
                     placeholder='Enter your email address'
                     textInputClass='mb-6'
-                    {...{ control, trigger }}
+                    control={control}
+                    trigger={trigger}
                 />
                 <PrimaryButton label='Send Password Reset Email' loading={loading} />
             </form>

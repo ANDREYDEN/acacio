@@ -59,7 +59,8 @@ const PasswordReset: NextPage = () => {
                         label='Password'
                         placeholder='Enter New Password'
                         textInputClass='mb-6'
-                        {...{ control, trigger }}
+                        control={control}
+                        trigger={trigger}
                     />
                     <TextInput
                         type='password'
@@ -67,7 +68,8 @@ const PasswordReset: NextPage = () => {
                         label='Confirm Password'
                         placeholder='Confirm New Password'
                         textInputClass='mb-8'
-                        {...{ control, trigger }}
+                        control={control}
+                        trigger={trigger}
                     />
                     <PrimaryButton label='Reset Password' loading={loading} />
                 </form>

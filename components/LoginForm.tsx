@@ -33,7 +33,8 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 label={content.login.form.email_label}
                 placeholder={content.login.form.email_label}
                 textInputClass='mb-8'
-                {...{ control, trigger }}
+                control={control}
+                trigger={trigger}
             />
             <TextInput
                 type='password'
@@ -41,7 +42,8 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 label={content.login.form.password_label}
                 placeholder={content.login.form.password_placeholder}
                 textInputClass='mb-8'
-                {...{ control, trigger }}
+                control={control}
+                trigger={trigger}
             />
             <PrimaryButton label={content.login.form.button} loading={loading}/>
         </form>
