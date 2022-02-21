@@ -10,6 +10,7 @@ import Table from '@components/Table'
 import { IActionsList } from '@interfaces'
 import { useTranslation } from '@lib/hooks'
 
+// TODO: add internalization
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
     const [mounted, setMounted] = useState(false)
