@@ -44,7 +44,7 @@ const Employees: NextPage = () => {
     }
 
     return (
-        <div className='flex flex-col items-center justify-center py-2'>
+        <div className='flex flex-col items-center py-2 lg:mr-20 mr-10'>
             {showAddEmployeeModal && <AddEmployeeModal addEmployee={addEmployee} toggleModal={setShowAddEmployeeModal} />}
             <div className='w-full flex justify-between'>
                 <h3>Employees</h3>
@@ -57,7 +57,11 @@ const Employees: NextPage = () => {
                     />
                 </div>
             </div>
-            <Table headers={['First Name', 'Last Name', 'BirthDate', 'Salary', 'Coefficient', 'Action']} data={employees} />
+            <Table
+                headers={['Full Name', 'Role', 'Birth date', 'Salary', 'Income Percentage', '', '']}
+                data={employees}
+                action={deleteEmployeeAndReload}
+            />
         </div>
     )
 }

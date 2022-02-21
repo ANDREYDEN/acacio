@@ -65,7 +65,7 @@ const Menu: React.FC = ({ children }) => {
                         })}
                     </ul>
                 </nav>
-                { children }
+                <span className='mt-36 flex-1'>{ children }</span>
             </div>
             <button className='absolute top-16 right-20 flex' onClick={handleLogOut}>
                 <Logout />
