@@ -1,8 +1,8 @@
-import { useTranslation } from '@lib/hooks'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import PrimaryButton from './PrimaryButton'
 import TextInput from './TextInput'
+import Button from './Button'
+import { useTranslation } from '@lib/hooks'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
@@ -18,15 +18,13 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
     register('email', { required: content.login.form.email_required })
     register('password', { required: content.login.form.password_required })
-    
+
     const handleForm = async (data: any) => {
         await handleLogin(data.email, data.password)
     }
     
     return (
-        <form 
-            className='flex flex-col' 
-            onSubmit={handleSubmit(handleForm)}>
+        <form className='flex flex-col' onSubmit={handleSubmit(handleForm)}>
             <TextInput
                 type='email'
                 name='email'
@@ -45,7 +43,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 control={control}
                 trigger={trigger}
             />
-            <PrimaryButton label={content.login.form.button} loading={loading}/>
+            <Button label={content.login.form.button} loading={loading}/>
         </form>
     )
 }

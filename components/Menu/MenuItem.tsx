@@ -5,7 +5,7 @@ import SubRoutesList from './SubRoutesList'
 import { IMenuItem } from '@interfaces'
 
 const MenuItem: React.FC<IMenuItem> = ({ currentItem, currentRoute, pageName }: IMenuItem) => {
-    const [subRoutesOpened, setSubRoutesOpened] = useState(false)
+    const [subRoutesOpened, setSubRoutesOpened] = useState(true)
 
     return (
         <>

@@ -5,14 +5,14 @@ interface ITextInput {
     type: string
     name: string
     label: string
-    placeholder: string
-    value?: string
     control: any
     trigger: any
+    placeholder?: string
+    value?: string
     textInputClass?: string
 }
 
-const TextInput: React.FC<ITextInput> = ({ 
+const TextInput: React.FC<ITextInput> = ({
     type, name, label, placeholder, value = '', textInputClass, control, trigger
 }: ITextInput) => {
     const { field, fieldState, formState: { errors } } = useController({ name, control })

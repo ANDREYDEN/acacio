@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
 import React, { useMemo } from 'react'
 import { Column, useTable } from 'react-table'
-import { ScheduleTableRow } from '../../../interfaces'
-import { definitions } from '../../../types/database'
+import { ScheduleTableRow } from '@interfaces'
+import { definitions } from '@types'
 import ScheduleTableCell from './ScheduleTableCell'
 
 interface IScheduleTable {
