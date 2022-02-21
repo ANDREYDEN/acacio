@@ -3,7 +3,7 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { supabase } from '@client'
-import PrimaryButton from '@components/PrimaryButton'
+import Button from '@components/Button'
 import TextInput from '@components/TextInput'
 import ErrorMessage from '@components/ErrorMessage'
 import { useForm } from 'react-hook-form'
@@ -71,7 +71,7 @@ const PasswordReset: NextPage = () => {
                         control={control}
                         trigger={trigger}
                     />
-                    <PrimaryButton label='Reset Password' loading={loading} />
+                    <Button label='Reset Password' loading={loading} />
                 </form>
             </div>
         </>

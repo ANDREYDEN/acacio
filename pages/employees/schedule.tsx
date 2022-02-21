@@ -3,11 +3,11 @@ import { NextPage } from 'next'
 import { useCallback, useMemo, useState } from 'react'
 import ScheduleTable from '../../components/employees/schedule/ScheduleTable'
 import Loader from '../../components/Loader'
-import { ScheduleTableRow } from '../../interfaces'
-import { useMounted, useUser } from '../../lib/hooks'
-import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '../../lib/services/supabase'
-import { getMonthDays } from '../../lib/utils'
-import { definitions } from '../../types/database'
+import { ScheduleTableRow } from '@interfaces'
+import { useMounted, useUser } from '@lib/hooks'
+import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@services/supabase'
+import { getMonthDays } from '@lib/utils'
+import { definitions } from '@types'
 
 const Shifts: NextPage = () => {
     const { mounted } = useMounted()

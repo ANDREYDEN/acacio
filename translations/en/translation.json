@@ -1,4 +1,9 @@
 {
+	"employees": {
+		"index": {
+			"header": "Employees"
+		}
+	},
 	"login": {
 		"email": "Email address",
 		"forgot_password": "Forgot Password?",
@@ -18,8 +23,5 @@
 	},
 	"reset_password": {
 		"password_required":"Password is required"
-	},
-	"main": {
-		"title": "Acacio"
 	}
 }

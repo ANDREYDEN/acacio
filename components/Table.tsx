@@ -1,80 +1,40 @@
 import React from 'react'
-import { ChevronDown, ChevronUp } from 'react-iconly'
-import { Column, useSortBy, useTable } from 'react-table'
+import { ITable } from '@interfaces'
 
-interface ITable<T extends Object> {
-    columns: Column<T>[]
-    data: T[]
-    tableSpacing: string
-}
-
-const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => {
-    const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<T>({
-        columns,
-        data,
-    }, useSortBy)
-
+const Table: React.FC<ITable> = ({ headers, data, actionsList }: ITable) => {
     return (
-        <div className='border border-table-grey rounded-lg w-full overflow-scroll max-h-[calc(100vh-220px)]'>
-            <table {...getTableProps()} className='w-full'>
+        <div className='border rounded-lg w-full'>
+            <table className='w-full'>
                 <thead>
-                    <tr className='sticky z-0 top-0 border-b border-table-grey bg-white'>
-                        {headers.map((header, index) => {
-                            const sortableHeader = header as any
-                            const { 
-                                key: headerKey, 
-                                ...getHeaderProps 
-                            } = header.getHeaderProps(sortableHeader.getSortByToggleProps())
-
-                            return (
-                                <th
-                                    key={headerKey}
-                                    {...getHeaderProps}
-                                    className={`py-6 text-left ${tableSpacing}
-                                        ${index === 0 ? 'pl-6' : ''}
-                                        ${index === headers.length - 1 ? 'pr-6' : ''}`}
-                                >
-                                    <span className='flex items-center'>
-                                        <span className='mr-1'>{header.render('Header')}</span>
-                                        {sortableHeader.isSorted 
-                                            ? sortableHeader.isSortedDesc 
-                                                ? <ChevronDown stroke='bold' size='small' /> 
-                                                : <ChevronUp stroke='bold' size='small' />
-                                            : ''}
-                                    </span>
-                                </th>
-                            )
-                        })}
+                    <tr>
+                        {headers.map((header, index) =>
+                            <th key={index} className='py-6 px-8 text-left border-b'>
+                                <h6>{header}</h6>
+                            </th>)}
                     </tr>
                 </thead>
-                <tbody {...getTableBodyProps()}>
-                    {rows.map((row, index) => {
-                        prepareRow(row)
-                        const { key: rowKey, ...getRowProps } = row.getRowProps()
-
-                        return (
-                            <tr
-                                key={rowKey}
-                                {...getRowProps}
-                                className={index === data.length - 1 ? '' : 'border-b border-table-grey'}
-                            >
-                                {row.cells.map((cell, index) => {
-                                    const { key: cellKey, ...getCellProps } = cell.getCellProps()
-                                    return (
-                                        <td
-                                            key={cellKey}
-                                            {...getCellProps}
-                                            className={`py-5 ${tableSpacing}
-                                                ${index === 0 ? 'pl-6' : ''}
-                                                ${index === headers.length - 1 ? 'pr-6' : ''}`}
-                                        >
-                                            {cell.render('Cell')}
-                                        </td>
-                                    )
-                                })}
-                            </tr>
-                        )
-                    })}
+                <tbody>
+                    {/*TODO: make table more generic*/}
+                    {data?.map((entity, index) => (
+                        <tr key={entity.id} className={index === data.length - 1 ? '' : 'border-b'}>
+                            <td className='px-8 py-5'>{entity.first_name} {entity.last_name}</td>
+                            {/*TODO: fetch roles*/}
+                            {/*<td className='px-8 py-5'>employee.role</td>*/}
+                            <td className='px-8 py-5'>{entity.date_of_birth}</td>
+                            <td className='px-8 py-5'>{entity.salary}</td>
+                            <td className='px-8 py-5'>{entity.coefficient}</td>
+                            {actionsList && actionsList.map(actionItem =>
+                                <td key={actionItem.label} className='px-8 py-5'>
+                                    <button
+                                        className={`text-${actionItem.textColor ?? 'black'} underline`}
+                                        type='button'
+                                        onClick={() => actionItem.action(entity.id)}
+                                    >
+                                        {actionItem.label}
+                                    </button>
+                                </td>)}
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
