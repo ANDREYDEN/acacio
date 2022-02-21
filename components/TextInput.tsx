@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Control, FieldValues, useController, UseFormTrigger } from 'react-hook-form'
+import { useController } from 'react-hook-form'
 
 interface ITextInput {
     type: string
@@ -7,7 +7,6 @@ interface ITextInput {
     label: string
     placeholder: string
     value?: string
-    register?: any
     control: any
     trigger: any
     error?: string
@@ -15,7 +14,7 @@ interface ITextInput {
 }
 
 const TextInput: React.FC<ITextInput> = ({ 
-    type, name, label, placeholder, onChange, value = '', register, error, textInputClass, control, trigger
+    type, name, label, placeholder, value = '', error, textInputClass, control, trigger
 }: ITextInput) => {
     const { field, fieldState } = useController({ name, control })
 

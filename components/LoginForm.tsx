@@ -16,7 +16,9 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
         'password': ''
     }
     const { register, formState: { errors }, handleSubmit, trigger, control } = useForm({ defaultValues })
-
+    register('email', { required: content.login.form.email_required })
+    register('password', { required: content.login.form.password_required })
+    
     const handleForm = async (data: any) => {
         await handleLogin(data.email, data.password)
     }
@@ -29,7 +31,6 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 label={content.login.form.email_label}
                 placeholder={content.login.form.email_label}
                 textInputClass='mb-8'
-                register={register('email', { required: content.login.form.email_required })}
                 error={errors?.email && errors?.email?.message}
                 {...{ control, trigger }}
             />
@@ -39,7 +40,6 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 label={content.login.form.password_label}
                 placeholder={content.login.form.password_placeholder}
                 textInputClass='mb-8'
-                register={register('password', { required: content.login.form.password_required })}
                 error={errors?.password && errors?.password?.message}
                 {...{ control, trigger }}
             />
