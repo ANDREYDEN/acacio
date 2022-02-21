@@ -9,14 +9,14 @@ interface ITextInput {
     value?: string
     control: any
     trigger: any
-    error?: string
     textInputClass?: string
 }
 
 const TextInput: React.FC<ITextInput> = ({ 
-    type, name, label, placeholder, value = '', error, textInputClass, control, trigger
+    type, name, label, placeholder, value = '', textInputClass, control, trigger
 }: ITextInput) => {
-    const { field, fieldState } = useController({ name, control })
+    const { field, fieldState, formState: { errors } } = useController({ name, control })
+    const error = errors[name]?.message
 
     useEffect(() => {
         if (field.value !== value && !fieldState.isTouched) {

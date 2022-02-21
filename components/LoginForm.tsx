@@ -15,7 +15,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
         'email': '',
         'password': ''
     }
-    const { register, formState: { errors }, handleSubmit, trigger, control } = useForm({ defaultValues })
+    const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
     register('email', { required: content.login.form.email_required })
     register('password', { required: content.login.form.password_required })
     
@@ -31,7 +31,6 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 label={content.login.form.email_label}
                 placeholder={content.login.form.email_label}
                 textInputClass='mb-8'
-                error={errors?.email && errors?.email?.message}
                 {...{ control, trigger }}
             />
             <TextInput
@@ -40,7 +39,6 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 label={content.login.form.password_label}
                 placeholder={content.login.form.password_placeholder}
                 textInputClass='mb-8'
-                error={errors?.password && errors?.password?.message}
                 {...{ control, trigger }}
             />
             <PrimaryButton label={content.login.form.button} loading={loading}/>
