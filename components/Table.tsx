@@ -19,10 +19,10 @@ const Table: React.FC<ITable> = ({ headers, data, actionsList }: ITable) => {
                         <tr key={entity.id} className={index === data.length - 1 ? '' : 'border-b'}>
                             <td className='px-8 py-5'>{entity.first_name} {entity.last_name}</td>
                             {/*TODO: fetch roles*/}
-                            {/*<td className='px-8 py-5'>employee.role</td>*/}
-                            <td className='px-8 py-5'>{entity.date_of_birth}</td>
+                            {/*<td className='px-8 py-5'>{entity.role_id}</td>*/}
+                            <td className='px-8 py-5'>{entity.birth_date}</td>
                             <td className='px-8 py-5'>{entity.salary}</td>
-                            <td className='px-8 py-5'>{entity.coefficient}</td>
+                            <td className='px-8 py-5'>{entity.income_percentage}%</td>
                             {actionsList && actionsList.map(actionItem =>
                                 <td key={actionItem.label} className='px-8 py-5'>
                                     <button

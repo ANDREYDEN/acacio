@@ -19,20 +19,21 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
     const defaultValues = {
         first_name: '',
         last_name: '',
-        date_of_birth: '',
+        role_id: 1,
+        birth_date: '',
         salary: '',
-        coefficient: '',
+        income_percentage: '',
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
     register('first_name', { required: 'First name is required' })
-    register('last_name', { required: 'Last name is required' })
-    register('date_of_birth')
+    register('last_name')
+    register('birth_date')
     register('salary', {
         required: 'Salary is required',
         min: { value: 0, message: 'Cannot be negative' }
     })
-    register('coefficient', {
-        required: 'Coefficient is required',
+    register('income_percentage', {
+        required: 'Revenue percentage is required',
         min: { value: 0, message: 'Cannot be less than 0' },
         max: { value: 100, message: 'Cannot be more than 100' }
     })
@@ -42,9 +43,10 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
         const newEmployee: Partial<definitions['employees']> = {
             first_name: data.first_name,
             last_name: data.last_name,
-            date_of_birth: data.date_of_birth === '' ? null : data.date_of_birth,
+            role_id: 1,
+            birth_date: data.birth_date === '' ? null : data.birth_date,
             salary: data.salary,
-            coefficient: data.coefficient
+            income_percentage: data.income_percentage
         }
         await addEmployee(newEmployee)
         toast('🦄 An employee has been successfully added')
@@ -80,7 +82,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
             />
             <TextInput
                 type='date'
-                name='date_of_birth'
+                name='birth_date'
                 label='Birth date'
                 textInputClass='mb-6'
                 control={control}
@@ -96,10 +98,10 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
                 trigger={trigger}
             />
             <TextInput
-                type='double'
-                name='coefficient'
+                type='number'
+                name='income_percentage'
                 label='Income Percentage'
-                placeholder='0.00%'
+                placeholder='0%'
                 textInputClass='mb-10'
                 control={control}
                 trigger={trigger}
