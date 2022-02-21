@@ -16,6 +16,9 @@
 		"sign_in": "Войти",
 		"welcome": "Добро пожаловать"
 	},
+	"reset_password": {
+		"password_required":"Необходим пароль"
+	},
 	"main": {
 		"title": "Акацио"
 	}

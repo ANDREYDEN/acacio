@@ -6,15 +6,27 @@ import { supabase } from '@client'
 import PrimaryButton from '@components/PrimaryButton'
 import TextInput from '@components/TextInput'
 import ErrorMessage from '@components/ErrorMessage'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from '@lib/hooks'
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
     const [error, setError] = useState('')
     const router = useRouter()
+    const content = useTranslation()
 
-    const handlePasswordReset = async () => {
+    const defaultValues = {
+        password: '',
+        confirmPassword: ''
+    }
+    const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
+    register('password', { required: content.reset_password.password_required })
+
+    const handleForm = async (data: any) => {
+        await handlePasswordReset(data.password, data.confirmPassword)
+    }
+
+    const handlePasswordReset = async (password: string, confirmPassword: string) => {
         if (password !== confirmPassword) {
             setError('Passwords should match')
             return
@@ -40,18 +52,15 @@ const PasswordReset: NextPage = () => {
         <>
             {error && <ErrorMessage message={error} errorMessageClass='w-96 mb-8' />}
             <div className='flex justify-center text-center mt-8'>
-                <div className='w-96'>
+                <form className='w-96' onSubmit={handleSubmit(handleForm)}>
                     <TextInput
                         type='password'
                         name='password'
                         label='Password'
                         placeholder='Enter New Password'
                         textInputClass='mb-6'
-                        value={password}
-                        onChange={(val) => {
-                            setPassword(val)
-                            setError('')
-                        }}
+                        control={control}
+                        trigger={trigger}
                     />
                     <TextInput
                         type='password'
@@ -59,14 +68,11 @@ const PasswordReset: NextPage = () => {
                         label='Confirm Password'
                         placeholder='Confirm New Password'
                         textInputClass='mb-8'
-                        value={confirmPassword}
-                        onChange={(val) => {
-                            setConfirmPassword(val)
-                            setError('')
-                        }}
+                        control={control}
+                        trigger={trigger}
                     />
-                    <PrimaryButton label='Reset Password' onClick={handlePasswordReset} loading={loading} />
-                </div>
+                    <PrimaryButton label='Reset Password' loading={loading} />
+                </form>
             </div>
         </>
     )
