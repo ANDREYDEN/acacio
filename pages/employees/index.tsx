@@ -77,7 +77,7 @@ const Employees: NextPage = () => {
                     revalidateEmployees={(newEmployee: definitions['employees']) =>
                         revalidateEmployees([...employees, newEmployee])}
                 />}
-            <div className='w-full flex justify-between'>
+            <div className='w-full flex justify-between mb-8'>
                 <h3>{content.employees.index.header}</h3>
                 <div className='space-x-8'>
                     <Button label='Export' variant='secondary' buttonClass='w-40' />

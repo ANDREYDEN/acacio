@@ -4,6 +4,9 @@ module.exports = {
         './components/**/*.{js,ts,jsx,tsx}',
     ],
     theme: {
+        screens: {
+            'lg': '1080px'
+        },
         extend: {
             fontFamily: {
                 'body': ['Manrope', 'sans-serif'],

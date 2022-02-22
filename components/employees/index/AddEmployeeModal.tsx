@@ -67,7 +67,10 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
         setLoading(false)
     }
     
-    const Header: ReactElement = <h4>Add Employee</h4>
+    const Header: ReactElement = <div>
+        <h4>Add Employee</h4>
+        <p className='text-dark-grey w-80'>Add new employee to the system, in order to track his/her salary and work shifts.</p>
+    </div>
 
     return <Modal
         header={Header}
