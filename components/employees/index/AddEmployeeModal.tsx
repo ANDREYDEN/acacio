@@ -4,22 +4,24 @@ import { toast } from 'react-toastify'
 import Modal from '@components/Modal'
 import Button from '@components/Button'
 import { definitions } from '@types'
-import { useRouter } from 'next/router'
 import TextInput from '@components/TextInput'
+import ValidatedDropdown from '@components/ValidatedDropdown'
+import { IDropdownOption } from '@interfaces'
 
 interface IAddEmployeeModal {
-    addEmployee: (employee: any) => Promise<void>
+    addEmployee: (employee: Partial<definitions['employees']>) => Promise<void>
     toggleModal: (visible: boolean) => void
+    employeeRoles: definitions['employee_roles'][]
+    revalidateEmployees: any
 }
 
-const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModal }: IAddEmployeeModal) => {
+const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModal, employeeRoles, revalidateEmployees }: IAddEmployeeModal) => {
     const [loading, setLoading] = useState(false)
-    const router = useRouter()
 
     const defaultValues = {
         first_name: '',
         last_name: '',
-        role_id: 1,
+        role_id: undefined,
         birth_date: '',
         salary: '',
         income_percentage: '',
@@ -27,6 +29,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
     register('first_name', { required: 'First name is required' })
     register('last_name')
+    register('role_id', { required: 'Role is required' })
     register('birth_date')
     register('salary', {
         required: 'Salary is required',
@@ -38,20 +41,30 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
         max: { value: 100, message: 'Cannot be more than 100' }
     })
 
+    const preparedRolesOptions: IDropdownOption[] = employeeRoles.map(role => {
+        return {
+            value: role.id,
+            label: `${role.name.at(0)?.toUpperCase()}${role.name.slice(1)}`
+        }
+    })
+
     const handleAddEmployee = async (data: any) => {
         setLoading(true)
+
         const newEmployee: Partial<definitions['employees']> = {
             first_name: data.first_name,
             last_name: data.last_name,
-            role_id: 1,
+            role_id: data.role_id,
             birth_date: data.birth_date === '' ? null : data.birth_date,
             salary: data.salary,
             income_percentage: data.income_percentage
         }
         await addEmployee(newEmployee)
         toast('🦄 An employee has been successfully added')
+
+        revalidateEmployees(newEmployee)
+        toggleModal(false)
         setLoading(false)
-        router.reload()
     }
     
     const Header: ReactElement = <h4>Add Employee</h4>
@@ -79,6 +92,14 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
+            />
+            <ValidatedDropdown
+                label='Role'
+                name='role_id'
+                data={preparedRolesOptions}
+                defaultOption='Select role'
+                control={control}
+                dropdownClass='mb-6'
             />
             <TextInput
                 type='date'

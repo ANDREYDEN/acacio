@@ -2,13 +2,19 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import Loader from '@components/Loader'
-import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseUpsertEntity } from '@services/supabase'
+import {
+    useSupabaseDeleteEntity,
+    useSupabaseGetEmployees,
+    useSupabaseGetEmployeeRoles,
+    useSupabaseUpsertEntity
+} from '@services/supabase'
 import Button from '@components/Button'
 import AddEmployeeModal from '@components/employees/index/AddEmployeeModal'
 import ErrorMessage from '@components/ErrorMessage'
 import Table from '@components/Table'
 import { IActionsList } from '@interfaces'
 import { useTranslation } from '@lib/hooks'
+import { definitions } from '@types'
 
 // TODO: add internalization
 const Employees: NextPage = () => {
@@ -23,8 +29,14 @@ const Employees: NextPage = () => {
     const {
         data: employees, 
         loading: employeesLoading, 
-        error: employeesError
+        error: employeesError,
+        mutate: revalidateEmployees
     } = useSupabaseGetEmployees()
+    const {
+        data: employeeRoles,
+        loading: employeeRolesLoading,
+        error: employeeRolesError
+    } = useSupabaseGetEmployeeRoles()
     const { 
         upsertEntity: addEmployee,
         loading: addEmployeeLoading, 
@@ -42,12 +54,12 @@ const Employees: NextPage = () => {
         router.reload()
     }
 
-    if (!mounted || employeesLoading || addEmployeeLoading || deleteEmployeeLoading) {
+    if (!mounted || employeesLoading || employeeRolesLoading || addEmployeeLoading || deleteEmployeeLoading) {
         return <Loader />
     }
 
-    if (employeesError || addEmployeeError || deleteEmployeeError) {
-        return <ErrorMessage message={employeesError || addEmployeeError || deleteEmployeeError} />
+    if (employeesError || employeeRolesError || addEmployeeError || deleteEmployeeError) {
+        return <ErrorMessage message={employeesError || employeeRolesError || addEmployeeError || deleteEmployeeError} />
     }
 
     const employeesActions: Array<IActionsList> = [
@@ -57,7 +69,14 @@ const Employees: NextPage = () => {
 
     return (
         <div className='flex flex-col items-center py-2 lg:mr-20 mr-10'>
-            {showAddEmployeeModal && <AddEmployeeModal addEmployee={addEmployee} toggleModal={setShowAddEmployeeModal} />}
+            {showAddEmployeeModal &&
+                <AddEmployeeModal
+                    addEmployee={addEmployee}
+                    toggleModal={setShowAddEmployeeModal}
+                    employeeRoles={employeeRoles}
+                    revalidateEmployees={(newEmployee: definitions['employees']) =>
+                        revalidateEmployees([...employees, newEmployee])}
+                />}
             <div className='w-full flex justify-between'>
                 <h3>{content.employees.index.header}</h3>
                 <div className='space-x-8'>
@@ -70,7 +89,7 @@ const Employees: NextPage = () => {
                 </div>
             </div>
             <Table
-                headers={['Name', 'Birth date', 'Salary', 'Revenue %', '', '']}
+                headers={['Name', 'Role', 'Birth date', 'Salary', 'Revenue %', '', '']}
                 data={employees}
                 actionsList={employeesActions}
             />
