@@ -9,15 +9,14 @@ import { IDropdownOption } from '@interfaces'
 import { useTranslation } from '@lib/hooks'
 
 interface IAddEmployeeModal {
-    addEmployee: (employee: Partial<definitions['employees']>) => Promise<void>
+    onAddEmployee: (newEmployee: Partial<definitions['employees']>) => Promise<void>
     toggleModal: (visible: boolean) => void
     toggleConfirmationModal: (visible: boolean) => void
     employeeRoles: definitions['employee_roles'][]
-    revalidateEmployees: any
 }
 
 const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
-    addEmployee, toggleModal, toggleConfirmationModal, employeeRoles, revalidateEmployees
+    onAddEmployee, toggleModal, toggleConfirmationModal, employeeRoles
 }: IAddEmployeeModal) => {
     const [loading, setLoading] = useState(false)
     const content = useTranslation()
@@ -63,10 +62,9 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             salary: data.salary,
             income_percentage: data.income_percentage
         }
-        await addEmployee(newEmployee)
-        toggleConfirmationModal(true)
+        await onAddEmployee(newEmployee)
 
-        revalidateEmployees(newEmployee)
+        toggleConfirmationModal(true)
         toggleModal(false)
         setLoading(false)
     }

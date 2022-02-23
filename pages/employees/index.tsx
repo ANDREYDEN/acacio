@@ -69,16 +69,20 @@ const Employees: NextPage = () => {
         { label: content.general.delete, action: deleteEmployeeAndReload, textColor: 'error' }
     ]
 
+    const updateEmployees = async (newEmployee: Partial<definitions['employees']>) => {
+        await revalidateEmployees([...employees, newEmployee])
+        await addEmployee(newEmployee)
+        await revalidateEmployees()
+    }
+
     return (
         <div className='flex flex-col items-center py-2 lg:mr-20 mr-10'>
             {showAddEmployeeModal &&
                 <AddEmployeeModal
-                    addEmployee={addEmployee}
+                    onAddEmployee={updateEmployees}
                     toggleModal={setShowAddEmployeeModal}
                     toggleConfirmationModal={setShowAddConfirmationModal}
                     employeeRoles={employeeRoles}
-                    revalidateEmployees={(newEmployee: definitions['employees']) =>
-                        revalidateEmployees([...employees, newEmployee])}
                 />}
             {showAddConfirmationModal && !addEmployeeError &&
                 <ConfirmationModal

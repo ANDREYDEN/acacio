@@ -1,6 +1,15 @@
 import React from 'react'
 import { useController } from 'react-hook-form'
-import { IValidatedDropdown } from '@interfaces'
+import { IDropdownOption } from '@interfaces'
+
+export interface IValidatedDropdown {
+    label: string
+    name: string
+    data: IDropdownOption[]
+    control: any
+    defaultOption: string
+    dropdownClass?: string
+}
 
 // TODO: use headless ui to style dropdown better
 const ValidatedDropdown: React.FC<IValidatedDropdown> = ({
