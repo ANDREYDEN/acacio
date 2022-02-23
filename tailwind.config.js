@@ -4,6 +4,9 @@ module.exports = {
         './components/**/*.{js,ts,jsx,tsx}',
     ],
     theme: {
+        screens: {
+            'lg': '1080px'
+        },
         extend: {
             fontFamily: {
                 'body': ['Manrope', 'sans-serif'],
@@ -18,6 +21,7 @@ module.exports = {
                 'primary-blue': '#010446',
                 'dark-grey': '#656565',
                 'grey': '#B2B2B2',
+                'secondary-background': '#F0F0F0',
                 'light-grey': '#E2E2E2',
                 'error': '#C60000',
                 'blue': '#649CD3',
@@ -26,6 +30,9 @@ module.exports = {
                 'light-yellow': '#FFF4CA',
                 'green': '#A8D04B',
                 'light-green': '#ECF9CE',
+            },
+            spacing: {
+                '116': '28rem',
             }
         },
     },

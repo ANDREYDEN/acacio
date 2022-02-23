@@ -44,7 +44,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
                 control={control}
                 trigger={trigger}
             />
-            <Button label={content.login.form.button} loading={loading}/>
+            <Button label={content.login.form.button} loading={loading} buttonClass='mb-8' />
         </form>
     )
 }

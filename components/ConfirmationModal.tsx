@@ -1,7 +1,8 @@
-import React from 'react'
-import { useTranslation } from 'next-i18next'
+import Button from '@components/Button'
 import Image from 'next/image'
-import { Button, Modal } from '@components'
+import Modal from '@components/Modal'
+import React from 'react'
+import { useTranslation } from '@lib/hooks'
 
 interface IConfirmationModal {
     header: string
@@ -10,12 +11,13 @@ interface IConfirmationModal {
 }
 
 const ConfirmationModal: React.FC<IConfirmationModal> = ({ header, toggleModal, message }: IConfirmationModal) => {
-    const { t } = useTranslation('common')
+    const content = useTranslation()
 
     return (
         <Modal
+            closable={true}
             toggler={() => toggleModal(false)}
-            footer={<Button label={t('done')} buttonClass='w-96' onClick={() => toggleModal(false)} />}
+            footer={<Button label={content.general.done} buttonClass='w-96' onClick={() => toggleModal(false)} />}
         >
             <div className='flex flex-col items-center w-80'>
                 <Image src='/img/confirmation.svg' width={260} height={150} alt='Success' />

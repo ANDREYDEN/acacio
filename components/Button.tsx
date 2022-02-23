@@ -15,7 +15,7 @@ const Button: React.FC<IPrimaryButton> = ({ label, variant = 'primary', onClick,
         <button
             onClick={onClick}
             disabled={loading}
-            className={`font-bold rounded-md py-2 px-5 mb-8 border-2 border-primary-blue ${buttonClass}
+            className={`font-bold rounded-md py-2 px-5 border-2 border-primary-blue ${buttonClass}
                 ${variant === 'primary' ? 'bg-primary-blue text-white' : ''}
                 ${variant === 'secondary' ? 'bg-white text-primary-blue' : ''}`}
         >

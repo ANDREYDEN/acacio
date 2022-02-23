@@ -1,13 +1,4 @@
-import dayjs from 'dayjs'
-
-export type DropdownItemValue = string | number | dayjs.Dayjs
-
-export interface IDropdownItem {
+export interface IDropdownOption {
+    value: any
     label: string
-    value: DropdownItemValue
-}
-
-export interface IValidatedDropdownItem {
-    label: string
-    value: string | number
 }
