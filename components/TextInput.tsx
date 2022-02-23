@@ -34,7 +34,8 @@ const TextInput: React.FC<ITextInput> = ({
                 type={type}
                 placeholder={placeholder}
                 className={`focus:outline-none rounded-lg px-6 py-2 text-primary-text placeholder-secondary-text
-                    focus:border-dark-grey ${error ? 'border-2 border-error' : 'border border-grey'}`}
+                    placeholder:text-dark-grey focus:border-dark-grey
+                    ${error ? 'border-2 border-error' : 'border border-grey'}`}
                 {...field}
             />
             <p className='text-error text-sm'>{error}</p>
