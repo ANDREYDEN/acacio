@@ -6,6 +6,7 @@ import { definitions } from '@types'
 import TextInput from '@components/TextInput'
 import ValidatedDropdown from '@components/ValidatedDropdown'
 import { IDropdownOption } from '@interfaces'
+import { useTranslation } from '@lib/hooks'
 
 interface IAddEmployeeModal {
     addEmployee: (employee: Partial<definitions['employees']>) => Promise<void>
@@ -19,6 +20,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
     addEmployee, toggleModal, toggleConfirmationModal, employeeRoles, revalidateEmployees
 }: IAddEmployeeModal) => {
     const [loading, setLoading] = useState(false)
+    const content = useTranslation()
 
     const defaultValues = {
         first_name: '',
@@ -70,8 +72,8 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
     }
     
     const Header: ReactElement = <div>
-        <h4>Add Employee</h4>
-        <p className='text-dark-grey w-80'>Add new employee to the system, in order to track his/her salary and work shifts.</p>
+        <h4>{content.employees.index.add_employee}</h4>
+        <p className='text-dark-grey w-96'>{content.employees.index.add_modal.message}</p>
     </div>
 
     return <Modal
@@ -79,12 +81,12 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
         toggler={() => toggleModal(false)}
         closable={true}
     >
-        <form className='w-96' onSubmit={handleSubmit(handleAddEmployee)}>
+        <form className='w-116' onSubmit={handleSubmit(handleAddEmployee)}>
             <TextInput
                 type='text'
                 name='first_name'
-                label='First Name'
-                placeholder='Enter employee’s first name'
+                label={content.employees.index.add_modal.first_name}
+                placeholder={content.employees.index.add_modal.first_name_placeholder}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
@@ -92,24 +94,24 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             <TextInput
                 type='text'
                 name='last_name'
-                label='Last Name'
-                placeholder='Enter employee’s last name'
+                label={content.employees.index.add_modal.last_name}
+                placeholder={content.employees.index.add_modal.last_name_placeholder}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
             />
             <ValidatedDropdown
-                label='Role'
+                label={content.employees.index.add_modal.role}
                 name='role_id'
                 data={preparedRolesOptions}
-                defaultOption='Select role'
+                defaultOption={content.employees.index.add_modal.role_placeholder}
                 control={control}
                 dropdownClass='mb-6'
             />
             <TextInput
                 type='date'
                 name='birth_date'
-                label='Birth date'
+                label={content.employees.index.add_modal.birth_date}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
@@ -117,8 +119,8 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             <TextInput
                 type='number'
                 name='salary'
-                label='Salary'
-                placeholder='0$/hr'
+                label={content.employees.index.add_modal.salary}
+                placeholder={content.employees.index.add_modal.salary_placeholder}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
@@ -126,13 +128,13 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             <TextInput
                 type='number'
                 name='income_percentage'
-                label='Income Percentage'
+                label={content.employees.index.add_modal.income_percentage}
                 placeholder='0%'
                 textInputClass='mb-10'
                 control={control}
                 trigger={trigger}
             />
-            <Button label='Add Employee' loading={loading} buttonClass='w-full' />
+            <Button label={content.employees.index.add_employee} loading={loading} buttonClass='w-full' />
         </form>
     </Modal>
 }

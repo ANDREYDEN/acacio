@@ -65,8 +65,8 @@ const Employees: NextPage = () => {
     }
 
     const employeesActions: Array<IActionsList> = [
-        { label: 'Edit', action: () => setShowEditEmployeeModal(true) },
-        { label: 'Delete', action: deleteEmployeeAndReload, textColor: 'error' }
+        { label: content.general.edit, action: () => setShowEditEmployeeModal(true) },
+        { label: content.general.delete, action: deleteEmployeeAndReload, textColor: 'error' }
     ]
 
     return (
@@ -90,16 +90,16 @@ const Employees: NextPage = () => {
             <div className='w-full flex justify-between mb-8'>
                 <h3>{content.employees.index.header}</h3>
                 <div className='space-x-8'>
-                    <Button label='Export' variant='secondary' buttonClass='w-40' />
+                    <Button label={content.general.export} variant='secondary' buttonClass='w-56' />
                     <Button
-                        label='Add employee'
-                        buttonClass='w-40'
+                        label={content.employees.index.add_employee}
+                        buttonClass='w-56'
                         onClick={() => setShowAddEmployeeModal(prevState => !prevState)}
                     />
                 </div>
             </div>
             <Table
-                headers={['Name', 'Role', 'Birth date', 'Salary', 'Revenue %', '', '']}
+                headers={content.employees.index.table_headers}
                 data={employees}
                 actionsList={employeesActions}
             />

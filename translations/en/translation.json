@@ -1,7 +1,28 @@
 {
+	"general": {
+		"export": "Export",
+		"edit": "Edit",
+		"delete": "Delete",
+		"log_out": "Log Out"
+	},
 	"employees": {
 		"index": {
-			"header": "Employees"
+			"header": "Employees",
+			"table_headers": ["Name", "Role", "Birth date", "Salary", "Revenue %", "", ""],
+			"add_employee": "Add employee",
+			"add_modal": {
+				"message": "Add new employee to the system, in order to track his/her salary and work shifts.",
+				"first_name": "First Name",
+				"last_name": "Last Name",
+				"role": "Role",
+				"birth_date": "Birth date",
+				"salary": "Salary",
+				"income_percentage": "Income Percentage",
+				"first_name_placeholder": "Enter employee’s first name",
+				"last_name_placeholder": "Enter employee’s last name",
+				"role_placeholder": "Select role",
+				"salary_placeholder": "0$/hr"
+			}
 		}
 	},
 	"login": {
@@ -18,7 +39,6 @@
 		},
 		"password": "Password",
 		"please_sign": "Welcome back! Please, sign in",
-		"sign_in": "Sign In",
 		"welcome": "Welcome back"
 	},
 	"reset_password": {

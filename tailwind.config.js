@@ -30,6 +30,9 @@ module.exports = {
                 'light-yellow': '#FFF4CA',
                 'green': '#A8D04B',
                 'light-green': '#ECF9CE',
+            },
+            spacing: {
+                '116': '28rem',
             }
         },
     },
