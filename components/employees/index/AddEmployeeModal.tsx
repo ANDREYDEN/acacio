@@ -31,18 +31,18 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
         income_percentage: '',
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('first_name', { required: 'First name is required' })
+    register('first_name', { required: content.employees.index.add_modal.first_name_required })
     register('last_name')
-    register('role_id', { required: 'Role is required' })
+    register('role_id', { required: content.employees.index.add_modal.role_required })
     register('birth_date')
     register('salary', {
-        required: 'Salary is required',
-        min: { value: 0, message: 'Cannot be negative' }
+        required: content.employees.index.add_modal.salary_required,
+        min: { value: 0, message: content.employees.index.add_modal.salary_negative }
     })
     register('income_percentage', {
-        required: 'Revenue percentage is required',
-        min: { value: 0, message: 'Cannot be less than 0' },
-        max: { value: 100, message: 'Cannot be more than 100' }
+        required: content.employees.index.add_modal.income_percentage_required,
+        min: { value: 0, message: content.employees.index.add_modal.min_revenue },
+        max: { value: 100, message: content.employees.index.add_modal.max_revenue }
     })
 
     const preparedRolesOptions: IDropdownOption[] = employeeRoles.map(role => {

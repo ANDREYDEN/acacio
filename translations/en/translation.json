@@ -21,7 +21,14 @@
 				"first_name_placeholder": "Enter employee’s first name",
 				"last_name_placeholder": "Enter employee’s last name",
 				"role_placeholder": "Select role",
-				"salary_placeholder": "0$/hr"
+				"salary_placeholder": "0$/hr",
+				"first_name_required": "First name is required",
+				"role_required": "Role is required",
+				"salary_required": "Salary is required",
+				"salary_negative": "Cannot be negative",
+				"income_percentage_required": "Revenue percentage is required",
+				"min_revenue": "Cannot be less than 0",
+				"max_revenue": "Cannot be more than 100"
 			}
 		}
 	},
