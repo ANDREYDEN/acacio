@@ -17,7 +17,6 @@ import { useTranslation } from '@lib/hooks'
 import { definitions } from '@types'
 import ConfirmationModal from '@components/ConfirmationModal'
 
-// TODO: add internalization
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
     const [mounted, setMounted] = useState(false)
@@ -86,9 +85,9 @@ const Employees: NextPage = () => {
                 />}
             {showAddConfirmationModal && !addEmployeeError &&
                 <ConfirmationModal
-                    header='Employee was added'
+                    header={content.employees.index.confirmation_modal.header}
                     toggleModal={setShowAddConfirmationModal}
-                    message='New employee is successfully added to the system, now you can track his/her salary and work shifts.'
+                    message={content.employees.index.confirmation_modal.message}
                 />
             }
             <div className='w-full flex justify-between mb-8'>

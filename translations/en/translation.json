@@ -3,7 +3,8 @@
 		"export": "Export",
 		"edit": "Edit",
 		"delete": "Delete",
-		"log_out": "Log Out"
+		"log_out": "Log Out",
+		"done": "Готово"
 	},
 	"employees": {
 		"index": {
@@ -29,6 +30,10 @@
 				"income_percentage_required": "Revenue percentage is required",
 				"min_revenue": "Cannot be less than 0",
 				"max_revenue": "Cannot be more than 100"
+			},
+			"confirmation_modal": {
+				"header": "Employee was added",
+				"message": "New employee is successfully added to the system, now you can track his/her salary and work shifts."
 			}
 		}
 	},
