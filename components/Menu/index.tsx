@@ -22,7 +22,7 @@ const AppRoutes: AppRoutesType = {
             Salary: '/salary',
         }
     },
-    Inventory: {
+    Stock: {
         route: '/ingredients-movement',
         icon: <TickSquare />,
         iconFilled: <TickSquare filled={true} />

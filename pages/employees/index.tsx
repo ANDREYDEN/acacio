@@ -15,12 +15,14 @@ import Table from '@components/Table'
 import { IActionsList } from '@interfaces'
 import { useTranslation } from '@lib/hooks'
 import { definitions } from '@types'
+import ConfirmationModal from '@components/ConfirmationModal'
 
 // TODO: add internalization
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
     const [mounted, setMounted] = useState(false)
     const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false)
+    const [showAddConfirmationModal, setShowAddConfirmationModal] = useState(false)
     // TODO: add editEmployeeModal
     const [showEditEmployeeModal, setShowEditEmployeeModal] = useState(false)
     const router = useRouter()
@@ -73,10 +75,18 @@ const Employees: NextPage = () => {
                 <AddEmployeeModal
                     addEmployee={addEmployee}
                     toggleModal={setShowAddEmployeeModal}
+                    toggleConfirmationModal={setShowAddConfirmationModal}
                     employeeRoles={employeeRoles}
                     revalidateEmployees={(newEmployee: definitions['employees']) =>
                         revalidateEmployees([...employees, newEmployee])}
                 />}
+            {showAddConfirmationModal && !addEmployeeError &&
+                <ConfirmationModal
+                    header='Employee was added'
+                    toggleModal={setShowAddConfirmationModal}
+                    message='New employee is successfully added to the system, now you can track his/her salary and work shifts.'
+                />
+            }
             <div className='w-full flex justify-between mb-8'>
                 <h3>{content.employees.index.header}</h3>
                 <div className='space-x-8'>

@@ -19,13 +19,13 @@ const Modal: React.FC<IModal> = ({ header, children, closable, footer, toggler }
                 <div className='w-auto p-10 rounded-xl shadow-2xl flex flex-col bg-white'
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div className='flex items-start justify-between mb-6'>
+                    <div className={`flex mb-6 ${ header ? 'items-start justify-between' : 'justify-end'}`}>
                         {header}
                         {closable && <button onClick={toggler}>
                             <Image src='/img/cross.svg' alt='Logo' width={17} height={17} />
                         </button>}
                     </div>
-                    <div>{children}</div>
+                    <div className='w-full mb-10 grid place-items-center'>{children}</div>
                     <div className='text-center'>{footer}</div>
                 </div>
             </div>

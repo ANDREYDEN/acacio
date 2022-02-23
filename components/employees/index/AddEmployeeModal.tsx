@@ -1,6 +1,5 @@
 import React, { ReactElement, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
 import Modal from '@components/Modal'
 import Button from '@components/Button'
 import { definitions } from '@types'
@@ -11,11 +10,14 @@ import { IDropdownOption } from '@interfaces'
 interface IAddEmployeeModal {
     addEmployee: (employee: Partial<definitions['employees']>) => Promise<void>
     toggleModal: (visible: boolean) => void
+    toggleConfirmationModal: (visible: boolean) => void
     employeeRoles: definitions['employee_roles'][]
     revalidateEmployees: any
 }
 
-const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModal, employeeRoles, revalidateEmployees }: IAddEmployeeModal) => {
+const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
+    addEmployee, toggleModal, toggleConfirmationModal, employeeRoles, revalidateEmployees
+}: IAddEmployeeModal) => {
     const [loading, setLoading] = useState(false)
 
     const defaultValues = {
@@ -60,7 +62,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({ addEmployee, toggleModa
             income_percentage: data.income_percentage
         }
         await addEmployee(newEmployee)
-        toast('🦄 An employee has been successfully added')
+        toggleConfirmationModal(true)
 
         revalidateEmployees(newEmployee)
         toggleModal(false)
