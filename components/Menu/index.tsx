@@ -50,7 +50,7 @@ const Menu: React.FC = ({ children }) => {
     return (
         <>
             <div className='flex'>
-                <nav className='grid place-items-center h-screen w-64 bg-light-green lg:mr-12 mr-8'>
+                <nav className='grid place-items-center min-h-screen w-64 bg-light-green lg:mr-12 mr-8'>
                     <div className='absolute top-16'>
                         <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                     </div>
