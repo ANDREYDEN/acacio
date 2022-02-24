@@ -8,26 +8,26 @@ import ValidatedDropdown from '@components/ValidatedDropdown'
 import { IDropdownOption } from '@interfaces'
 import { useTranslation } from '@lib/hooks'
 
-interface IAddEmployeeModal {
-    onAddEmployee: (newEmployee: Partial<definitions['employees']>) => Promise<void>
-    toggleModal: (visible: boolean) => void
-    toggleConfirmationModal: (visible: boolean) => void
+// TODO: pass down headers
+interface IEmployeeModal {
+    onUpsertEmployee: (currentEmployee: Partial<definitions['employees']>) => Promise<void>
+    onSuccess: () => void
+    onClose: () => void
     employeeRoles: definitions['employee_roles'][]
+    employee?: Partial<definitions['employees']>
 }
 
-const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
-    onAddEmployee, toggleModal, toggleConfirmationModal, employeeRoles
-}: IAddEmployeeModal) => {
+const EmployeeModal: React.FC<IEmployeeModal> = ({ onUpsertEmployee, onSuccess, onClose, employeeRoles, employee }: IEmployeeModal) => {
     const [loading, setLoading] = useState(false)
     const content = useTranslation()
 
-    const defaultValues = {
+    const defaultValues: Partial<definitions['employees']> = employee ?? {
         first_name: '',
         last_name: '',
         role_id: undefined,
         birth_date: '',
-        salary: '',
-        income_percentage: '',
+        salary: 0,
+        income_percentage: 0,
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
     register('first_name', { required: content.employees.index.add_modal.first_name_required })
@@ -54,7 +54,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
     const handleAddEmployee = async (data: any) => {
         setLoading(true)
 
-        const newEmployee: Partial<definitions['employees']> = {
+        const currentEmployee: Partial<definitions['employees']> = {
             first_name: data.first_name,
             last_name: data.last_name,
             role_id: data.role_id,
@@ -62,10 +62,11 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             salary: data.salary,
             income_percentage: data.income_percentage
         }
-        await onAddEmployee(newEmployee)
+        if (employee) currentEmployee.id = employee.id
 
-        toggleConfirmationModal(true)
-        toggleModal(false)
+        await onUpsertEmployee(currentEmployee)
+
+        onSuccess()
         setLoading(false)
     }
     
@@ -76,7 +77,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
 
     return <Modal
         header={Header}
-        toggler={() => toggleModal(false)}
+        toggler={() => onClose()}
         closable={true}
     >
         <form className='w-116' onSubmit={handleSubmit(handleAddEmployee)}>
@@ -137,4 +138,4 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
     </Modal>
 }
 
-export default AddEmployeeModal
+export default EmployeeModal
