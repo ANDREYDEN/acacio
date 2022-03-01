@@ -3,13 +3,12 @@ import Image from 'next/image'
 
 interface IModal {
     children: ReactElement
-    toggler: () => void
-    closable: boolean
     header?: ReactElement
     footer?: ReactElement
+    toggler?: () => void
 }
 
-const Modal: React.FC<IModal> = ({ header, children, closable, footer, toggler }: IModal) => {
+const Modal: React.FC<IModal> = ({ header, children, footer, toggler }: IModal) => {
     return (
         <>
             <div
@@ -21,7 +20,7 @@ const Modal: React.FC<IModal> = ({ header, children, closable, footer, toggler }
                 >
                     <div className={`flex mb-6 ${ header ? 'items-start justify-between' : 'justify-end'}`}>
                         {header}
-                        {closable && <button onClick={toggler}>
+                        {toggler && <button onClick={toggler}>
                             <Image src='/img/cross.svg' alt='Logo' width={17} height={17} />
                         </button>}
                     </div>

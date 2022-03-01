@@ -15,7 +15,6 @@ const ConfirmationModal: React.FC<IConfirmationModal> = ({ header, toggleModal, 
 
     return (
         <Modal
-            closable={true}
             toggler={() => toggleModal(false)}
             footer={<Button label={content.general.done} buttonClass='w-96' onClick={() => toggleModal(false)} />}
         >
