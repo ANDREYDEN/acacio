@@ -5,7 +5,8 @@
 		"delete": "Delete",
 		"log_out": "Log Out",
 		"done": "Done",
-		"save": "Save"
+		"save": "Save",
+		"cancel": "Cancel"
 	},
 	"employees": {
 		"index": {
@@ -34,9 +35,16 @@
 				"min_revenue": "Cannot be less than 0",
 				"max_revenue": "Cannot be more than 100"
 			},
-			"confirmation_modal": {
+			"add_confirmation_modal": {
 				"header": "Employee was added",
 				"message": "New employee is successfully added to the system, now you can track his/her salary and work shifts."
+			},
+			"deletion_modal": {
+				"header": "Delete employee",
+				"message1": "Are you sure you want to delete",
+				"message2": "Deleting employee will permanently remove it from your system.",
+				"confirmation_header": "Employee was deleted",
+				"confirmation_message": "Employee was successfully removed from the system. All reports are updated accordingly."
 			}
 		}
 	},

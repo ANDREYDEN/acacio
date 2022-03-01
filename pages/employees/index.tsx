@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import Loader from '@components/Loader'
 import {
@@ -16,6 +15,7 @@ import { IActionsList } from '@interfaces'
 import { useTranslation } from '@lib/hooks'
 import { definitions } from '@types'
 import ConfirmationModal from '@components/ConfirmationModal'
+import DeletionModal from '@components/DeletionModal'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
@@ -23,7 +23,8 @@ const Employees: NextPage = () => {
     const [showEmployeeModal, setShowEmployeeModal] = useState(false)
     const [showAddConfirmationModal, setShowAddConfirmationModal] = useState(false)
     const [employeeIdToEdit, setEmployeeIdToEdit] = useState<number | undefined>(undefined)
-    const router = useRouter()
+    const [employeeIdToDelete, setEmployeeIdToDelete] = useState<number | undefined>(undefined)
+    const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false)
     const content = useTranslation()
 
     const {
@@ -48,12 +49,6 @@ const Employees: NextPage = () => {
         error: deleteEmployeeError 
     } = useSupabaseDeleteEntity('employees')
 
-    // TODO: add deleteEmployeeModal for confirmation
-    async function deleteEmployeeAndReload(id: number) {
-        await deleteEmployee(id)
-        router.reload()
-    }
-
     if (!mounted || employeesLoading || employeeRolesLoading || upsertEmployeeLoading || deleteEmployeeLoading) {
         return <Loader />
     }
@@ -67,13 +62,25 @@ const Employees: NextPage = () => {
             setEmployeeIdToEdit(id)
             setShowEmployeeModal(true)
         } },
-        { label: content.general.delete, action: deleteEmployeeAndReload, textColor: 'error' }
+        { label: content.general.delete, action: (id) => { setEmployeeIdToDelete(id) }, textColor: 'error' }
     ]
 
     const updateEmployees = async (newEmployee: Partial<definitions['employees']>) => {
         await revalidateEmployees([...employees, newEmployee])
         await upsertEmployee(newEmployee)
         await revalidateEmployees()
+    }
+
+    const onDeleteEmployee = async () => {
+        if (!employeeIdToDelete) return
+
+        const filteredEmployees = employees.filter(employee => employee.id !== employeeIdToDelete)
+        await revalidateEmployees(filteredEmployees)
+        setEmployeeIdToDelete(undefined)
+
+        await deleteEmployee(employeeIdToDelete)
+        await revalidateEmployees()
+        setShowDeleteConfirmationModal(true)
     }
 
     const toggleModal = () => {
@@ -84,6 +91,13 @@ const Employees: NextPage = () => {
 
     const employeeForModal = () => {
         return employeeIdToEdit ? employees.find((employee) => employee.id === employeeIdToEdit) : undefined
+    }
+
+    const confirmationMessage = (): string => {
+        const employeeToBeDeleted = employees.find(employee => employee.id === employeeIdToDelete)
+        const employeeName = employeeToBeDeleted?.first_name ?? 'this employee'
+
+        return `${content.employees.index.deletion_modal.message1} ${employeeName}? ${content.employees.index.deletion_modal.message2}`
     }
 
     return (
@@ -98,9 +112,24 @@ const Employees: NextPage = () => {
                 />}
             {showAddConfirmationModal && !upsertEmployeeError &&
                 <ConfirmationModal
-                    header={content.employees.index.confirmation_modal.header}
+                    header={content.employees.index.add_confirmation_modal.header}
                     toggleModal={setShowAddConfirmationModal}
-                    message={content.employees.index.confirmation_modal.message}
+                    message={content.employees.index.add_confirmation_modal.message}
+                />
+            }
+            {employeeIdToDelete &&
+                <DeletionModal
+                    header={content.employees.index.deletion_modal.header}
+                    onClose={() => setEmployeeIdToDelete(undefined)}
+                    action={onDeleteEmployee}
+                    message={confirmationMessage()}
+                />
+            }
+            {showDeleteConfirmationModal && !deleteEmployeeError &&
+                <ConfirmationModal
+                    header={content.employees.index.deletion_modal.confirmation_header}
+                    toggleModal={setShowDeleteConfirmationModal}
+                    message={content.employees.index.deletion_modal.confirmation_message}
                 />
             }
             <div className='w-full flex justify-between mb-8'>

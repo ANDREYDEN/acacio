@@ -82,8 +82,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
 
     return <Modal
         header={Header}
-        toggler={() => onClose()}
-        closable={true}
+        toggler={onClose}
     >
         <form className='w-116' onSubmit={handleSubmit(handleAddEmployee)}>
             <TextInput
