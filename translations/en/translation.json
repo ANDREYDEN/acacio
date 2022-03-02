@@ -4,15 +4,19 @@
 		"edit": "Edit",
 		"delete": "Delete",
 		"log_out": "Log Out",
-		"done": "Готово"
+		"done": "Done",
+		"save": "Save",
+		"cancel": "Cancel"
 	},
 	"employees": {
 		"index": {
 			"header": "Employees",
 			"table_headers": ["Name", "Role", "Birth date", "Salary", "Revenue %", "", ""],
 			"add_employee": "Add employee",
-			"add_modal": {
-				"message": "Add new employee to the system, in order to track his/her salary and work shifts.",
+			"edit_employee": "Edit employee",
+			"modal": {
+				"add_message": "Add new employee to the system, in order to track his/her salary and work shifts",
+				"edit_message": "Edit information to keep the system up-to-date",
 				"first_name": "First Name",
 				"last_name": "Last Name",
 				"role": "Role",
@@ -31,9 +35,16 @@
 				"min_revenue": "Cannot be less than 0",
 				"max_revenue": "Cannot be more than 100"
 			},
-			"confirmation_modal": {
+			"add_confirmation_modal": {
 				"header": "Employee was added",
 				"message": "New employee is successfully added to the system, now you can track his/her salary and work shifts."
+			},
+			"deletion_modal": {
+				"header": "Delete employee",
+				"message1": "Are you sure you want to delete",
+				"message2": "Deleting employee will permanently remove it from your system.",
+				"confirmation_header": "Employee was deleted",
+				"confirmation_message": "Employee was successfully removed from the system. All reports are updated accordingly."
 			}
 		}
 	},

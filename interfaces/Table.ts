@@ -2,7 +2,7 @@ import { definitions } from '@types'
 
 export interface IActionsList {
     label: string
-    action: (() => void) | ((entityId: number) => Promise<void>)
+    action: (() => void) | ((entityId: number) => void | Promise<void>)
     textColor?: string
 }
 

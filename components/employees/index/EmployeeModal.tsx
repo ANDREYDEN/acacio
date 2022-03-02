@@ -8,40 +8,41 @@ import ValidatedDropdown from '@components/ValidatedDropdown'
 import { IDropdownOption } from '@interfaces'
 import { useTranslation } from '@lib/hooks'
 
-interface IAddEmployeeModal {
-    onAddEmployee: (newEmployee: Partial<definitions['employees']>) => Promise<void>
-    toggleModal: (visible: boolean) => void
-    toggleConfirmationModal: (visible: boolean) => void
+interface IEmployeeModal {
+    onUpsertEmployee: (currentEmployee: Partial<definitions['employees']>) => Promise<void>
+    onSuccess: () => void
+    onClose: () => void
     employeeRoles: definitions['employee_roles'][]
+    employee?: Partial<definitions['employees']>
 }
 
-const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
-    onAddEmployee, toggleModal, toggleConfirmationModal, employeeRoles
-}: IAddEmployeeModal) => {
+const EmployeeModal: React.FC<IEmployeeModal> = ({
+    onUpsertEmployee, onSuccess, onClose, employeeRoles, employee
+}: IEmployeeModal) => {
     const [loading, setLoading] = useState(false)
     const content = useTranslation()
 
-    const defaultValues = {
+    const defaultValues: Partial<definitions['employees']> = employee ?? {
         first_name: '',
         last_name: '',
         role_id: undefined,
         birth_date: '',
-        salary: '',
-        income_percentage: '',
+        salary: 0,
+        income_percentage: 0,
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('first_name', { required: content.employees.index.add_modal.first_name_required })
+    register('first_name', { required: content.employees.index.modal.first_name_required })
     register('last_name')
-    register('role_id', { required: content.employees.index.add_modal.role_required })
+    register('role_id', { required: content.employees.index.modal.role_required })
     register('birth_date')
     register('salary', {
-        required: content.employees.index.add_modal.salary_required,
-        min: { value: 0, message: content.employees.index.add_modal.salary_negative }
+        required: content.employees.index.modal.salary_required,
+        min: { value: 0, message: content.employees.index.modal.salary_negative }
     })
     register('income_percentage', {
-        required: content.employees.index.add_modal.income_percentage_required,
-        min: { value: 0, message: content.employees.index.add_modal.min_revenue },
-        max: { value: 100, message: content.employees.index.add_modal.max_revenue }
+        required: content.employees.index.modal.income_percentage_required,
+        min: { value: 0, message: content.employees.index.modal.min_revenue },
+        max: { value: 100, message: content.employees.index.modal.max_revenue }
     })
 
     const preparedRolesOptions: IDropdownOption[] = employeeRoles.map(role => {
@@ -54,7 +55,7 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
     const handleAddEmployee = async (data: any) => {
         setLoading(true)
 
-        const newEmployee: Partial<definitions['employees']> = {
+        const currentEmployee: Partial<definitions['employees']> = {
             first_name: data.first_name,
             last_name: data.last_name,
             role_id: data.role_id,
@@ -62,29 +63,33 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             salary: data.salary,
             income_percentage: data.income_percentage
         }
-        await onAddEmployee(newEmployee)
+        if (employee) currentEmployee.id = employee.id
 
-        toggleConfirmationModal(true)
-        toggleModal(false)
+        await onUpsertEmployee(currentEmployee)
+
+        onSuccess()
         setLoading(false)
     }
     
     const Header: ReactElement = <div>
-        <h4>{content.employees.index.add_employee}</h4>
-        <p className='text-dark-grey w-96'>{content.employees.index.add_modal.message}</p>
+        <h4>
+            {employee ? content.employees.index.edit_employee : content.employees.index.add_employee}
+        </h4>
+        <p className='text-dark-grey w-96'>
+            {employee ? content.employees.index.modal.edit_message : content.employees.index.modal.add_message}
+        </p>
     </div>
 
     return <Modal
         header={Header}
-        toggler={() => toggleModal(false)}
-        closable={true}
+        toggler={onClose}
     >
         <form className='w-116' onSubmit={handleSubmit(handleAddEmployee)}>
             <TextInput
                 type='text'
                 name='first_name'
-                label={content.employees.index.add_modal.first_name}
-                placeholder={content.employees.index.add_modal.first_name_placeholder}
+                label={content.employees.index.modal.first_name}
+                placeholder={content.employees.index.modal.first_name_placeholder}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
@@ -92,24 +97,24 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             <TextInput
                 type='text'
                 name='last_name'
-                label={content.employees.index.add_modal.last_name}
-                placeholder={content.employees.index.add_modal.last_name_placeholder}
+                label={content.employees.index.modal.last_name}
+                placeholder={content.employees.index.modal.last_name_placeholder}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
             />
             <ValidatedDropdown
-                label={content.employees.index.add_modal.role}
+                label={content.employees.index.modal.role}
                 name='role_id'
                 data={preparedRolesOptions}
-                defaultOption={content.employees.index.add_modal.role_placeholder}
+                defaultOption={content.employees.index.modal.role_placeholder}
                 control={control}
                 dropdownClass='mb-6'
             />
             <TextInput
                 type='date'
                 name='birth_date'
-                label={content.employees.index.add_modal.birth_date}
+                label={content.employees.index.modal.birth_date}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
@@ -117,8 +122,8 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             <TextInput
                 type='number'
                 name='salary'
-                label={content.employees.index.add_modal.salary}
-                placeholder={content.employees.index.add_modal.salary_placeholder}
+                label={content.employees.index.modal.salary}
+                placeholder={content.employees.index.modal.salary_placeholder}
                 textInputClass='mb-6'
                 control={control}
                 trigger={trigger}
@@ -126,15 +131,19 @@ const AddEmployeeModal: React.FC<IAddEmployeeModal> = ({
             <TextInput
                 type='number'
                 name='income_percentage'
-                label={content.employees.index.add_modal.income_percentage}
+                label={content.employees.index.modal.income_percentage}
                 placeholder='0%'
                 textInputClass='mb-10'
                 control={control}
                 trigger={trigger}
             />
-            <Button label={content.employees.index.add_employee} loading={loading} buttonClass='w-full' />
+            <Button
+                label={employee ? content.general.save : content.employees.index.add_employee}
+                loading={loading}
+                buttonClass='w-full'
+            />
         </form>
     </Modal>
 }
 
-export default AddEmployeeModal
+export default EmployeeModal
