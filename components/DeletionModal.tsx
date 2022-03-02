@@ -1,7 +1,8 @@
-import React from 'react'
-import { useTranslation } from 'next-i18next'
+import Button from '@components/Button'
 import Image from 'next/image'
-import { Button, Modal } from '@components'
+import Modal from '@components/Modal'
+import React from 'react'
+import { useTranslation } from '@lib/hooks'
 
 interface IConfirmationModal {
     header: string
@@ -11,16 +12,16 @@ interface IConfirmationModal {
 }
 
 const DeletionModal: React.FC<IConfirmationModal> = ({ header, onClose, action, message }: IConfirmationModal) => {
-    const { t } = useTranslation('common')
+    const content = useTranslation()
 
     const Footer = <div className='flex'>
         <Button
-            label={t('cancel')}
+            label={content.general.cancel}
             variant='secondary'
             buttonClass='w-48 mr-6'
             onClick={onClose}
         />
-        <Button label={t('delete')} buttonClass='w-48' onClick={action} />
+        <Button label={content.general.delete} buttonClass='w-48' onClick={action} />
     </div>
 
     return (
