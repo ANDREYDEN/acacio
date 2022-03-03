@@ -16,7 +16,7 @@ const ConfirmationModal: React.FC<IConfirmationModal> = ({ header, toggleModal, 
     return (
         <Modal
             toggler={() => toggleModal(false)}
-            footer={<Button label={content.general.done} buttonClass='w-96' onClick={() => toggleModal(false)} />}
+            footer={<Button label={t('general.done')} buttonClass='w-96' onClick={() => toggleModal(false)} />}
         >
             <div className='flex flex-col items-center w-80'>
                 <Image src='/img/confirmation.svg' width={260} height={150} alt='Success' />

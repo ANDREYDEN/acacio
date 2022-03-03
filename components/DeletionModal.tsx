@@ -16,12 +16,12 @@ const DeletionModal: React.FC<IConfirmationModal> = ({ header, onClose, action, 
 
     const Footer = <div className='flex'>
         <Button
-            label={content.general.cancel}
+            label={t('general.cancel')}
             variant='secondary'
             buttonClass='w-48 mr-6'
             onClick={onClose}
         />
-        <Button label={content.general.delete} buttonClass='w-48' onClick={action} />
+        <Button label={t('general.delete')} buttonClass='w-48' onClick={action} />
     </div>
 
     return (
