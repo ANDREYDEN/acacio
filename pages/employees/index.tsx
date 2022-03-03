@@ -17,6 +17,7 @@ import { definitions } from '@types'
 import ConfirmationModal from '@components/ConfirmationModal'
 import DeletionModal from '@components/DeletionModal'
 import exportToXLSX from '@lib/services/exportService'
+import { Column } from 'exceljs'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
@@ -102,7 +103,14 @@ const Employees: NextPage = () => {
     }
 
     const handleExport = () => {
-        exportToXLSX([], [], 'foobar')
+        const columns: Partial<Column>[] = [
+            { key: 'first_name', header: 'First Name' },
+            { key: 'last_name', header: 'Last Name' },
+            { key: 'birth_date', header: 'Birth Date' },
+            { key: 'salary', header: 'Salary' },
+            { key: 'income_percentage', header: 'Income %' }
+        ]
+        exportToXLSX(employees, columns, 'employees')
     }
 
     return (
