@@ -1,23 +1,20 @@
-import type { NextPage } from 'next'
-import React, { useEffect, useState } from 'react'
-import Loader from '@components/Loader'
-import {
-    useSupabaseDeleteEntity,
-    useSupabaseGetEmployees,
-    useSupabaseGetEmployeeRoles,
-    useSupabaseUpsertEntity
-} from '@services/supabase'
 import Button from '@components/Button'
-import EmployeeModal from '@components/employees/index/EmployeeModal'
-import ErrorMessage from '@components/ErrorMessage'
-import Table from '@components/Table'
-import { IActionsList } from '@interfaces'
-import { definitions } from '@types'
 import ConfirmationModal from '@components/ConfirmationModal'
 import DeletionModal from '@components/DeletionModal'
+import EmployeeModal from '@components/employees/index/EmployeeModal'
+import ErrorMessage from '@components/ErrorMessage'
+import Loader from '@components/Loader'
+import Table from '@components/Table'
+import { IActionsList } from '@interfaces'
+import { useMounted } from '@lib/hooks'
+import {
+    useSupabaseDeleteEntity, useSupabaseGetEmployeeRoles, useSupabaseGetEmployees, useSupabaseUpsertEntity
+} from '@services/supabase'
+import { definitions } from '@types'
+import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useMounted } from '@lib/hooks'
+import React, { useState } from 'react'
 
 export const getServerSideProps = async (context: any) => ({
     props: {
@@ -104,7 +101,7 @@ const Employees: NextPage = () => {
         const employeeToBeDeleted = employees.find(employee => employee.id === employeeIdToDelete)
         const employeeName = employeeToBeDeleted?.first_name ?? 'this employee'
 
-        return `${t('index.deletion_modal.message1')} ${employeeName}? ${t('index.deletion_modal.message2')}`
+        return t('deletion_modal.message', { employeeName, ns: 'employees' })
     }
 
     return (
@@ -119,14 +116,14 @@ const Employees: NextPage = () => {
                 />}
             {showAddConfirmationModal && !upsertEmployeeError &&
                 <ConfirmationModal
-                    header={t('index.add_confirmation_modal.header')}
+                    header={t('add_confirmation_modal.header')}
                     toggleModal={setShowAddConfirmationModal}
-                    message={t('index.add_confirmation_modal.message')}
+                    message={t('add_confirmation_modal.message')}
                 />
             }
             {employeeIdToDelete &&
                 <DeletionModal
-                    header={t('index.deletion_modal.header')}
+                    header={t('deletion_modal.header')}
                     onClose={() => setEmployeeIdToDelete(undefined)}
                     action={onDeleteEmployee}
                     message={confirmationMessage()}
@@ -134,24 +131,24 @@ const Employees: NextPage = () => {
             }
             {showDeleteConfirmationModal && !deleteEmployeeError &&
                 <ConfirmationModal
-                    header={t('index.deletion_modal.confirmation_header')}
+                    header={t('deletion_modal.confirmation_header')}
                     toggleModal={setShowDeleteConfirmationModal}
-                    message={t('index.deletion_modal.confirmation_message')}
+                    message={t('deletion_modal.confirmation_message')}
                 />
             }
             <div className='w-full flex justify-between mb-8'>
-                <h3>{t('index.header')}</h3>
+                <h3>{t('header')}</h3>
                 <div className='space-x-8'>
                     <Button label={t('export', { ns: 'common' })} variant='secondary' buttonClass='w-56' />
                     <Button
-                        label={t('index.add_employee')}
+                        label={t('add_employee')}
                         buttonClass='w-56'
                         onClick={() => setShowEmployeeModal(prevState => !prevState)}
                     />
                 </div>
             </div>
             <Table
-                headers={t('index.table_headers', { returnObjects: true })}
+                headers={t('table_headers', { returnObjects: true })}
                 data={employees}
                 actionsList={employeesActions}
             />
