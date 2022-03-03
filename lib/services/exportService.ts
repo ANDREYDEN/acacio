@@ -1,4 +1,5 @@
 import { Workbook } from 'exceljs'
+import { saveAs } from 'file-saver'
 
 export default async function exportToXLSX(data: any[], columns: any[], name: string) {
     const capitalizedName = name[0].toUpperCase() + name.slice(1)
@@ -15,6 +16,6 @@ export default async function exportToXLSX(data: any[], columns: any[], name: st
     const blob = new Blob([buffer], { 
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     })
-    const fileUrl = URL.createObjectURL(blob)
-    window.open(fileUrl)
+    
+    saveAs(blob, `${name}.xlsx`) 
 }
