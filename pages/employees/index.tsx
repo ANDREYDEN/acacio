@@ -17,6 +17,8 @@ import { useTranslation } from '@lib/hooks'
 import { definitions } from '@types'
 import ConfirmationModal from '@components/ConfirmationModal'
 import DeletionModal from '@components/DeletionModal'
+import exportToXLSX from '@lib/services/exportService'
+import { Column } from 'exceljs'
 
 const Employees: NextPage = () => {
     useEffect(() => setMounted(true), [])
@@ -101,6 +103,17 @@ const Employees: NextPage = () => {
         return `${content.employees.index.deletion_modal.message1} ${employeeName}? ${content.employees.index.deletion_modal.message2}`
     }
 
+    const handleExport = () => {
+        const columns: Partial<Column>[] = [
+            { key: 'first_name', header: 'First Name' },
+            { key: 'last_name', header: 'Last Name' },
+            { key: 'birth_date', header: 'Birth Date' },
+            { key: 'salary', header: 'Salary' },
+            { key: 'income_percentage', header: 'Income %' }
+        ]
+        exportToXLSX(employees, columns, 'employees')
+    }
+
     return (
         <div className='flex flex-col items-center py-2 lg:mr-20 mr-10'>
             {showEmployeeModal &&
@@ -136,7 +149,12 @@ const Employees: NextPage = () => {
             <div className='w-full flex justify-between mb-8'>
                 <h3>{content.employees.index.header}</h3>
                 <div className='space-x-8'>
-                    <Button label={content.general.export} variant='secondary' buttonClass='w-56' />
+                    <Button 
+                        label={content.general.export} 
+                        variant='secondary' 
+                        buttonClass='w-56' 
+                        onClick={handleExport}
+                    />
                     <Button
                         label={content.employees.index.add_employee}
                         buttonClass='w-56'
