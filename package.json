@@ -10,7 +10,6 @@
     "update-types": "npx openapi-typescript $NEXT_PUBLIC_SUPABASE_URL/rest/v1/?apikey=$NEXT_PUBLIC_SUPABASE_API_KEY --output types/database/index.ts"
   },
   "dependencies": {
-    "@next/swc-darwin-x64": "^12.0.10",
     "@supabase/supabase-js": "^1.29.4",
     "@types/file-saver": "^2.0.5",
     "axios": "^0.25.0",
