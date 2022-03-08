@@ -1,33 +1,38 @@
-import type { NextPage } from 'next'
-import React, { useEffect, useState } from 'react'
-import Loader from '@components/Loader'
-import {
-    useSupabaseDeleteEntity,
-    useSupabaseGetEmployees,
-    useSupabaseGetEmployeeRoles,
-    useSupabaseUpsertEntity
-} from '@services/supabase'
 import Button from '@components/Button'
-import EmployeeModal from '@components/employees/index/EmployeeModal'
-import ErrorMessage from '@components/ErrorMessage'
-import Table from '@components/Table'
-import { IActionsList } from '@interfaces'
-import { useTranslation } from '@lib/hooks'
-import { definitions } from '@types'
 import ConfirmationModal from '@components/ConfirmationModal'
 import DeletionModal from '@components/DeletionModal'
+import EmployeeModal from '@components/employees/index/EmployeeModal'
+import ErrorMessage from '@components/ErrorMessage'
+import Loader from '@components/Loader'
+import Table from '@components/Table'
+import { IActionsList } from '@interfaces'
+import { useMounted } from '@lib/hooks'
+import {
+    useSupabaseDeleteEntity, useSupabaseGetEmployeeRoles, useSupabaseGetEmployees, useSupabaseUpsertEntity
+} from '@services/supabase'
+import { definitions } from '@types'
+import type { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import React, { useState } from 'react'
 import exportToXLSX from '@lib/services/exportService'
 import { Column } from 'exceljs'
 
+export const getServerSideProps = async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['employees', 'common']),
+    },
+})
+
+
 const Employees: NextPage = () => {
-    useEffect(() => setMounted(true), [])
-    const [mounted, setMounted] = useState(false)
+    const { mounted } = useMounted()
     const [showEmployeeModal, setShowEmployeeModal] = useState(false)
     const [showAddConfirmationModal, setShowAddConfirmationModal] = useState(false)
     const [employeeIdToEdit, setEmployeeIdToEdit] = useState<number | undefined>(undefined)
     const [employeeIdToDelete, setEmployeeIdToDelete] = useState<number | undefined>(undefined)
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false)
-    const content = useTranslation()
+    const { t } = useTranslation('employees')
 
     const {
         data: employees, 
@@ -60,11 +65,11 @@ const Employees: NextPage = () => {
     }
 
     const employeesActions: Array<IActionsList> = [
-        { label: content.general.edit, action: (id) => {
+        { label: t('edit', { ns: 'common' }), action: (id) => {
             setEmployeeIdToEdit(id)
             setShowEmployeeModal(true)
         } },
-        { label: content.general.delete, action: (id) => { setEmployeeIdToDelete(id) }, textColor: 'error' }
+        { label: t('delete', { ns: 'common' }), action: (id) => { setEmployeeIdToDelete(id) }, textColor: 'error' }
     ]
 
     const updateEmployees = async (newEmployee: Partial<definitions['employees']>) => {
@@ -99,7 +104,7 @@ const Employees: NextPage = () => {
         const employeeToBeDeleted = employees.find(employee => employee.id === employeeIdToDelete)
         const employeeName = employeeToBeDeleted?.first_name ?? 'this employee'
 
-        return `${content.employees.index.deletion_modal.message1} ${employeeName}? ${content.employees.index.deletion_modal.message2}`
+        return t('deletion_modal.message', { employeeName, ns: 'employees' })
     }
 
     const handleExport = () => {
@@ -125,14 +130,14 @@ const Employees: NextPage = () => {
                 />}
             {showAddConfirmationModal && !upsertEmployeeError &&
                 <ConfirmationModal
-                    header={content.employees.index.add_confirmation_modal.header}
+                    header={t('add_confirmation_modal.header')}
                     toggleModal={setShowAddConfirmationModal}
-                    message={content.employees.index.add_confirmation_modal.message}
+                    message={t('add_confirmation_modal.message')}
                 />
             }
             {employeeIdToDelete &&
                 <DeletionModal
-                    header={content.employees.index.deletion_modal.header}
+                    header={t('deletion_modal.header')}
                     onClose={() => setEmployeeIdToDelete(undefined)}
                     action={onDeleteEmployee}
                     message={confirmationMessage()}
@@ -140,29 +145,29 @@ const Employees: NextPage = () => {
             }
             {showDeleteConfirmationModal && !deleteEmployeeError &&
                 <ConfirmationModal
-                    header={content.employees.index.deletion_modal.confirmation_header}
+                    header={t('deletion_modal.confirmation_header')}
                     toggleModal={setShowDeleteConfirmationModal}
-                    message={content.employees.index.deletion_modal.confirmation_message}
+                    message={t('deletion_modal.confirmation_message')}
                 />
             }
             <div className='w-full flex justify-between mb-8'>
-                <h3>{content.employees.index.header}</h3>
+                <h3>{t('header')}</h3>
                 <div className='space-x-8'>
                     <Button 
-                        label={content.general.export} 
+                        label={t('export', { ns: 'common' })} 
                         variant='secondary' 
                         buttonClass='w-56' 
                         onClick={handleExport}
                     />
                     <Button
-                        label={content.employees.index.add_employee}
+                        label={t('add_employee')}
                         buttonClass='w-56'
                         onClick={() => setShowEmployeeModal(prevState => !prevState)}
                     />
                 </div>
             </div>
             <Table
-                headers={content.employees.index.table_headers}
+                headers={t('table_headers', { returnObjects: true })}
                 data={employees}
                 actionsList={employeesActions}
             />
