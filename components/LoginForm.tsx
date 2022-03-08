@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next'
 import { useForm } from 'react-hook-form'
 import TextInput from './TextInput'
 import Button from './Button'
-import { useTranslation } from '@lib/hooks'
+import { useTranslation } from 'next-i18next'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
@@ -11,14 +11,14 @@ interface ILoginForm {
 }
 
 const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) => {
-    const content = useTranslation()
+    const { t } = useTranslation('login')
     const defaultValues = {
         email: '',
         password: ''
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('email', { required: content.login.form.email_required })
-    register('password', { required: content.login.form.password_required })
+    register('email', { required: t('form.email_updated').toString() })
+    register('password', { required: t('form.password_required').toString() })
 
     const handleForm = async (data: any) => {
         await handleLogin(data.email, data.password)
@@ -29,8 +29,8 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
             <TextInput
                 type='email'
                 name='email'
-                label={content.login.form.email_label}
-                placeholder={content.login.form.email_label}
+                label={t('form.email_label')}
+                placeholder={t('form.email_label')}
                 textInputClass='mb-8'
                 control={control}
                 trigger={trigger}
@@ -38,13 +38,13 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
             <TextInput
                 type='password'
                 name='password'
-                label={content.login.form.password_label}
-                placeholder={content.login.form.password_placeholder}
+                label={t('form.password_label')}
+                placeholder={t('form.password_placeholder')}
                 textInputClass='mb-8'
                 control={control}
                 trigger={trigger}
             />
-            <Button label={content.login.form.button} loading={loading} buttonClass='mb-8' />
+            <Button label={t('form.button')} loading={loading} buttonClass='mb-8' />
         </form>
     )
 }

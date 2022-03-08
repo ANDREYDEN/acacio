@@ -7,9 +7,18 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { supabase } from '@client'
-import { useTranslation, useUser } from '@lib/hooks'
+import { useMounted, useUser } from '@lib/hooks'
 import LoginForm from '@components/LoginForm'
 import ErrorMessage from '@components/ErrorMessage'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import Loader from '@components/Loader'
+
+export const getServerSideProps = async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['login']),
+    },
+})
 
 const Login: NextPage = () => {
     const { mounted } = useMounted()
@@ -17,7 +26,7 @@ const Login: NextPage = () => {
     const [error, setError] = useState<string>('')
     const router = useRouter()
     const user = useUser()
-    const content = useTranslation()
+    const { t } = useTranslation('login')
 
     useEffect(() => {
         if (user) {
@@ -48,12 +57,12 @@ const Login: NextPage = () => {
                 <div className='absolute top-16'>
                     <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 </div>
-                <h2>{content.login.welcome}</h2>
-                <p className='mb-10 text-dark-grey'>{content.login.please_sign}</p>
+                <h2>{t('welcome')}</h2>
+                <p className='mb-10 text-dark-grey'>{t('please_sign')}</p>
                 {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />
                 <Link href={'/send-password-reset'} passHref>
-                    <span className='underline text-center hover:cursor-pointer'>{content.login.forgot_password}</span>
+                    <span className='underline text-center hover:cursor-pointer'>{t('forgot_password')}</span>
                 </Link>
             </div>
             <div className='bg-cover bg-login col-span-4 shadow-2xl' />

@@ -7,20 +7,27 @@ import Button from '@components/Button'
 import TextInput from '@components/TextInput'
 import ErrorMessage from '@components/ErrorMessage'
 import { useForm } from 'react-hook-form'
-import { useTranslation } from '@lib/hooks'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+
+export const getServerSideProps = async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['resetPassword']),
+    },
+})
 
 const PasswordReset: NextPage = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const router = useRouter()
-    const content = useTranslation()
+    const { t } = useTranslation('resetPassword')
 
     const defaultValues = {
         password: '',
         confirmPassword: ''
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('password', { required: content.reset_password.password_required })
+    register('password', { required: t('password_required').toString() })
 
     const handleForm = async (data: any) => {
         await handlePasswordReset(data.password, data.confirmPassword)
