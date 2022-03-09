@@ -1,4 +1,24 @@
+import { supabase } from '@client'
 import dayjs from 'dayjs'
+import { GetServerSideProps } from 'next'
+
+export function enforceAuthenticated(inner?: GetServerSideProps): GetServerSideProps {
+    return async context => {
+        const { req } = context
+        const { user } = await supabase.auth.api.getUserByCookie(req)
+
+        console.log({ user })
+        
+
+        if (!user) {
+            return { props: {}, redirect: { destination: '/' } }
+        }
+
+        if (inner) return inner(context)
+
+        return { props: {} }
+    }
+}
 
 export function snakeCaseToPascalCase(input: string): string {
     return input
