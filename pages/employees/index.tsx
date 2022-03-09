@@ -25,14 +25,6 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
     },
 }))
 
-
-export const getServerSideProps = async (context: any) => ({
-    props: {
-        ...await serverSideTranslations(context.locale, ['employees', 'common']),
-    },
-})
-
-
 const Employees: NextPage = () => {
     const { mounted } = useMounted()
     const [showEmployeeModal, setShowEmployeeModal] = useState(false)
