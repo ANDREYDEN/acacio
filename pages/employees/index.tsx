@@ -4,7 +4,7 @@ import DeletionModal from '@components/DeletionModal'
 import EmployeeModal from '@components/employees/index/EmployeeModal'
 import ErrorMessage from '@components/ErrorMessage'
 import Loader from '@components/Loader'
-import Table from '@components/Table'
+import EmployeesTable from '@components/employees/index/EmployeesTable'
 import { IActionsList } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import {
@@ -166,7 +166,7 @@ const Employees: NextPage = () => {
                     />
                 </div>
             </div>
-            <Table
+            <EmployeesTable
                 headers={t('table_headers', { returnObjects: true })}
                 data={employees}
                 actionsList={employeesActions}

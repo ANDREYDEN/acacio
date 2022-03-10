@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
 import React, { useMemo } from 'react'
-import { Column, useTable } from 'react-table'
+import { Column } from 'react-table'
 import { ScheduleTableRow } from '@interfaces'
 import { definitions } from '@types'
 import ScheduleTableCell from './ScheduleTableCell'
+import Table from '@components/Table'
 
 interface IScheduleTable {
   dateColumns: dayjs.Dayjs[]
@@ -19,9 +20,13 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
                 accessor: 'employee',
                 Cell: ({ value: employee }: { value: definitions['employees'] }) => <b>{employee?.first_name ?? 'Some Employee'}</b>
             },
+            {
+                Header: 'Month Total',
+                accessor: 'total'
+            },
             ...dateColumns.map((date) => ({
                 accessor: date.unix().toString(),
-                Header: date.format('dd, MMM D'),
+                Header: date.format('dd, D'),
                 Cell: (cellState: any) => {
                     const matchingEmployee = cellState.cell.row.cells[0].value
           
@@ -32,50 +37,14 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
                         date: date.toString()
                     })}/>
                 }
-            })),
-            {
-                Header: 'Month Total',
-                accessor: 'total'
-            }
+            }))
         ],
         [dateColumns, onCellSubmit]
     )
 
-    const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<ScheduleTableRow>({
-        columns,
-        data
-    })
-
-    return <table {...getTableProps()} className='table-auto'>
-        <thead>
-            <tr>
-                {headers.map((header) => {
-                    const { key: headerKey, ...getHeaderProps } = header.getHeaderProps()
-                    return <th key={headerKey} {...getHeaderProps}>
-                        {header.render('Header')}
-                    </th>
-                })}
-            </tr>
-        </thead>
-        <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-                prepareRow(row)
-                const { key: rowKey, ...getRowProps } = row.getRowProps()
-                return (
-                    <tr key={rowKey} {...getRowProps}>
-                        {row.cells.map((cell) => {
-                            const { key: cellKey, ...getCellProps } = cell.getCellProps()
-                            return (
-                                <td key={cellKey} {...getCellProps}>
-                                    {cell.render('Cell')}
-                                </td>
-                            )
-                        })}
-                    </tr>
-                )
-            })}
-        </tbody>
-    </table>
+    return (
+        <Table columns={columns} data={data} tableSpacing='px-1' />
+    )
 }
 
 export default ScheduleTable

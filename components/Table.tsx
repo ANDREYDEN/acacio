@@ -1,39 +1,60 @@
 import React from 'react'
-import { ITable } from '@interfaces'
+import { Column, useTable } from 'react-table'
 
-const Table: React.FC<ITable> = ({ headers, data, actionsList }: ITable) => {
+interface ITable<T extends Object> {
+    columns: Column<T>[]
+    data: T[]
+    tableSpacing: string
+}
+
+const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => {
+    const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<T>({
+        columns,
+        data
+    })
+
     return (
         <div className='border rounded-lg w-full'>
-            <table className='w-full'>
+            <table {...getTableProps()} className='w-full'>
                 <thead>
                     <tr>
-                        {headers.map((header, index) =>
-                            <th key={index} className='py-6 px-8 text-left border-b'>
-                                <h6>{header}</h6>
-                            </th>)}
+                        {headers.map((header) => {
+                            const { key: headerKey, ...getHeaderProps } = header.getHeaderProps()
+
+                            return (
+                                <th
+                                    key={headerKey}
+                                    {...getHeaderProps}
+                                    className={`py-6 text-left border-b ${tableSpacing}`}
+                                >
+                                    <h6>{header.render('Header')}</h6>
+                                </th>
+                            )
+                        })}
                     </tr>
                 </thead>
-                <tbody>
-                    {/*TODO: make table more generic*/}
-                    {data?.map((entity, index) => (
-                        <tr key={entity.id} className={index === data.length - 1 ? '' : 'border-b'}>
-                            <td className='px-8 py-5'>{entity.first_name} {entity.last_name}</td>
-                            <td className='px-8 py-5'>{entity.role_id}</td>
-                            <td className='px-8 py-5'>{entity.birth_date}</td>
-                            <td className='px-8 py-5'>{entity.salary}</td>
-                            <td className='px-8 py-5'>{entity.income_percentage}%</td>
-                            {actionsList && actionsList.map(actionItem =>
-                                <td key={actionItem.label} className='px-8 py-5'>
-                                    <button
-                                        className={`text-${actionItem.textColor ?? 'black'} underline`}
-                                        type='button'
-                                        onClick={() => actionItem.action(entity.id)}
-                                    >
-                                        {actionItem.label}
-                                    </button>
-                                </td>)}
-                        </tr>
-                    ))}
+                <tbody {...getTableBodyProps()}>
+                    {rows.map((row, index) => {
+                        prepareRow(row)
+                        const { key: rowKey, ...getRowProps } = row.getRowProps()
+
+                        return (
+                            <tr key={rowKey} {...getRowProps} className={index === data.length - 1 ? '' : 'border-b'}>
+                                {row.cells.map((cell) => {
+                                    const { key: cellKey, ...getCellProps } = cell.getCellProps()
+                                    return (
+                                        <td
+                                            key={cellKey}
+                                            {...getCellProps}
+                                            className={`py-5 ${tableSpacing}`}
+                                        >
+                                            {cell.render('Cell')}
+                                        </td>
+                                    )
+                                })}
+                            </tr>
+                        )
+                    })}
                 </tbody>
             </table>
         </div>
