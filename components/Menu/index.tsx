@@ -43,7 +43,8 @@ const Menu: React.FC = ({ children }) => {
         router.replace('/')
     }
 
-    const is404Page = Object.values(AppRoutes).every(ar => ar.route !== currentRoute)
+    // TODO: fix this
+    const is404Page = Object.values(AppRoutes).every(ar => currentRoute.includes(ar.route))
     if (currentRoute === '/' || currentRoute === '/send-password-reset' || is404Page) {
         return (<>{ children }</>)
     }

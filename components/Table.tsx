@@ -14,7 +14,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
     })
 
     return (
-        <div className='border rounded-lg w-full'>
+        <div className='border border-table-grey rounded-lg w-full'>
             <table {...getTableProps()} className='w-full'>
                 <thead>
                     <tr>
@@ -25,7 +25,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                                 <th
                                     key={headerKey}
                                     {...getHeaderProps}
-                                    className={`py-6 text-left border-b ${tableSpacing}`}
+                                    className={`py-6 text-left border-b border-table-grey ${tableSpacing}`}
                                 >
                                     <h6>{header.render('Header')}</h6>
                                 </th>
@@ -39,7 +39,11 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                         const { key: rowKey, ...getRowProps } = row.getRowProps()
 
                         return (
-                            <tr key={rowKey} {...getRowProps} className={index === data.length - 1 ? '' : 'border-b'}>
+                            <tr
+                                key={rowKey}
+                                {...getRowProps}
+                                className={index === data.length - 1 ? '' : 'border-b border-table-grey'}
+                            >
                                 {row.cells.map((cell) => {
                                     const { key: cellKey, ...getCellProps } = cell.getCellProps()
                                     return (
