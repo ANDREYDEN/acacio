@@ -2,7 +2,7 @@ import ErrorMessage from '@components/ErrorMessage'
 import Loader from '@components/Loader'
 import { useMounted } from '@lib/hooks'
 import { useSupabaseGetEmployees } from '@lib/services/supabase'
-import { useGetEmployeesMonthlySalary } from '@lib/services/supabase/salaryService'
+import { useGetEmployeesMonthlyWorkHours } from '@lib/services/supabase/salaryService'
 import { NextPage } from 'next'
 
 const Salary: NextPage = () => {
@@ -15,27 +15,31 @@ const Salary: NextPage = () => {
     } = useSupabaseGetEmployees()
 
     const {
-        data: salaryTotals,
-        loading: salaryTotalsLoading,
-        error: salaryTotalsError,
-    } = useGetEmployeesMonthlySalary()
+        data: workHoursTotals,
+        loading: workHoursTotalsLoading,
+        error: workHoursTotalsError,
+    } = useGetEmployeesMonthlyWorkHours()
     
-    if (!mounted || employeesLoading || salaryTotalsLoading) {
+    if (!mounted || employeesLoading || workHoursTotalsLoading) {
         return <Loader />
     }
 
-    if (employeesError || salaryTotalsError) {
-        return <ErrorMessage message={employeesError || salaryTotalsError} />
+    if (employeesError || workHoursTotalsError) {
+        return <ErrorMessage message={employeesError || workHoursTotalsError} />
     }
 
     return <>
         <h3>Salary</h3>
-        {employees.map(employee => (
-            <>
-                <h4>{employee.first_name}</h4>
-                <span>{(salaryTotals.find(st => st.employee_id === employee.id)?.total_salary ?? 0) * employee.salary}UAH</span>
+        {employees.map(employee => {
+            const workHoursTotal = workHoursTotals.find(st => st.employee_id === employee.id)?.total_work_hours ?? 0
+            const salaryTotal = workHoursTotal * employee.salary
+            return <>
+                <h4>Name: {employee.first_name}</h4>
+                <div>Salary: {employee.salary}UAH</div>
+                <div>Hours Worked: {workHoursTotal}h</div>
+                <div>Total Salary: {salaryTotal}UAH</div>
             </>
-        ))}
+        })}
     </>
 }
 

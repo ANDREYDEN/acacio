@@ -1,4 +1,4 @@
-export interface MonthlySalaryDto {
+export interface MonthlyWorkHoursDto {
   employee_id: number
-  total_salary: number
+  total_work_hours: number
 }
