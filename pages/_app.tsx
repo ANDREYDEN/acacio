@@ -5,8 +5,11 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Menu from '@components/Menu'
 import { appWithTranslation } from 'next-i18next'
+import { useUpdateAuthCookie } from '@lib/hooks'
 
 function MyApp({ Component, pageProps }: AppProps) {
+    useUpdateAuthCookie()
+
     return (
         <Menu>
             <Head>

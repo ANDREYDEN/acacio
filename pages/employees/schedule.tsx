@@ -1,17 +1,18 @@
+import { ScheduleTableRow } from '@interfaces'
+import { useMounted } from '@lib/hooks'
+import { enforceAuthenticated, getMonthDays } from '@lib/utils'
+import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@services/supabase'
+import { definitions } from '@types'
 import dayjs from 'dayjs'
 import { NextPage } from 'next'
 import { useCallback, useMemo, useState } from 'react'
 import ScheduleTable from '../../components/employees/schedule/ScheduleTable'
 import Loader from '../../components/Loader'
-import { ScheduleTableRow } from '@interfaces'
-import { useMounted, useUser } from '@lib/hooks'
-import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@services/supabase'
-import { getMonthDays } from '@lib/utils'
-import { definitions } from '@types'
+
+export const getServerSideProps = enforceAuthenticated()
 
 const Shifts: NextPage = () => {
     const { mounted } = useMounted()
-    const user = useUser()
 
     // a dayjs object that represents the current month and year
     const [month, setMonth] = useState(dayjs())
@@ -105,7 +106,7 @@ const Shifts: NextPage = () => {
         }), 
     [employees, matchingShift, monthTotalByEmployee])
   
-    if (!mounted || !user || employeesLoading) {
+    if (!mounted || employeesLoading) {
         return <Loader />
     }
 

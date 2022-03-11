@@ -1,18 +1,15 @@
-import React, { useState } from 'react'
+import { supabase } from '@client'
+import ErrorMessage from '@components/ErrorMessage'
+import Loader from '@components/Loader'
+import LoginForm from '@components/LoginForm'
+import { useMounted } from '@lib/hooks'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { supabase } from '@client'
-import { useMounted, useUser } from '@lib/hooks'
-import LoginForm from '@components/LoginForm'
-import ErrorMessage from '@components/ErrorMessage'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import Loader from '@components/Loader'
+import React, { useState } from 'react'
 
 export const getServerSideProps = async (context: any) => ({
     props: {
@@ -25,14 +22,7 @@ const Login: NextPage = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string>('')
     const router = useRouter()
-    const user = useUser()
     const { t } = useTranslation('login')
-
-    useEffect(() => {
-        if (user) {
-            router.replace('/employees')
-        }
-    }, [user, router])
 
     const handleLogin = async (email: string, password: string) => {
         try {
