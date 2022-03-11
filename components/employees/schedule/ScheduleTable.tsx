@@ -25,8 +25,8 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
                 accessor: 'total'
             },
             ...dateColumns.map((date) => ({
-                accessor: date.unix().toString(),
                 Header: date.format('dd, D'),
+                accessor: date.unix().toString(),
                 Cell: (cellState: any) => {
                     const matchingEmployee = cellState.cell.row.cells[0].value
           
@@ -42,9 +42,7 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
         [dateColumns, onCellSubmit]
     )
 
-    return (
-        <Table columns={columns} data={data} tableSpacing='px-1' />
-    )
+    return <Table columns={columns} data={data} tableSpacing='px-1' />
 }
 
 export default ScheduleTable
