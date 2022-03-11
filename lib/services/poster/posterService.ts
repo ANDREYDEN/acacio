@@ -1,7 +1,8 @@
 import axios from 'axios'
 import useSWR from 'swr'
 import { definitions } from '@types'
-import { MonthlyDeductionsDto } from '@interfaces'
+import { EmployeesMonthlyStatDto, MonthlyWorkHoursDto2 } from '@interfaces'
+import { Deduction, SalesData } from 'interfaces/Poster'
 
 export const posterInstance = axios.create({
     baseURL: 'https://joinposter.com/api/',
@@ -10,7 +11,7 @@ export const posterInstance = axios.create({
     }
 })
 
-async function apiGet(url: string) {
+async function posterGet(url: string) {
     const response = await axios.get(`/api/poster/${url}`)
     if (response.status === 400) {
         throw response.data.message
@@ -19,7 +20,7 @@ async function apiGet(url: string) {
 }
 
 export function usePosterGetEmployees() {
-    const { data, error } = useSWR('access.getEmployees', apiGet)
+    const { data, error } = useSWR('access.getEmployees', posterGet)
 
     const employeesError = error?.toString()
 
@@ -36,25 +37,23 @@ export function usePosterGetEmployees() {
     return { employees, employeesLoading: !employeesError && !employees, employeesError }
 }
 
-type deductionHookState = {
-    deductionsTotals: MonthlyDeductionsDto,
-    deductionsTotalsLoading: boolean,
-    deductionsTotalsError: any
-}
-
-export function usePosterGetDeductionsForEmployees(employees: definitions['employees'][]): deductionHookState {
-    const { data: wastes, error } = useSWR('storage.getWastes', apiGet)
+export function usePosterGetDeductionsForEmployees(employees: definitions['employees'][]) {
+    const { data: wastes, error } = useSWR<Deduction[]>('storage.getWastes', posterGet)
 
     const deductionsTotalsError = error?.toString()
 
     if (!wastes) {
-        return { deductionsTotals: {}, deductionsTotalsLoading: !deductionsTotalsError, deductionsTotalsError }
+        return { 
+            deductionsTotals: {} as EmployeesMonthlyStatDto, 
+            deductionsTotalsLoading: !deductionsTotalsError, 
+            deductionsTotalsError 
+        }
     }
 
-    const deductionsTotals: MonthlyDeductionsDto = wastes.reduce((acc: MonthlyDeductionsDto, deduction: any) => {
+    const deductionsTotals: EmployeesMonthlyStatDto = wastes.reduce((acc: EmployeesMonthlyStatDto, deduction) => {
         const employee = employees.find(employee => 
             deduction.reason_name.toLowerCase().includes(employee.first_name.toLowerCase()) || 
-            deduction.reason_name.toLowerCase().includes(employee.last_name?.toLowerCase()))
+            deduction.reason_name.toLowerCase().includes(employee.last_name?.toLowerCase() ?? ''))
         if (!employee) return acc
         
         return {
@@ -67,5 +66,35 @@ export function usePosterGetDeductionsForEmployees(employees: definitions['emplo
         deductionsTotals, 
         deductionsTotalsLoading: !deductionsTotalsError && !deductionsTotals, 
         deductionsTotalsError
+    }
+}
+
+export function usePosterGetSalesIncomeForEmployees(employees: definitions['employees'][], shiftDurations: MonthlyWorkHoursDto2) {
+    const { data: sales, error } = useSWR<SalesData>('dash.getAnalytics', posterGet)
+
+    const salesIncomeTotalsError = error?.toString()
+
+    if (!sales) {
+        return { 
+            salesIncomeTotals: {} as EmployeesMonthlyStatDto, 
+            salesIncomeTotalsLoading: !salesIncomeTotalsError, 
+            salesIncomeTotalsError 
+        }
+    }
+
+    const salesIncomeTotals: EmployeesMonthlyStatDto = {}
+
+    for (const employee of employees) {
+        salesIncomeTotals[employee.id] = (shiftDurations[employee.id] ?? [])
+            .reduce(
+                (total, duration, day) => total + duration * employee.income_percentage * (+sales.data[day]), 
+                0
+            )
+    }
+
+    return { 
+        salesIncomeTotals, 
+        salesIncomeTotalsLoading: !salesIncomeTotalsError && !salesIncomeTotals, 
+        salesIncomeTotalsError
     }
 }
