@@ -138,7 +138,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
                 trigger={trigger}
             />
             <Button
-                label={employee ? t('general.save') : t('add_employee')}
+                label={employee ? t('save',{ ns: 'common' }) : t('add_employee')}
                 loading={loading}
                 buttonClass='w-full'
             />
