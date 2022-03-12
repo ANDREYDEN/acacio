@@ -18,7 +18,7 @@ const AppRoutes: AppRoutesType = {
         iconFilled: <User filled={true} />,
         subRoutes: {
             Employees: '',
-            Schedule: '/schedule',
+            Shifts: '/schedule',
             Salary: '/salary',
         }
     },

@@ -16,26 +16,26 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data, roles }: IEmployeeTabl
     const columns: Column<IEmployeesTableRow>[] = useMemo(
         () => [
             {
-                Header: t('table_headers.name').toString(),
+                Header: <h6>{t('table_headers.name').toString()}</h6>,
                 accessor: 'name',
             },
             {
-                Header: t('table_headers.role').toString(),
+                Header: <h6>{t('table_headers.role').toString()}</h6>,
                 accessor: 'roleId',
                 Cell: ({ value: roleId }: { value: number }) => <span>{roles.find(role => role.id === roleId)?.name}</span>
             },
             {
-                Header: t('table_headers.birth_date').toString(),
+                Header: <h6>{t('table_headers.birth_date').toString()}</h6>,
                 accessor: 'birthDate',
                 Cell: ({ value: birthDate }: { value: string }) => <span>{birthDate}</span>
             },
             {
-                Header: t('table_headers.salary').toString(),
+                Header: <h6>{t('table_headers.salary').toString()}</h6>,
                 accessor: 'salary',
                 Cell: ({ value: salary }: { value: number }) => <span>{salary}</span>
             },
             {
-                Header: t('table_headers.revenue_percentage').toString(),
+                Header: <h6>{t('table_headers.revenue_percentage').toString()}</h6>,
                 accessor: 'revenuePercentage',
                 Cell: ({ value: revenuePercentage }: { value: number }) => <span>{revenuePercentage}%</span>
             },

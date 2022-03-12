@@ -16,16 +16,19 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
     const columns: Column<ScheduleTableRow>[] = useMemo(
         () => [
             {
-                Header: 'Name',
+                Header: <h6>Name</h6>,
                 accessor: 'employee',
                 Cell: ({ value: employee }: { value: definitions['employees'] }) => <b>{employee?.first_name ?? 'Some Employee'}</b>
             },
             {
-                Header: 'Month Total',
+                Header: <h6>Month Total</h6>,
                 accessor: 'total'
             },
             ...dateColumns.map((date) => ({
-                Header: date.format('dd, D'),
+                Header: <div className='flex flex-col items-center'>
+                    <p className='font-light'>{date.format('dd')}</p>
+                    <h6>{date.format('DD')}</h6>
+                </div>,
                 accessor: date.unix().toString(),
                 Cell: (cellState: any) => {
                     const matchingEmployee = cellState.cell.row.cells[0].value

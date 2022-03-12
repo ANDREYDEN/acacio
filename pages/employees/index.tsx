@@ -128,7 +128,7 @@ const Employees: NextPage = () => {
         return t('deletion_modal.message', { employeeName, ns: 'employees' })
     }
 
-    const handleExport = () => {
+    const handleExport = async () => {
         const columns: Partial<Column>[] = [
             { key: 'first_name', header: 'First Name' },
             { key: 'last_name', header: 'Last Name' },
@@ -136,7 +136,7 @@ const Employees: NextPage = () => {
             { key: 'salary', header: 'Salary' },
             { key: 'income_percentage', header: 'Income %' }
         ]
-        exportToXLSX(employees, columns, 'employees')
+        await exportToXLSX(employees, columns, 'Employees')
     }
 
     return (
@@ -177,7 +177,7 @@ const Employees: NextPage = () => {
                     <Button 
                         label={t('export', { ns: 'common' })} 
                         variant='secondary' 
-                        buttonClass='w-56' 
+                        buttonClass='w-56'
                         onClick={handleExport}
                     />
                     <Button
@@ -187,6 +187,7 @@ const Employees: NextPage = () => {
                     />
                 </div>
             </div>
+
             <EmployeesTable data={tableData} roles={employeeRoles} />
         </div>
     )

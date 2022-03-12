@@ -14,7 +14,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
     })
 
     return (
-        <div className='border border-table-grey rounded-lg w-full'>
+        <div className='border border-table-grey rounded-lg w-full overflow-x-scroll'>
             <table {...getTableProps()} className='w-full'>
                 <thead>
                     <tr>
@@ -27,7 +27,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                                     {...getHeaderProps}
                                     className={`py-6 text-left border-b border-table-grey ${tableSpacing}`}
                                 >
-                                    <h6>{header.render('Header')}</h6>
+                                    {header.render('Header')}
                                 </th>
                             )
                         })}
