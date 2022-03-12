@@ -1,17 +1,29 @@
 import dayjs from 'dayjs'
 import { NextPage } from 'next'
-import { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import ScheduleTable from '@components/employees/schedule/ScheduleTable'
 import Loader from '@components/Loader'
 import { ScheduleTableRow } from '@interfaces'
 import { useMounted, useUser } from '@lib/hooks'
-import { useSupabaseDeleteEntity, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@services/supabase'
+import {
+    useSupabaseDeleteEntity,
+    useSupabaseGetEmployees,
+    useSupabaseGetShifts,
+    useSupabaseUpsertEntity
+} from '@services/supabase'
 import { getMonthDays } from '@lib/utils'
 import { definitions } from '@types'
+import ErrorMessage from '@components/ErrorMessage'
+import { useTranslation } from 'next-i18next'
+import Button from '@components/Button'
+import { Column } from 'exceljs'
+import exportToXLSX from '@services/exportService'
+import { ChevronLeft, ChevronRight } from 'react-iconly'
 
 const Shifts: NextPage = () => {
     const { mounted } = useMounted()
     const user = useUser()
+    const { t } = useTranslation('schedule')
 
     // a dayjs object that represents the current month and year
     const [month, setMonth] = useState(dayjs())
@@ -82,10 +94,7 @@ const Shifts: NextPage = () => {
         revalidateShifts()
     }
 
-    // TODO: fetch appropriate data based on updated designs (rn it's showing 2 tables)
     const monthDays = getMonthDays(month)
-    const firstHalfOfMonth = monthDays.slice(0, 15)
-    const secondHalfOfMonth = monthDays.slice(15)
   
     const getTableData = useCallback((dateRange: dayjs.Dayjs[]): ScheduleTableRow[] => 
         employees.map((employee) => {
@@ -104,40 +113,55 @@ const Shifts: NextPage = () => {
             return row
         }), 
     [employees, matchingShift, monthTotalByEmployee])
-  
+
+    const handleExport = async () => {
+        const columns: Partial<Column>[] = [
+            // TODO: define columns
+        ]
+        await exportToXLSX(shifts, columns, 'Shifts')
+    }
+    
     if (!mounted || !user || employeesLoading) {
         return <Loader />
     }
 
     return (
-        <div className="flex flex-col items-center justify-center py-2">
-            {shiftsError && (<div>Error fetching shifts: {shiftsError}</div>)}
-            {employeesError && (<div>Error fetching employees: {employeesError}</div>)}
-            {upsertShiftError && (<div>Error adding shift: {upsertShiftError}</div>)}
-            {deleteShiftError && (<div>Error deleting shift: {deleteShiftError}</div>)}
-            <div>
-                <div className="flex flex-col flex-wrap items-center justify-around mt-6">
-                    {(shiftsLoading || upsertShiftLoading || deleteShiftLoading) && 'Loading...'}
+        <div className='flex flex-col items-center py-2 lg:mr-20 mr-10 mb-8'>
+            {shiftsError && (<ErrorMessage message={`Error fetching shifts: ${shiftsError}`} />)}
+            {employeesError && (<ErrorMessage message={`Error fetching employees: ${employeesError}`} />)}
+            {upsertShiftError && (<ErrorMessage message={`Error adding shift: ${upsertShiftError}`} />)}
+            {deleteShiftError && (<ErrorMessage message={`Error deleting shift: ${deleteShiftError}`} />)}
+            {(shiftsLoading || upsertShiftLoading || deleteShiftLoading) && 'Loading...'}
 
-                    <div>
-                        <button className='border-2 p-1' onClick={() => setMonth(month.subtract(1, 'month'))}>{'<'}</button>
-                        <span className='w-32'>{month.format('MMMM YYYY')}</span>
-                        <button className='border-2 p-1' onClick={() => setMonth(month.add(1, 'month'))}>{'>'}</button>
-                    </div>
-
-                    <ScheduleTable 
-                        dateColumns={firstHalfOfMonth} 
-                        data={getTableData(firstHalfOfMonth)} 
-                        onCellSubmit={modifyShiftAndReload}
-                    />
-
-                    <ScheduleTable 
-                        dateColumns={secondHalfOfMonth} 
-                        data={getTableData(secondHalfOfMonth)} 
-                        onCellSubmit={modifyShiftAndReload}
+            <div className='w-full flex justify-between mb-8'>
+                <div>
+                    <h3>{t('header')}</h3>
+                    <span className='font-bold'>{month.format('MMMM, YYYY')}</span>
+                </div>
+                
+                <div className='flex items-center'>
+                    <button
+                        className='w-14 h-11 border border-r-0 border-grey rounded-bl-md rounded-tl-md'
+                        onClick={() => setMonth(month.subtract(1, 'month'))}
+                    >{<ChevronLeft style={{ marginLeft: 15 }} />}</button>
+                    <button
+                        className='w-14 h-11 border border-grey rounded-br-md rounded-tr-md'
+                        onClick={() => setMonth(month.add(1, 'month'))}
+                    >{<ChevronRight style={{ marginLeft: 15 }} />}</button>
+                    <Button
+                        label={t('export', { ns: 'common' })}
+                        variant='secondary'
+                        buttonClass='w-52 ml-8'
+                        onClick={handleExport}
                     />
                 </div>
             </div>
+
+            <ScheduleTable
+                dateColumns={monthDays}
+                data={getTableData(monthDays)}
+                onCellSubmit={modifyShiftAndReload}
+            />
         </div>
     )
 }
