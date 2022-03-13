@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import ScheduleTable from '@components/employees/schedule/ScheduleTable'
 import Loader from '@components/Loader'
 import { ScheduleTableRow } from '@interfaces'
-import { useMounted, useUser } from '@lib/hooks'
+import { useMounted } from '@lib/hooks'
 import {
     useSupabaseDeleteEntity,
     useSupabaseGetEmployees,
@@ -22,16 +22,16 @@ import { ChevronLeft, ChevronRight } from 'react-iconly'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import 'dayjs/locale/ru'
+import { enforceAuthenticated } from '@lib/utils'
 
-export const getServerSideProps = async (context: any) => ({
+export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
         ...await serverSideTranslations(context.locale, ['schedule', 'common']),
     },
-})
+}))
 
 const Shifts: NextPage = () => {
     const { mounted } = useMounted()
-    const user = useUser()
     const { t } = useTranslation('schedule')
     const router = useRouter()
 
@@ -90,18 +90,18 @@ const Shifts: NextPage = () => {
 
             shift.id = existingShift.id
             if (shift.duration === 0) {
-                revalidateShifts(shifts.filter((s) => s.id !== shift.id))
+                await revalidateShifts(shifts.filter((s) => s.id !== shift.id))
                 await deleteShift(shift.id)
             } else {
-                revalidateShifts([...shifts, shift])
+                await revalidateShifts([...shifts, shift])
                 await upsertShift(shift)    
             }
         } else {
             delete shift['id']
-            revalidateShifts([...shifts, shift])
+            await revalidateShifts([...shifts, shift])
             await upsertShift(shift)
         }
-        revalidateShifts()
+        await revalidateShifts()
     }
 
     const monthDays = getMonthDays(month)
@@ -130,8 +130,8 @@ const Shifts: NextPage = () => {
         ]
         await exportToXLSX(shifts, columns, 'Shifts')
     }
-    
-    if (!mounted || !user || employeesLoading) {
+
+    if (!mounted || employeesLoading) {
         return <Loader />
     }
 
@@ -151,7 +151,7 @@ const Shifts: NextPage = () => {
                         {month.format('MMMM').slice(1)}, {month.format('YYYY')}
                     </span>
                 </div>
-                
+
                 <div className='flex items-center'>
                     <button
                         className='w-14 h-11 border border-r-0 border-grey rounded-bl-md rounded-tl-md'

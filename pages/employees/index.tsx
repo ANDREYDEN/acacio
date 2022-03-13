@@ -20,12 +20,13 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useMemo, useState } from 'react'
 import exportToXLSX from '@lib/services/exportService'
 import { Column } from 'exceljs'
+import { enforceAuthenticated } from '@lib/utils'
 
-export const getServerSideProps = async (context: any) => ({
+export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
         ...await serverSideTranslations(context.locale, ['employees', 'common']),
     },
-})
+}))
 
 const Employees: NextPage = () => {
     const { mounted } = useMounted()
