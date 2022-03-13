@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { posterInstance } from '@services/poster'
+import dayjs from 'dayjs'
 
 export default async function handler(
     req: NextApiRequest,
@@ -7,7 +8,12 @@ export default async function handler(
 ) {
     const { route } = req.query
     try {
-        const { data } = await posterInstance.get(route as string)
+        const { data } = await posterInstance.get(route as string, {
+            params: {
+                dateFrom: dayjs().startOf('month').format('YYYYMMDD'),
+                dateTo: dayjs().endOf('month').format('YYYYMMDD')
+            }
+        })
         if (data.error) throw data.error
         res.status(200).json(data.response)
     } catch(e: any) {

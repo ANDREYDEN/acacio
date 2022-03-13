@@ -1,11 +1,13 @@
-import axios from 'axios'
-import useSWR from 'swr'
+import { EmployeesMonthlyStatDto } from '@interfaces'
 import { definitions } from '@types'
-import { EmployeesMonthlyStatDto, MonthlyWorkHoursDto2 } from '@interfaces'
+import axios from 'axios'
+import dayjs from 'dayjs'
 import { Deduction, SalesData } from 'interfaces/Poster'
+import useSWR from 'swr'
 
 export const posterInstance = axios.create({
-    baseURL: 'https://joinposter.com/api/',
+    // baseURL: 'https://joinposter.com/api/',
+    baseURL: 'https://401524cc-8270-41bd-9bab-118833a6d3cd.mock.pstmn.io',
     params: {
         token: process.env.NEXT_POSTER_ACCESS_TOKEN ?? ''
     }
@@ -17,24 +19,6 @@ async function posterGet(url: string) {
         throw response.data.message
     }
     return response.data
-}
-
-export function usePosterGetEmployees() {
-    const { data, error } = useSWR('access.getEmployees', posterGet)
-
-    const employeesError = error?.toString()
-
-    if (!data) {
-        return { employees: [], employeesLoading: !employeesError, employeesError }
-    }
-
-    const employees: Partial<definitions['employees']>[] = data.map((e: any, i: number) => ({
-        id: i,
-        first_name: e.name,
-        last_name: e.name
-    }))
-
-    return { employees, employeesLoading: !employeesError && !employees, employeesError }
 }
 
 export function usePosterGetDeductionsForEmployees(employees: definitions['employees'][]) {
@@ -69,7 +53,10 @@ export function usePosterGetDeductionsForEmployees(employees: definitions['emplo
     }
 }
 
-export function usePosterGetSalesIncomeForEmployees(employees: definitions['employees'][], shiftDurations: MonthlyWorkHoursDto2) {
+export function usePosterGetSalesIncomeForEmployees(
+    employees: definitions['employees'][], 
+    shifts: definitions['shifts'][]
+) {
     const { data: sales, error } = useSWR<SalesData>('dash.getAnalytics', posterGet)
 
     const salesIncomeTotalsError = error?.toString()
@@ -85,9 +72,17 @@ export function usePosterGetSalesIncomeForEmployees(employees: definitions['empl
     const salesIncomeTotals: EmployeesMonthlyStatDto = {}
 
     for (const employee of employees) {
-        salesIncomeTotals[employee.id] = (shiftDurations[employee.id] ?? [])
+        salesIncomeTotals[employee.id] = sales.data
             .reduce(
-                (total, duration, day) => total + duration * employee.income_percentage * (+sales.data[day]), 
+                (total, dateSales, date) => {
+                    const currentDay = dayjs().set('date', date + 1)
+                    console.log({ e: employee.first_name, date: date + 1, shifts: shifts.filter(shift => employee.id === shift.employee_id) })
+                    
+                    const workHours = shifts
+                        .find(shift => employee.id === shift.employee_id && dayjs(shift.date).isSame(currentDay, 'date'))
+                        ?.duration ?? 0
+                    return total + workHours * (employee.income_percentage / 100) * (+dateSales)
+                }, 
                 0
             )
     }

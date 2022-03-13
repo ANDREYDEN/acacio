@@ -2,17 +2,12 @@ import ErrorMessage from '@components/ErrorMessage'
 import Loader from '@components/Loader'
 import { useMounted } from '@lib/hooks'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { useGetEmployeesMonthlyWorkHours, useSupabaseGetBonuses, useSupabaseGetEmployees } from '@lib/services/supabase'
+import { useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts } from '@lib/services/supabase'
+import dayjs from 'dayjs'
 import { NextPage } from 'next'
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
-
-    const {
-        data: bonuses, 
-        loading: bonusesLoading, 
-        error: bonusesError,
-    } = useSupabaseGetBonuses()
 
     const {
         data: employees, 
@@ -21,10 +16,16 @@ const Salary: NextPage = () => {
     } = useSupabaseGetEmployees()
 
     const {
-        data: workHoursTotals,
-        loading: workHoursTotalsLoading,
-        error: workHoursTotalsError,
-    } = useGetEmployeesMonthlyWorkHours()
+        data: bonuses, 
+        loading: bonusesLoading, 
+        error: bonusesError,
+    } = useSupabaseGetBonuses()
+
+    const {
+        data: shifts, 
+        loading: shiftsLoading, 
+        error: shiftsError,
+    } = useSupabaseGetShifts(dayjs())
 
     const {
         deductionsTotals,
@@ -36,21 +37,21 @@ const Salary: NextPage = () => {
         salesIncomeTotals,
         salesIncomeTotalsLoading,
         salesIncomeTotalsError,
-    } = usePosterGetSalesIncomeForEmployees(employees, []) // TODO: get shifts hours
+    } = usePosterGetSalesIncomeForEmployees(employees, shifts)
     
     
     const loading = 
         employeesLoading || 
+        shiftsLoading || 
         bonusesLoading || 
-        workHoursTotalsLoading || 
         deductionsTotalsLoading || 
         salesIncomeTotalsLoading
     if (!mounted || loading) return <Loader />
     
     const error = 
         employeesError ||
+        shiftsError ||
         bonusesError || 
-        workHoursTotalsError || 
         deductionsTotalsError || 
         salesIncomeTotalsError
     if (error) return <ErrorMessage message={error} />
@@ -58,7 +59,10 @@ const Salary: NextPage = () => {
     return <>
         <h3>Salary</h3>
         {employees.map(employee => {
-            const workHoursTotal = workHoursTotals.find(st => st.employee_id === employee.id)?.total_work_hours ?? 0
+            const workHoursTotal = shifts.reduce(
+                (acc, shift) => acc + (shift.employee_id === employee.id ? shift.duration : 0),
+                0
+            )
             const salaryTotal = workHoursTotal * employee.salary
             const deductionsTotal = deductionsTotals[employee.id] ?? 0
             const salesIncomeTotal = salesIncomeTotals[employee.id] ?? 0
@@ -74,8 +78,8 @@ const Salary: NextPage = () => {
                 <div>Total Salary: {salaryTotal}UAH</div>
                 <div>Deductions: {deductionsTotal}</div>
                 <div>Bonus: {bonusesTotal}</div>
-                <div>Sales Income: {salesIncomeTotal}</div>
-                <div>Total Income: {incomeTotal}</div>
+                <div>Sales Income: {salesIncomeTotal.toFixed(2)}</div>
+                <div>Total Income: {incomeTotal.toFixed(2)}</div>
             </>
         })}
     </>
