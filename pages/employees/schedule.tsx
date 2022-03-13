@@ -93,7 +93,7 @@ const Shifts: NextPage = () => {
                 await revalidateShifts(shifts.filter((s) => s.id !== shift.id))
                 await deleteShift(shift.id)
             } else {
-                await revalidateShifts([...shifts, shift])
+                await revalidateShifts(shifts.map((s) => s.id === shift.id ? shift : s))
                 await upsertShift(shift)    
             }
         } else {

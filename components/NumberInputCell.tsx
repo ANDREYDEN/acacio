@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
-interface IScheduleTableCell {
+interface INumberInputCell {
   value: number
   onBlur: (newValue: number) => void
 }
 
-const ScheduleTableCell: React.FC<IScheduleTableCell> = ({ value, onBlur }) => {
+const NumberInputCell: React.FC<INumberInputCell> = ({ value, onBlur }) => {
     const [cellValue, setCellValue] = useState<number>(value)
 
     return <input 
@@ -17,4 +17,4 @@ const ScheduleTableCell: React.FC<IScheduleTableCell> = ({ value, onBlur }) => {
     />
 }
 
-export default ScheduleTableCell
+export default NumberInputCell

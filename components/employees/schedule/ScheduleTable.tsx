@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { Column } from 'react-table'
 import { ScheduleTableRow } from '@interfaces'
 import { definitions } from '@types'
-import ScheduleTableCell from './ScheduleTableCell'
+import NumberInputCell from '../../NumberInputCell'
 import Table from '@components/Table'
 import { useTranslation } from 'next-i18next'
 
@@ -39,7 +39,7 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
                 Cell: (cellState: any) => {
                     const matchingEmployee = cellState.cell.row.cells[0].value
           
-                    return <ScheduleTableCell value={cellState.value} onBlur={(cellValue: number) => onCellSubmit({
+                    return <NumberInputCell value={cellState.value} onBlur={(cellValue: number) => onCellSubmit({
                         id: 0,
                         employee_id: matchingEmployee.id,
                         duration: cellValue,
