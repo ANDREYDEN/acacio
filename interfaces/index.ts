@@ -1,4 +1,5 @@
 export * from './Menu'
 export * from './Schedule'
-export * from './Table'
+export * from './Action'
 export * from './Dropdown'
+export * from './Employees'

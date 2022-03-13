@@ -1,6 +1,12 @@
 {
   "header": "Employees",
-  "table_headers": ["Name", "Role", "Birth date", "Salary", "Revenue %", "", ""],
+  "table_headers": {
+    "name": "Name",
+    "role": "Role",
+    "birth_date": "Birth date",
+    "salary": "Salary",
+    "revenue_percentage": "Revenue %"
+  },
   "add_employee": "Add employee",
   "edit_employee": "Edit employee",
   "modal": {

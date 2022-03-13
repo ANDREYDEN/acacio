@@ -1,0 +1,7 @@
+{
+  "header": "Shifts timesheet",
+  "table": {
+    "name": "Name",
+    "total": "Total hours"
+  }
+}
