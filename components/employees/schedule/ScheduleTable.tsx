@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { Column } from 'react-table'
 import { ScheduleTableRow } from '@interfaces'
 import { definitions } from '@types'
-import NumberInputCell from '../../NumberInputCell'
+import NumberInputCell from '../../tableCells/NumberInputCell'
 import Table from '@components/Table'
 import { useTranslation } from 'next-i18next'
 
