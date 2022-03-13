@@ -2,11 +2,11 @@ import { NextPage } from 'next'
 import { useMemo } from 'react'
 import { posterInstance } from '@services/poster'
 import { Column, useSortBy, useTable } from 'react-table'
-import { snakeCaseToPascalCase } from '@lib/utils'
+import { enforceAuthenticated, snakeCaseToPascalCase } from '@lib/utils'
 import { Ingredient } from '@lib/posterTypes'
 import ErrorMessage from '@components/ErrorMessage'
 
-export async function getServerSideProps() {
+export const getServerSideProps = enforceAuthenticated(async () => {
     try {
         const { data } = await posterInstance.get('storage.getReportMovement')
         if (data.error) throw data.error
@@ -25,7 +25,7 @@ export async function getServerSideProps() {
             }
         }
     }  
-}
+})
 
 type IngredientsMovementProps = {
   ingredients: Ingredient[],

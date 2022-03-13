@@ -9,8 +9,8 @@ const ScheduleTableCell: React.FC<IScheduleTableCell> = ({ value, onBlur }) => {
     const [cellValue, setCellValue] = useState<number>(value)
 
     return <input 
-        className='w-10 border-2'
-        type="number" 
+        className='w-6 h-10 text-center border border-table-grey rounded'
+        type='number'
         value={cellValue} 
         onChange={(e) => setCellValue(+e.target.value)}
         onBlur={() => onBlur(cellValue)}
