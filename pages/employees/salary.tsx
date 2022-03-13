@@ -1,28 +1,13 @@
 import ErrorMessage from '@components/ErrorMessage'
 import Loader from '@components/Loader'
+import NumberInputCell from '@components/NumberInputCell'
 import { useMounted } from '@lib/hooks'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts } from '@lib/services/supabase'
+import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
+import { definitions } from '@types'
 import dayjs from 'dayjs'
 import { NextPage } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
-import dayjs from 'dayjs'
-import { Button, SalaryTable, ErrorMessage, Loader, BonusCommentModal } from '@components'
-import { IBonusInput, SalaryTableRow } from '@interfaces'
-import { useMounted } from '@lib/hooks'
-import exportToXLSX from '@lib/services/exportService'
-import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { capitalizeWord, enforceAuthenticated, fullName, modifyEntityAndReload } from '@lib/utils'
-import { definitions } from '@types'
-import { useSupabaseDeleteEntity, useSupabaseGetShifts, useSupabaseUpsertEntity, useSupabaseGetEntity } from '@lib/services/supabase'
-
-export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
-    props: {
-        ...await serverSideTranslations(context.locale, ['salary', 'common']),
-    },
-}))
+import { useCallback } from 'react'
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
@@ -37,7 +22,20 @@ const Salary: NextPage = () => {
         data: bonuses, 
         loading: bonusesLoading, 
         error: bonusesError,
+        mutate: revalidateBonuses
     } = useSupabaseGetBonuses()
+
+    const {
+        upsertEntity: upsertBonus,
+        loading: upsertBonusLoading,
+        error: upsertBonusError
+    } = useSupabaseUpsertEntity('bonuses')
+
+    const {
+        deleteEntity: deleteBonus,
+        loading: deleteBonusLoading,
+        error: deleteBonusError
+    } = useSupabaseDeleteEntity('bonuses')
 
     const {
         data: shifts, 
@@ -57,6 +55,25 @@ const Salary: NextPage = () => {
         salesIncomeTotalsError,
     } = usePosterGetSalesIncomeForEmployees(employees, shifts)
     
+    const matchingBonus = useCallback((employeeId) => {
+        return bonuses.find(bonus => bonus.employee_id === employeeId)
+    }, [bonuses])
+
+    const modifyBonusAndReload = async (bonus: Partial<definitions['bonuses']>) => {
+        if (bonus.id) {
+            if (bonus.amount === 0) {
+                await revalidateBonuses(bonuses.filter(b => b.id !== bonus.id))
+                await deleteBonus(bonus.id)
+            } else {
+                await revalidateBonuses(bonuses.map(b => b.id === bonus.id ? bonus : b))
+                await upsertBonus(bonus)
+            }
+        } else {
+            await revalidateBonuses([...bonuses, bonus])
+            await upsertBonus(bonus)
+        }
+        await revalidateBonuses()
+    }
     
     const loading = 
         employeesLoading || 
@@ -76,6 +93,8 @@ const Salary: NextPage = () => {
 
     return <>
         <h3>Salary</h3>
+        {upsertBonusLoading || deleteBonusLoading && <Loader />}
+        {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
         {employees.map(employee => {
             const workHoursTotal = shifts.reduce(
                 (acc, shift) => acc + (shift.employee_id === employee.id ? shift.duration : 0),
@@ -84,18 +103,22 @@ const Salary: NextPage = () => {
             const salaryTotal = workHoursTotal * employee.salary
             const deductionsTotal = deductionsTotals[employee.id] ?? 0
             const salesIncomeTotal = salesIncomeTotals[employee.id] ?? 0
-            const bonusesTotal = bonuses.reduce(
-                (acc, bonus) => acc + (bonus.employee_id === employee.id ? bonus.amount : 0), 
-                0
-            )
-            const incomeTotal = salaryTotal + salesIncomeTotal + bonusesTotal - deductionsTotal
+            const bonus = matchingBonus(employee.id)
+            const bonusAmount = bonus?.amount ?? 0
+            const incomeTotal = salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal
+
             return <>
                 <h4>Name: {employee.first_name}</h4>
                 <div>Salary: {employee.salary}UAH</div>
                 <div>Hours Worked: {workHoursTotal}h</div>
                 <div>Total Salary: {salaryTotal}UAH</div>
                 <div>Deductions: {deductionsTotal}</div>
-                <div>Bonus: {bonusesTotal}</div>
+                <div>
+                    Bonus: 
+                    <NumberInputCell 
+                        value={bonusAmount} 
+                        onBlur={amount => modifyBonusAndReload({ ...bonus, amount, employee_id: employee.id })} />
+                </div>
                 <div>Sales Income: {salesIncomeTotal.toFixed(2)}</div>
                 <div>Total Income: {incomeTotal.toFixed(2)}</div>
             </>
