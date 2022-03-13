@@ -75,7 +75,6 @@ export function usePosterGetSalesIncomeForEmployees(
             .reduce(
                 (total, dateSales, date) => {
                     const currentDay = dayjs().set('date', date + 1)
-                    console.log({ e: employee.first_name, date: date + 1, shifts: shifts.filter(shift => employee.id === shift.employee_id) })
                     
                     const workHours = shifts
                         .find(shift => employee.id === shift.employee_id && dayjs(shift.date).isSame(currentDay, 'date'))
