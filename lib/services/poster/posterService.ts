@@ -6,8 +6,7 @@ import { Deduction, SalesData } from 'interfaces/Poster'
 import useSWR from 'swr'
 
 export const posterInstance = axios.create({
-    // baseURL: 'https://joinposter.com/api/',
-    baseURL: 'https://401524cc-8270-41bd-9bab-118833a6d3cd.mock.pstmn.io',
+    baseURL: 'https://joinposter.com/api/',
     params: {
         token: process.env.NEXT_POSTER_ACCESS_TOKEN ?? ''
     }
