@@ -18,7 +18,7 @@ const AppRoutes: AppRoutesType = {
         iconFilled: <User filled={true} />,
         subRoutes: {
             Employees: '',
-            Schedule: '/schedule',
+            Shifts: '/schedule',
             Salary: '/salary',
         }
     },
@@ -43,7 +43,11 @@ const Menu: React.FC = ({ children }) => {
         router.replace('/')
     }
 
-    const is404Page = Object.values(AppRoutes).every(ar => ar.route !== currentRoute)
+    const is404Page = Object.values(AppRoutes).every(ar => {
+        if (!ar.subRoutes) return ar.route !== currentRoute
+
+        return Object.values(ar.subRoutes ?? []).every(sr => `${ar.route}${sr}` !== currentRoute)
+    })
     if (currentRoute === '/' || currentRoute === '/send-password-reset' || is404Page) {
         return (<>{ children }</>)
     }

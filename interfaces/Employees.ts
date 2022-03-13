@@ -1,11 +1,11 @@
-import { IRowAction } from './RowActions'
+import { IAction } from './Action'
 
 export interface IEmployeesTableRow {
     name: string
-    roleName: string
+    roleId: number
     birthDate: string
     salary: number
     revenuePercentage: number
-    editEmployee: IRowAction
-    deleteEmployee: IRowAction
+    editEmployee: IAction
+    deleteEmployee: IAction
 }

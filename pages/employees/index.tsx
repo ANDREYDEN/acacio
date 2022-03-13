@@ -4,17 +4,20 @@ import DeletionModal from '@components/DeletionModal'
 import EmployeeModal from '@components/employees/index/EmployeeModal'
 import ErrorMessage from '@components/ErrorMessage'
 import Loader from '@components/Loader'
-import Table from '@components/Table'
-import { IActionsList } from '@interfaces'
+import EmployeesTable from '@components/employees/index/EmployeesTable'
+import { IEmployeesTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import {
-    useSupabaseDeleteEntity, useSupabaseGetEmployeeRoles, useSupabaseGetEmployees, useSupabaseUpsertEntity
+    useSupabaseDeleteEntity,
+    useSupabaseGetEmployeeRoles,
+    useSupabaseGetEmployees,
+    useSupabaseUpsertEntity
 } from '@services/supabase'
 import { definitions } from '@types'
 import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import exportToXLSX from '@lib/services/exportService'
 import { Column } from 'exceljs'
 import { enforceAuthenticated } from '@lib/utils'
@@ -56,6 +59,33 @@ const Employees: NextPage = () => {
         error: deleteEmployeeError 
     } = useSupabaseDeleteEntity('employees')
 
+    const tableData: IEmployeesTableRow[] = useMemo(() =>
+        employees.map((employee) => {
+            const row = {
+                name: `${employee.first_name} ${employee.last_name}`,
+                roleId: employee.role_id,
+                birthDate: employee.birth_date ?? '',
+                salary: employee.salary,
+                revenuePercentage: employee.income_percentage,
+                editEmployee: {
+                    label: t('edit', { ns: 'common' }),
+                    action: () => {
+                        setEmployeeIdToEdit(employee.id)
+                        setShowEmployeeModal(true)
+                    }
+                },
+                deleteEmployee: {
+                    label: t('delete', { ns: 'common' }),
+                    action: () => { setEmployeeIdToDelete(employee.id) },
+                    textColor: 'error'
+                }
+            }
+
+            return row
+        }),
+    [employees, t]
+    )
+
     if (!mounted || employeesLoading || employeeRolesLoading || upsertEmployeeLoading || deleteEmployeeLoading) {
         return <Loader />
     }
@@ -63,14 +93,6 @@ const Employees: NextPage = () => {
     if (employeesError || employeeRolesError || upsertEmployeeError || deleteEmployeeError) {
         return <ErrorMessage message={employeesError || employeeRolesError || upsertEmployeeError || deleteEmployeeError} />
     }
-
-    const employeesActions: Array<IActionsList> = [
-        { label: t('edit', { ns: 'common' }), action: (id) => {
-            setEmployeeIdToEdit(id)
-            setShowEmployeeModal(true)
-        } },
-        { label: t('delete', { ns: 'common' }), action: (id) => { setEmployeeIdToDelete(id) }, textColor: 'error' }
-    ]
 
     const updateEmployees = async (newEmployee: Partial<definitions['employees']>) => {
         await revalidateEmployees([...employees, newEmployee])
@@ -107,7 +129,7 @@ const Employees: NextPage = () => {
         return t('deletion_modal.message', { employeeName, ns: 'employees' })
     }
 
-    const handleExport = () => {
+    const handleExport = async () => {
         const columns: Partial<Column>[] = [
             { key: 'first_name', header: 'First Name' },
             { key: 'last_name', header: 'Last Name' },
@@ -115,7 +137,7 @@ const Employees: NextPage = () => {
             { key: 'salary', header: 'Salary' },
             { key: 'income_percentage', header: 'Income %' }
         ]
-        exportToXLSX(employees, columns, 'employees')
+        await exportToXLSX(employees, columns, 'Employees')
     }
 
     return (
@@ -156,7 +178,7 @@ const Employees: NextPage = () => {
                     <Button 
                         label={t('export', { ns: 'common' })} 
                         variant='secondary' 
-                        buttonClass='w-56' 
+                        buttonClass='w-56'
                         onClick={handleExport}
                     />
                     <Button
@@ -166,11 +188,8 @@ const Employees: NextPage = () => {
                     />
                 </div>
             </div>
-            <Table
-                headers={t('table_headers', { returnObjects: true })}
-                data={employees}
-                actionsList={employeesActions}
-            />
+
+            <EmployeesTable data={tableData} roles={employeeRoles} />
         </div>
     )
 }
