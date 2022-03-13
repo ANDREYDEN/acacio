@@ -1,29 +1,32 @@
-import { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { supabase } from '@client'
-import { useMounted, useUser } from '@lib/hooks'
-import Loader from '@components/Loader'
 import Button from '@components/Button'
+import Loader from '@components/Loader'
+import { useMounted } from '@lib/hooks'
+import { enforceAuthenticated } from '@lib/utils'
+import { NextPage } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+
+export const getServerSideProps = enforceAuthenticated()
 
 const Settings: NextPage = () => {
     const { mounted } = useMounted()
-    const user = useUser()
     const router = useRouter()
+    const user = supabase.auth.user()
 
     const handleLogOut = async () => {
         await supabase.auth.signOut()
         router.replace('/')
     }
 
-    if (!user || !mounted) {
+    if (!mounted) {
         return <Loader />
     }
 
     return (
         <div className='text-center'>
             <div>
-                <p className='mb-4'><b>User Email:</b> {user.email}</p>
+                <p className='mb-4'><b>User Email:</b> {user?.email}</p>
                 <Button label='Log Out' onClick={handleLogOut} />
             </div>
             <div>
