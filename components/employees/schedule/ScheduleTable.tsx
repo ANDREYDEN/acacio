@@ -30,7 +30,9 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
             },
             ...dateColumns.map((date) => ({
                 Header: <div className='flex flex-col items-center'>
-                    <p className='font-light'>{date.format('dd')}</p>
+                    <p className='font-light'>
+                        {date.format('dd').at(0)?.toUpperCase()}{date.format('dd').slice(1)}
+                    </p>
                     <h6>{date.format('DD')}</h6>
                 </div>,
                 accessor: date.unix().toString(),
@@ -46,7 +48,7 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
                 }
             }))
         ],
-        [dateColumns, onCellSubmit]
+        [dateColumns, onCellSubmit, t]
     )
 
     return <Table columns={columns} data={data} tableSpacing='px-1' />

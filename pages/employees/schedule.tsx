@@ -20,6 +20,8 @@ import { Column } from 'exceljs'
 import exportToXLSX from '@services/exportService'
 import { ChevronLeft, ChevronRight } from 'react-iconly'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import 'dayjs/locale/ru'
 
 export const getServerSideProps = async (context: any) => ({
     props: {
@@ -31,9 +33,10 @@ const Shifts: NextPage = () => {
     const { mounted } = useMounted()
     const user = useUser()
     const { t } = useTranslation('schedule')
+    const router = useRouter()
 
     // a dayjs object that represents the current month and year
-    const [month, setMonth] = useState(dayjs())
+    const [month, setMonth] = useState(dayjs().locale(router.locale?.split('-').at(0) ?? 'en'))
 
     const { 
         data: shifts, 
@@ -143,7 +146,10 @@ const Shifts: NextPage = () => {
             <div className='w-full flex justify-between mb-8'>
                 <div>
                     <h3>{t('header')}</h3>
-                    <span className='font-bold'>{month.format('MMMM, YYYY')}</span>
+                    <span className='font-bold'>
+                        {month.format('MMMM').at(0)?.toUpperCase()}
+                        {month.format('MMMM').slice(1)}, {month.format('YYYY')}
+                    </span>
                 </div>
                 
                 <div className='flex items-center'>
