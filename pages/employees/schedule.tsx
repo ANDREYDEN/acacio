@@ -19,6 +19,13 @@ import Button from '@components/Button'
 import { Column } from 'exceljs'
 import exportToXLSX from '@services/exportService'
 import { ChevronLeft, ChevronRight } from 'react-iconly'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+
+export const getServerSideProps = async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['schedule', 'common']),
+    },
+})
 
 const Shifts: NextPage = () => {
     const { mounted } = useMounted()

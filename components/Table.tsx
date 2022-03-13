@@ -18,14 +18,16 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
             <table {...getTableProps()} className='w-full'>
                 <thead>
                     <tr>
-                        {headers.map((header) => {
+                        {headers.map((header, index) => {
                             const { key: headerKey, ...getHeaderProps } = header.getHeaderProps()
 
                             return (
                                 <th
                                     key={headerKey}
                                     {...getHeaderProps}
-                                    className={`py-6 text-left border-b border-table-grey ${tableSpacing}`}
+                                    className={`py-6 text-left border-b border-table-grey ${tableSpacing}
+                                        ${index === 0 ? 'pl-6' : ''}
+                                        ${index === headers.length - 1 ? 'pr-6' : ''}`}
                                 >
                                     {header.render('Header')}
                                 </th>
@@ -44,13 +46,15 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                                 {...getRowProps}
                                 className={index === data.length - 1 ? '' : 'border-b border-table-grey'}
                             >
-                                {row.cells.map((cell) => {
+                                {row.cells.map((cell, index) => {
                                     const { key: cellKey, ...getCellProps } = cell.getCellProps()
                                     return (
                                         <td
                                             key={cellKey}
                                             {...getCellProps}
-                                            className={`py-5 ${tableSpacing}`}
+                                            className={`py-5 ${tableSpacing}
+                                                ${index === 0 ? 'pl-6' : ''}
+                                                ${index === headers.length - 1 ? 'pr-6' : ''}`}
                                         >
                                             {cell.render('Cell')}
                                         </td>

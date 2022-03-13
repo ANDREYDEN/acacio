@@ -5,6 +5,7 @@ import { ScheduleTableRow } from '@interfaces'
 import { definitions } from '@types'
 import ScheduleTableCell from './ScheduleTableCell'
 import Table from '@components/Table'
+import { useTranslation } from 'next-i18next'
 
 interface IScheduleTable {
   dateColumns: dayjs.Dayjs[]
@@ -13,16 +14,19 @@ interface IScheduleTable {
 }
 
 const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubmit }: IScheduleTable) => {
+    const { t } = useTranslation('schedule')
+
     const columns: Column<ScheduleTableRow>[] = useMemo(
         () => [
             {
-                Header: <h6>Name</h6>,
+                Header: <h6>{t('table.name').toString()}</h6>,
                 accessor: 'employee',
                 Cell: ({ value: employee }: { value: definitions['employees'] }) => <b>{employee?.first_name ?? 'Some Employee'}</b>
             },
             {
-                Header: <h6>Month Total</h6>,
-                accessor: 'total'
+                Header: <h6 className='mx-1'>{t('table.total').toString()}</h6>,
+                accessor: 'total',
+                Cell: ({ value: total }: {value: number}) => <p className='text-center'>{total}</p>
             },
             ...dateColumns.map((date) => ({
                 Header: <div className='flex flex-col items-center'>
