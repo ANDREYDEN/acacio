@@ -61,7 +61,7 @@ const Salary: NextPage = () => {
         return bonuses.find(bonus => bonus.employee_id === employeeId)
     }, [bonuses])
 
-    const modifyBonusAndReload = async (bonus: Partial<definitions['bonuses']>) => {
+    const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) => {
         if (bonus.id) {
             if (bonus.amount === 0) {
                 await revalidateBonuses(bonuses.filter(b => b.id !== bonus.id))
@@ -75,7 +75,7 @@ const Salary: NextPage = () => {
             await upsertBonus(bonus)
         }
         await revalidateBonuses()
-    }
+    }, [bonuses, deleteBonus, revalidateBonuses, upsertBonus])
 
     const tableData: SalaryTableRow[] = useMemo(() => {
         return employees.map(employee => {
@@ -95,11 +95,16 @@ const Salary: NextPage = () => {
                 salaryTotal,
                 salesIncomeTotal,
                 deductionsTotal,
-                bonusAmount,
+                bonusDto: { 
+                    initialValue: bonusAmount, 
+                    onChange: newAmount => modifyBonusAndReload({
+                        ...bonus, employee_id: employee.id, amount: newAmount
+                    })
+                },
                 incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal,
             }
         })
-    }, [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus])
+    }, [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, modifyBonusAndReload])
 
     const handleExport = () => {}
     
@@ -137,7 +142,7 @@ const Salary: NextPage = () => {
         </div>
         {upsertBonusLoading || deleteBonusLoading && <Loader />}
         {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-        <SalaryTable data={tableData} onBonusChange={modifyBonusAndReload} />
+        <SalaryTable data={tableData} />
     </div>
 }
 

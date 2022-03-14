@@ -8,6 +8,11 @@ export interface SalaryTableRow {
     salaryTotal: number
     salesIncomeTotal: number
     deductionsTotal: number
-    bonusAmount: number
+    bonusDto: BonusDto
     incomeTotal: number
+}
+
+export interface BonusDto {
+    onChange: (newAmount: number) => void
+    initialValue: number
 }
