@@ -4,10 +4,12 @@ import ErrorMessage from '@components/ErrorMessage'
 import Loader from '@components/Loader'
 import { SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
+import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
 import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
 import { definitions } from '@types'
 import dayjs from 'dayjs'
+import { Column } from 'exceljs'
 import { NextPage } from 'next'
 import { useCallback, useMemo } from 'react'
 
@@ -106,7 +108,23 @@ const Salary: NextPage = () => {
         })
     }, [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, modifyBonusAndReload])
 
-    const handleExport = () => {}
+    const handleExport = async () => {
+        const exportData = tableData.map(row => ({ 
+            ...row, 
+            bonusDto: row.bonusDto.initialValue 
+        }))
+        const columns: Partial<Column>[] = [
+            { key: 'employeeName', header: 'Name' },
+            { key: 'hourlySalary', header: 'Hourly Wage' },
+            { key: 'hoursTotal', header: 'Total Hours' },
+            { key: 'salaryTotal', header: 'Total Salary' },
+            { key: 'salesIncomeTotal', header: 'Sales Income' },
+            { key: 'deductionsTotal', header: 'Deductions' },
+            { key: 'bonusDto', header: 'Bonus' },
+            { key: 'incomeTotal', header: 'Income Total' }
+        ]
+        await exportToXLSX(exportData, columns, 'Schedule')
+    }
     
     const loading = 
         employeesLoading || 
