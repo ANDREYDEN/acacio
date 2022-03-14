@@ -1,13 +1,15 @@
+import Button from '@components/Button'
+import SalaryTable from '@components/employees/salary/SalaryTable'
 import ErrorMessage from '@components/ErrorMessage'
 import Loader from '@components/Loader'
-import NumberInputCell from '@components/NumberInputCell'
+import { SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
 import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
 import { definitions } from '@types'
 import dayjs from 'dayjs'
 import { NextPage } from 'next'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
@@ -59,7 +61,7 @@ const Salary: NextPage = () => {
         return bonuses.find(bonus => bonus.employee_id === employeeId)
     }, [bonuses])
 
-    const modifyBonusAndReload = async (bonus: Partial<definitions['bonuses']>) => {
+    const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) => {
         if (bonus.id) {
             if (bonus.amount === 0) {
                 await revalidateBonuses(bonuses.filter(b => b.id !== bonus.id))
@@ -73,7 +75,38 @@ const Salary: NextPage = () => {
             await upsertBonus(bonus)
         }
         await revalidateBonuses()
-    }
+    }, [bonuses, deleteBonus, revalidateBonuses, upsertBonus])
+
+    const tableData: SalaryTableRow[] = useMemo(() => {
+        return employees.map(employee => {
+            const hoursTotal = shifts.reduce(
+                (acc, shift) => acc + (shift.employee_id === employee.id ? shift.duration : 0),
+                0
+            )
+            const salaryTotal = hoursTotal * employee.salary
+            const salesIncomeTotal = salesIncomeTotals[employee.id] ?? 0
+            const deductionsTotal = deductionsTotals[employee.id] ?? 0
+            const bonus = matchingBonus(employee.id)
+            const bonusAmount = bonus?.amount ?? 0
+            return {
+                employeeName: `${employee.first_name} ${employee.last_name}`,
+                hourlySalary: employee.salary,
+                hoursTotal,
+                salaryTotal,
+                salesIncomeTotal,
+                deductionsTotal,
+                bonusDto: { 
+                    initialValue: bonusAmount, 
+                    onChange: newAmount => modifyBonusAndReload({
+                        ...bonus, employee_id: employee.id, amount: newAmount
+                    })
+                },
+                incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal,
+            }
+        })
+    }, [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, modifyBonusAndReload])
+
+    const handleExport = () => {}
     
     const loading = 
         employeesLoading || 
@@ -91,39 +124,26 @@ const Salary: NextPage = () => {
         salesIncomeTotalsError
     if (error) return <ErrorMessage message={error} />
 
-    return <>
-        <h3>Salary</h3>
+    return <div className='flex flex-col items-center py-2 lg:mr-20 mr-10 mb-8'>
+        <div className='w-full flex justify-between mb-8'>
+            <div>
+                <h3>Salary</h3>
+                {dayjs().format('MMMM, YYYY')}
+            </div>
+            <div className='space-x-8'>
+                <Button 
+                    // label={t('export', { ns: 'common' })} 
+                    label='Export'
+                    variant='secondary' 
+                    buttonClass='w-56'
+                    onClick={handleExport}
+                />
+            </div>
+        </div>
         {upsertBonusLoading || deleteBonusLoading && <Loader />}
         {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-        {employees.map(employee => {
-            const workHoursTotal = shifts.reduce(
-                (acc, shift) => acc + (shift.employee_id === employee.id ? shift.duration : 0),
-                0
-            )
-            const salaryTotal = workHoursTotal * employee.salary
-            const deductionsTotal = deductionsTotals[employee.id] ?? 0
-            const salesIncomeTotal = salesIncomeTotals[employee.id] ?? 0
-            const bonus = matchingBonus(employee.id)
-            const bonusAmount = bonus?.amount ?? 0
-            const incomeTotal = salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal
-
-            return <>
-                <h4>Name: {employee.first_name}</h4>
-                <div>Salary: {employee.salary}UAH</div>
-                <div>Hours Worked: {workHoursTotal}h</div>
-                <div>Total Salary: {salaryTotal}UAH</div>
-                <div>Deductions: {deductionsTotal}</div>
-                <div>
-                    Bonus: 
-                    <NumberInputCell 
-                        value={bonusAmount} 
-                        onBlur={amount => modifyBonusAndReload({ ...bonus, amount, employee_id: employee.id })} />
-                </div>
-                <div>Sales Income: {salesIncomeTotal.toFixed(2)}</div>
-                <div>Total Income: {incomeTotal.toFixed(2)}</div>
-            </>
-        })}
-    </>
+        <SalaryTable data={tableData} />
+    </div>
 }
 
 export default Salary
