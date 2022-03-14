@@ -28,16 +28,16 @@ const Settings: NextPage = () => {
 
     return (
         <div className='flex flex-col py-2 lg:mr-20 mr-10'>
-            <h3 className='mb-8'>Salary</h3>
+            <h3 className='mb-8'>Settings</h3>
             <div className='flex rounded-xl border border-table-grey w-full p-10'>
                 <h6 className='mr-12'>Language</h6>
-                <div className='mr-8'>
+                <div className='mr-8 flex justify-center'>
                     {getRadioIcon('en-CA')}
-                    <Link href={router.asPath} locale='en-CA'>ENG</Link>
+                    <span className='ml-2'><Link href={router.asPath} locale='en-CA'>ENG</Link></span>
                 </div>
-                <div>
+                <div className='flex justify-center'>
                     {getRadioIcon('ru-UA')}
-                    <Link href={router.asPath} locale='ru-UA'>RUS</Link>
+                    <span className='ml-2'><Link href={router.asPath} locale='ru-UA'>RUS</Link></span>
                 </div>
             </div>
         </div>
