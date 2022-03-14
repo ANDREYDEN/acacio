@@ -10,46 +10,47 @@ interface ISalaryTable {
 }
 
 const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
+    // TODO: internationalize this page
     const { t } = useTranslation('schedule')
 
     const columns: Column<SalaryTableRow>[] = useMemo(
         () => [
             { 
-                Header: 'Employee',
+                Header: <h6>Employee</h6>,
                 accessor: 'employeeName'
             },
             { 
-                Header: 'Hourly Wage',
+                Header: <h6>Hourly Wage</h6>,
                 accessor: 'hourlySalary',
                 Cell: ({ value }) => <>{value} UAH/hr</>
             },
             { 
-                Header: 'Total Hours',
+                Header: <h6>Total Hours</h6>,
                 accessor: 'hoursTotal',
                 Cell: ({ value }) => <>{value} hrs</>
             },
             { 
-                Header: 'Total Salary',
+                Header: <h6>Total Salary</h6>,
                 accessor: 'salaryTotal',
                 Cell: ({ value }) => <>{value} UAH</>
             },
             { 
-                Header: 'Sales Income',
+                Header: <h6>Sales Income</h6>,
                 accessor: 'salesIncomeTotal',
                 Cell: ({ value }) => <>{value} UAH</>
             },
             { 
-                Header: 'Deductions',
+                Header: <h6>Deductions</h6>,
                 accessor: 'deductionsTotal',
                 Cell: ({ value }) => <>{value} UAH</>
             },
             { 
-                Header: 'Bonus',
+                Header: <h6>Bonus</h6>,
                 accessor: 'bonusDto',
                 Cell: ({ value: bonusDto }) => <NumberInputCell value={bonusDto.initialValue} onBlur={bonusDto.onChange} widthStyle='w-20'/>
             },
             { 
-                Header: 'Total Income',
+                Header: <h6>Total Income</h6>,
                 accessor: 'incomeTotal',
                 Cell: ({ value }) => <>{value} UAH</>
             },
