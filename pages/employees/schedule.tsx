@@ -126,7 +126,10 @@ const Shifts: NextPage = () => {
 
     const handleExport = async () => {
         const columns: Partial<Column>[] = [
-            // TODO: define columns
+            { key: '', header: '' },
+            { key: '', header: '' },
+            { key: '', header: '' },
+            { key: '', header: '' },
         ]
         await exportToXLSX(shifts, columns, 'Shifts')
     }

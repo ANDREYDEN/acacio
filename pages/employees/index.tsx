@@ -63,7 +63,7 @@ const Employees: NextPage = () => {
         employees.map((employee) => {
             const row = {
                 name: `${employee.first_name} ${employee.last_name}`,
-                roleId: employee.role_id,
+                roleName: employeeRoles.find(role => employee.role_id === role.id)?.name ?? 'No Role',
                 birthDate: employee.birth_date ?? '',
                 salary: employee.salary,
                 revenuePercentage: employee.income_percentage,
@@ -83,7 +83,7 @@ const Employees: NextPage = () => {
 
             return row
         }),
-    [employees, t]
+    [employeeRoles, employees, t]
     )
 
     if (!mounted || employeesLoading || employeeRolesLoading || upsertEmployeeLoading || deleteEmployeeLoading) {
@@ -131,13 +131,13 @@ const Employees: NextPage = () => {
 
     const handleExport = async () => {
         const columns: Partial<Column>[] = [
-            { key: 'first_name', header: 'First Name' },
-            { key: 'last_name', header: 'Last Name' },
-            { key: 'birth_date', header: 'Birth Date' },
-            { key: 'salary', header: 'Salary' },
-            { key: 'income_percentage', header: 'Income %' }
+            { key: 'name', header: t('table_headers.name').toString() },
+            { key: 'roleName', header: t('table_headers.role').toString() },
+            { key: 'birthDate', header: t('table_headers.birth_date').toString() },
+            { key: 'salary', header: t('table_headers.salary').toString() },
+            { key: 'revenuePercentage', header: t('table_headers.revenue_percentage').toString() },
         ]
-        await exportToXLSX(employees, columns, 'Employees')
+        await exportToXLSX(tableData, columns, 'Employees')
     }
 
     return (
@@ -189,7 +189,7 @@ const Employees: NextPage = () => {
                 </div>
             </div>
 
-            <EmployeesTable data={tableData} roles={employeeRoles} />
+            <EmployeesTable data={tableData} />
         </div>
     )
 }
