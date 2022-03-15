@@ -118,7 +118,7 @@ const Shifts: NextPage = () => {
                             id: 0,
                             employee_id: employee.id,
                             duration: cellValue,
-                            date: date.toString()
+                            date: date.startOf('date').toString()
                         })
                     }
                 }
