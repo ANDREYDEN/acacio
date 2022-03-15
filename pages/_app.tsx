@@ -1,11 +1,15 @@
-import '../styles/globals.css'
+import '@styles/globals.css'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import Menu from '../components/Menu'
+import Menu from '@components/Menu'
+import { appWithTranslation } from 'next-i18next'
+import { useUpdateAuthCookie } from '@lib/hooks'
 
 function MyApp({ Component, pageProps }: AppProps) {
+    useUpdateAuthCookie()
+
     return (
         <Menu>
             <Head>
@@ -31,4 +35,4 @@ function MyApp({ Component, pageProps }: AppProps) {
     )
 }
 
-export default MyApp
+export default appWithTranslation(MyApp)

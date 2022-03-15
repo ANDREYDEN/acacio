@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { supabase } from '../../../client'
-import { definitions } from '../../../types/database'
+import { supabase } from '@client'
+import { definitions } from '@types'
 
 export async function apiGet(url: string) {
     const { data } = await axios.get(url)

@@ -1,14 +1,18 @@
 import { NextPage } from 'next'
 import React, { useState } from 'react'
-import { supabase } from '../client'
-import PrimaryButton from '../components/PrimaryButton'
-import TextInput from '../components/TextInput'
+import { supabase } from '@client'
+import Button from '@components/Button'
+import TextInput from '@components/TextInput'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import ErrorMessage from '../components/ErrorMessage'
+import ErrorMessage from '@components/ErrorMessage'
 
 const SendPasswordReset: NextPage = () => {
-    const { register, formState: { errors }, handleSubmit, clearErrors } = useForm()
+    const defaultValues = {
+        email: ''
+    }
+    const { register, handleSubmit, control, trigger } = useForm({ defaultValues })
+    register('email', { required: 'Email is required' })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
@@ -38,14 +42,10 @@ const SendPasswordReset: NextPage = () => {
                     label='Email address'
                     placeholder='Enter your email address'
                     textInputClass='mb-6'
-                    register={register('email', { required: 'Email is required' })}
-                    error={errors?.email && errors?.email?.message}
-                    onChange={() => {
-                        clearErrors()
-                        setError('')
-                    }}
+                    control={control}
+                    trigger={trigger}
                 />
-                <PrimaryButton label='Send Password Reset Email' loading={loading} />
+                <Button label='Send Password Reset Email' loading={loading} />
             </form>
         </div>
     )
