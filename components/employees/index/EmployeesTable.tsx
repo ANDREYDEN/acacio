@@ -1,16 +1,14 @@
-import React, { useMemo } from 'react'
-import { definitions } from '@types'
-import { IAction, IEmployeesTableRow } from '@interfaces'
-import { Column } from 'react-table'
-import { useTranslation } from 'next-i18next'
 import Table from '@components/Table'
+import { IAction, IEmployeesTableRow } from '@interfaces'
+import { useTranslation } from 'next-i18next'
+import React, { useMemo } from 'react'
+import { Column } from 'react-table'
 
 interface IEmployeeTable {
     data: IEmployeesTableRow[]
-    roles: definitions['employee_roles'][]
 }
 
-const EmployeesTable: React.FC<IEmployeeTable> = ({ data, roles }: IEmployeeTable) => {
+const EmployeesTable: React.FC<IEmployeeTable> = ({ data }: IEmployeeTable) => {
     const { t } = useTranslation('employees')
 
     const columns: Column<IEmployeesTableRow>[] = useMemo(
@@ -21,8 +19,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data, roles }: IEmployeeTabl
             },
             {
                 Header: <h6>{t('table_headers.role').toString()}</h6>,
-                accessor: 'roleId',
-                Cell: ({ value: roleId }: { value: number }) => <span>{roles.find(role => role.id === roleId)?.name}</span>
+                accessor: 'roleName',
             },
             {
                 Header: <h6>{t('table_headers.birth_date').toString()}</h6>,
@@ -66,7 +63,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data, roles }: IEmployeeTabl
                 )
             },
         ],
-        [roles, t]
+        [t]
     )
 
     return <Table columns={columns} data={data} tableSpacing='px-8' />

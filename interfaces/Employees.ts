@@ -2,7 +2,7 @@ import { IAction } from './Action'
 
 export interface IEmployeesTableRow {
     name: string
-    roleId: number
+    roleName: string
     birthDate: string
     salary: number
     revenuePercentage: number

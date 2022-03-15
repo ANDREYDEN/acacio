@@ -82,7 +82,7 @@ const Shifts: NextPage = () => {
    * - otherwise INSERT
    * @param shift the shift to manipualte
    */
-    async function modifyShiftAndReload(shift: Partial<definitions['shifts']>) {
+    const modifyShiftAndReload = useCallback(async (shift: Partial<definitions['shifts']>) => {
         const existingShift = matchingShift(shift.date, shift.employee_id)
     
         if (existingShift) {
@@ -102,33 +102,52 @@ const Shifts: NextPage = () => {
             await upsertShift(shift)
         }
         await revalidateShifts()
-    }
+    }, [deleteShift, matchingShift, revalidateShifts, shifts, upsertShift])
 
     const monthDays = getMonthDays(month)
   
-    const getTableData = useCallback((dateRange: dayjs.Dayjs[]): ScheduleTableRow[] => 
+    const tableData: ScheduleTableRow[] = useMemo(() => 
         employees.map((employee) => {
-            const shiftsDurationForEmployeeByDate = dateRange.reduce((acc, date) => {
+            const shiftsDurationForEmployeeByDate = monthDays.reduce((acc, date) => {
                 const shift = matchingShift(date, employee.id)
                 return {
                     ...acc,
-                    [date.unix().toString()]: shift ? (shift.duration ?? 0) : 0
+                    [date.unix().toString()]: {
+                        duration: shift?.duration ?? 0,
+                        onChange: (cellValue: number) => modifyShiftAndReload({
+                            id: 0,
+                            employee_id: employee.id,
+                            duration: cellValue,
+                            date: date.startOf('date').toString()
+                        })
+                    }
                 }
             }, {})
             const row = {
-                employee,
+                employeeName: `${employee?.first_name} ${employee?.last_name}`,
                 total: monthTotalByEmployee[employee.id.toString()],
                 ...shiftsDurationForEmployeeByDate
             }
             return row
         }), 
-    [employees, matchingShift, monthTotalByEmployee])
+    [employees, matchingShift, modifyShiftAndReload, monthDays, monthTotalByEmployee])
 
     const handleExport = async () => {
+        const exportData = tableData.map(row => Object.entries(row).reduce((acc, [key, value]) => ({
+            ...acc,
+            [key]: typeof value === 'object' ? value.duration : value
+        }), []))
+        const datesHeaders: Partial<Column>[] = monthDays.map(date => ({
+            key: date.unix().toString(),
+            header: date.format('dd DD'),
+            width: 7
+        }))
         const columns: Partial<Column>[] = [
-            // TODO: define columns
+            { key: 'employeeName', header: t('table.name').toString(), width: 20 },
+            { key: 'total', header: t('table.total').toString(), width: 15 },
+            ...datesHeaders
         ]
-        await exportToXLSX(shifts, columns, 'Shifts')
+        await exportToXLSX(exportData, columns, `Schedule ${month.format('MMM YYYY')}`)
     }
 
     if (!mounted || employeesLoading) {
@@ -172,8 +191,7 @@ const Shifts: NextPage = () => {
 
             <ScheduleTable
                 dateColumns={monthDays}
-                data={getTableData(monthDays)}
-                onCellSubmit={modifyShiftAndReload}
+                data={tableData}
             />
         </div>
     )

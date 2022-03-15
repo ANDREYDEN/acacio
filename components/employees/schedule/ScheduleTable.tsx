@@ -1,27 +1,25 @@
+import Table from '@components/Table'
+import { ScheduleTableRow, ShiftDto } from '@interfaces'
 import dayjs from 'dayjs'
+import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
 import { Column } from 'react-table'
-import { ScheduleTableRow } from '@interfaces'
-import { definitions } from '@types'
 import NumberInputCell from '../../NumberInputCell'
-import Table from '@components/Table'
-import { useTranslation } from 'next-i18next'
 
 interface IScheduleTable {
   dateColumns: dayjs.Dayjs[]
   data: ScheduleTableRow[]
-  onCellSubmit: (shift: definitions['shifts']) => void
 }
 
-const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubmit }: IScheduleTable) => {
+const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data }: IScheduleTable) => {
     const { t } = useTranslation('schedule')
 
     const columns: Column<ScheduleTableRow>[] = useMemo(
         () => [
             {
                 Header: <h6>{t('table.name').toString()}</h6>,
-                accessor: 'employee',
-                Cell: ({ value: employee }: { value: definitions['employees'] }) => <b>{employee?.first_name ?? 'Some Employee'}</b>
+                accessor: 'employeeName',
+                Cell: ({ value: employeeName }: { value: string }) => <b>{employeeName}</b>
             },
             {
                 Header: <h6 className='mx-1'>{t('table.total').toString()}</h6>,
@@ -36,19 +34,12 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
                     <h6>{date.format('DD')}</h6>
                 </div>,
                 accessor: date.unix().toString(),
-                Cell: (cellState: any) => {
-                    const matchingEmployee = cellState.cell.row.cells[0].value
-          
-                    return <NumberInputCell value={cellState.value} onBlur={(cellValue: number) => onCellSubmit({
-                        id: 0,
-                        employee_id: matchingEmployee.id,
-                        duration: cellValue,
-                        date: date.startOf('date').toString()
-                    })}/>
+                Cell: ({ value } : { value: ShiftDto }) => {
+                    return <NumberInputCell value={value.duration} onBlur={value.onChange}/>
                 }
             }))
         ],
-        [dateColumns, onCellSubmit, t]
+        [dateColumns, t]
     )
 
     return <Table columns={columns} data={data} tableSpacing='px-1' />
