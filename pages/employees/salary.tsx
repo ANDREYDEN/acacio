@@ -114,14 +114,14 @@ const Salary: NextPage = () => {
             bonusDto: row.bonusDto.initialValue 
         }))
         const columns: Partial<Column>[] = [
-            { key: 'employeeName', header: 'Name' },
-            { key: 'hourlySalary', header: 'Hourly Wage' },
-            { key: 'hoursTotal', header: 'Total Hours' },
-            { key: 'salaryTotal', header: 'Total Salary' },
-            { key: 'salesIncomeTotal', header: 'Sales Income' },
-            { key: 'deductionsTotal', header: 'Deductions' },
-            { key: 'bonusDto', header: 'Bonus' },
-            { key: 'incomeTotal', header: 'Income Total' }
+            { key: 'employeeName', header: 'Name', width: 20 },
+            { key: 'hourlySalary', header: 'Hourly Wage', width: 15 },
+            { key: 'hoursTotal', header: 'Total Hours', width: 15 },
+            { key: 'salaryTotal', header: 'Total Salary', width: 15 },
+            { key: 'salesIncomeTotal', header: 'Sales Income', width: 15 },
+            { key: 'deductionsTotal', header: 'Deductions', width: 15 },
+            { key: 'bonusDto', header: 'Bonus', },
+            { key: 'incomeTotal', header: 'Income Total', width: 15 }
         ]
         await exportToXLSX(exportData, columns, 'Schedule')
     }

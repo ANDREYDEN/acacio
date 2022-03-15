@@ -131,11 +131,11 @@ const Employees: NextPage = () => {
 
     const handleExport = async () => {
         const columns: Partial<Column>[] = [
-            { key: 'name', header: t('table_headers.name').toString() },
+            { key: 'name', header: t('table_headers.name').toString(), width: 20 },
             { key: 'roleName', header: t('table_headers.role').toString() },
-            { key: 'birthDate', header: t('table_headers.birth_date').toString() },
+            { key: 'birthDate', header: t('table_headers.birth_date').toString(), width: 15 },
             { key: 'salary', header: t('table_headers.salary').toString() },
-            { key: 'revenuePercentage', header: t('table_headers.revenue_percentage').toString() },
+            { key: 'revenuePercentage', header: t('table_headers.revenue_percentage').toString(), width: 15 },
         ]
         await exportToXLSX(tableData, columns, 'Employees')
     }

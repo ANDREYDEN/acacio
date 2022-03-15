@@ -140,10 +140,11 @@ const Shifts: NextPage = () => {
         const datesHeaders: Partial<Column>[] = monthDays.map(date => ({
             key: date.unix().toString(),
             header: date.format('dd DD'),
+            width: 7
         }))
         const columns: Partial<Column>[] = [
-            { key: 'employeeName', header: t('table.name').toString() },
-            { key: 'total', header: t('table.total').toString() },
+            { key: 'employeeName', header: t('table.name').toString(), width: 20 },
+            { key: 'total', header: t('table.total').toString(), width: 15 },
             ...datesHeaders
         ]
         await exportToXLSX(exportData, columns, 'Schedule')
