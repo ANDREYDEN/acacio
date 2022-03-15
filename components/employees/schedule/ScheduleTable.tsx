@@ -43,7 +43,7 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data, onCellSubm
                         id: 0,
                         employee_id: matchingEmployee.id,
                         duration: cellValue,
-                        date: date.toString()
+                        date: date.startOf('date').toString()
                     })}/>
                 }
             }))
