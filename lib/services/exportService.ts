@@ -10,6 +10,7 @@ export default async function exportToXLSX(data: any[], columns: Partial<Column>
         worksheet.columns = columns
     
         data.forEach(row => worksheet.addRow(row))
+        worksheet.getRow(1).font = { ...worksheet.getRow(1).font, bold: true }
     }
 
     const buffer = await workbook.xlsx.writeBuffer()
