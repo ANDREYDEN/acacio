@@ -11,7 +11,7 @@ import {
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
-import { getMonthDays } from '@lib/utils'
+import { fullName, getMonthDays } from '@lib/utils'
 import { definitions } from '@types'
 import ErrorMessage from '@components/ErrorMessage'
 import { useTranslation } from 'next-i18next'
@@ -124,7 +124,7 @@ const Shifts: NextPage = () => {
                 }
             }, {})
             const row = {
-                employeeName: `${employee?.first_name} ${employee?.last_name}`,
+                employeeName: fullName(employee),
                 total: monthTotalByEmployee[employee.id.toString()],
                 ...shiftsDurationForEmployeeByDate
             }
