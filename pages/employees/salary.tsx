@@ -123,7 +123,7 @@ const Salary: NextPage = () => {
             { key: 'bonusDto', header: 'Bonus', },
             { key: 'incomeTotal', header: 'Income Total', width: 15 }
         ]
-        await exportToXLSX(exportData, columns, 'Schedule')
+        await exportToXLSX(exportData, columns, `Salary ${dayjs().format('MMM YYYY')}`)
     }
     
     const loading = 

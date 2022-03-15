@@ -132,9 +132,6 @@ const Shifts: NextPage = () => {
         }), 
     [employees, matchingShift, modifyShiftAndReload, monthDays, monthTotalByEmployee])
 
-    console.log({ tableData })
-    
-
     const handleExport = async () => {
         const exportData = tableData.map(row => Object.entries(row).reduce((acc, [key, value]) => ({
             ...acc,
