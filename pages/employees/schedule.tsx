@@ -104,7 +104,7 @@ const Shifts: NextPage = () => {
         await revalidateShifts()
     }, [deleteShift, matchingShift, revalidateShifts, shifts, upsertShift])
 
-    const monthDays = useMemo(() => getMonthDays(month), [month])
+    const monthDays = getMonthDays(month)
   
     const tableData: ScheduleTableRow[] = useMemo(() => 
         employees.map((employee) => {
@@ -131,6 +131,9 @@ const Shifts: NextPage = () => {
             return row
         }), 
     [employees, matchingShift, modifyShiftAndReload, monthDays, monthTotalByEmployee])
+
+    console.log({ tableData })
+    
 
     const handleExport = async () => {
         const exportData = tableData.map(row => Object.entries(row).reduce((acc, [key, value]) => ({
