@@ -70,7 +70,7 @@ const Shifts: NextPage = () => {
         }), {})
     }, [employees, shifts])
 
-    const matchingShift = useCallback((date?: string | dayjs.Dayjs, employee_id?: number) => {        
+    const matchingShift = useCallback((date?: string | dayjs.Dayjs, employee_id?: number) => {
         return shifts.find((otherShift) => employee_id === otherShift.employee_id && dayjs(date).isSame(dayjs(otherShift.date), 'date'))
     }, [shifts])
 
