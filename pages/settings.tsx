@@ -13,6 +13,7 @@ import Button from '@components/Button'
 import TextInput from '@components/TextInput'
 import { useForm } from 'react-hook-form'
 import ErrorMessage from '@components/ErrorMessage'
+import ConfirmationModal from '@components/ConfirmationModal'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -24,6 +25,7 @@ const Settings: NextPage = () => {
     const { mounted } = useMounted()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false)
     const router = useRouter()
     const { t } = useTranslation('settings')
 
@@ -31,7 +33,7 @@ const Settings: NextPage = () => {
         newPassword: '',
         confirmPassword: ''
     }
-    const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
+    const { register, handleSubmit, trigger, control, setValue } = useForm({ defaultValues })
     register('newPassword', { required: t('password.new_required').toString() })
     register('confirmPassword', { required: t('password.confirm_required').toString() })
 
@@ -56,6 +58,7 @@ const Settings: NextPage = () => {
 
             const { error } = await supabase.auth.update({ password: data.newPassword })
             if (error) throw new Error(error.message)
+            setShowConfirmationModal(true)
         } catch (error: any) {
             setError(error.error_description || error.message)
         } finally {
@@ -65,6 +68,18 @@ const Settings: NextPage = () => {
 
     return (
         <div className='flex flex-col py-2 lg:mr-20 mr-10'>
+            {showConfirmationModal &&
+                <ConfirmationModal
+                    header={t('password.success_header')}
+                    message={t('password.success_message')}
+                    toggleModal={() => {
+                        setShowConfirmationModal(false)
+                        setValue('newPassword', '')
+                        setValue('confirmPassword', '')
+                    }}
+                />
+            }
+
             <h3 className='mb-8'>{t('header').toString()}</h3>
             <div className='flex rounded-xl border border-table-grey w-full p-10 mb-8'>
                 <h6 className='mr-12'>{t('language').toString()}</h6>

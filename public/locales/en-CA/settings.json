@@ -9,6 +9,8 @@
     "new_required": "Password is required",
     "confirm": "Confirm new password",
     "confirm_required": "Password confirmation is required",
-    "match_error": "Passwords should match"
+    "match_error": "Passwords should match",
+    "success_header": "Password reset",
+    "success_message": "Password has been successfully updated"
   }
 }
