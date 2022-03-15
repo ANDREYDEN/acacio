@@ -7,6 +7,7 @@ import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
 import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
+import { fullName } from '@lib/utils'
 import { definitions } from '@types'
 import dayjs from 'dayjs'
 import { Column } from 'exceljs'
@@ -91,7 +92,7 @@ const Salary: NextPage = () => {
             const bonus = matchingBonus(employee.id)
             const bonusAmount = bonus?.amount ?? 0
             return {
-                employeeName: `${employee.first_name} ${employee.last_name}`,
+                employeeName: fullName(employee),
                 hourlySalary: employee.salary,
                 hoursTotal,
                 salaryTotal,
