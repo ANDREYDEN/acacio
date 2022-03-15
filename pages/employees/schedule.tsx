@@ -147,7 +147,7 @@ const Shifts: NextPage = () => {
             { key: 'total', header: t('table.total').toString(), width: 15 },
             ...datesHeaders
         ]
-        await exportToXLSX(exportData, columns, 'Schedule')
+        await exportToXLSX(exportData, columns, `Schedule ${month.format('MMM YYYY')}`)
     }
 
     if (!mounted || employeesLoading) {
