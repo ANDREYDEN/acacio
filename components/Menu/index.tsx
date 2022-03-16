@@ -8,7 +8,7 @@ import { supabase } from '@client'
 
 const AppRoutes: AppRoutesType = {
     Sales: {
-        route: '/reports',
+        route: '/sales',
         icon: <Home />,
         iconFilled: <Home filled={true} />
     },
