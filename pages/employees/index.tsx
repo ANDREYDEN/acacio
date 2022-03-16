@@ -20,7 +20,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useMemo, useState } from 'react'
 import exportToXLSX from '@lib/services/exportService'
 import { Column } from 'exceljs'
-import { enforceAuthenticated } from '@lib/utils'
+import { enforceAuthenticated, fullName } from '@lib/utils'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -62,7 +62,7 @@ const Employees: NextPage = () => {
     const tableData: IEmployeesTableRow[] = useMemo(() =>
         employees.map((employee) => {
             const row = {
-                name: `${employee.first_name} ${employee.last_name}`,
+                name: fullName(employee),
                 roleName: employeeRoles.find(role => employee.role_id === role.id)?.name ?? 'No Role',
                 birthDate: employee.birth_date ?? '',
                 salary: employee.salary,

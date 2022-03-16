@@ -29,7 +29,7 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data }: ISchedul
             ...dateColumns.map((date) => ({
                 Header: <div className='flex flex-col items-center'>
                     <p className='font-light'>
-                        {date.format('dd').at(0)?.toUpperCase()}{date.format('dd').slice(1)}
+                        {date.format('dd')[0]?.toUpperCase()}{date.format('dd').slice(1)}
                     </p>
                     <h6>{date.format('DD')}</h6>
                 </div>,
