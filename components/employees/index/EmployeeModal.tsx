@@ -48,7 +48,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
     const preparedRolesOptions: IDropdownOption[] = employeeRoles.map(role => {
         return {
             value: role.id,
-            label: `${role.name.at(0)?.toUpperCase()}${role.name.slice(1)}`
+            label: `${role.name[0]?.toUpperCase()}${role.name.slice(1)}`
         }
     })
 
