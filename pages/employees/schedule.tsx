@@ -36,7 +36,7 @@ const Shifts: NextPage = () => {
     const router = useRouter()
 
     // a dayjs object that represents the current month and year
-    const [month, setMonth] = useState(dayjs().locale(router.locale?.split('-').at(0) ?? 'en'))
+    const [month, setMonth] = useState(dayjs().locale(router.locale?.split('-')[0] ?? 'en'))
 
     const { 
         data: shifts, 
@@ -166,7 +166,7 @@ const Shifts: NextPage = () => {
                 <div>
                     <h3>{t('header')}</h3>
                     <span className='font-bold'>
-                        {month.format('MMMM').at(0)?.toUpperCase()}
+                        {month.format('MMMM')[0]?.toUpperCase()}
                         {month.format('MMMM').slice(1)}, {month.format('YYYY')}
                     </span>
                 </div>
