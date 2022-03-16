@@ -11,7 +11,7 @@ import {
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
-import { getMonthDays } from '@lib/utils'
+import { fullName, getMonthDays } from '@lib/utils'
 import { definitions } from '@types'
 import ErrorMessage from '@components/ErrorMessage'
 import { useTranslation } from 'next-i18next'
@@ -36,7 +36,7 @@ const Shifts: NextPage = () => {
     const router = useRouter()
 
     // a dayjs object that represents the current month and year
-    const [month, setMonth] = useState(dayjs().locale(router.locale?.split('-').at(0) ?? 'en'))
+    const [month, setMonth] = useState(dayjs().locale(router.locale?.split('-')[0] ?? 'en'))
 
     const { 
         data: shifts, 
@@ -124,7 +124,7 @@ const Shifts: NextPage = () => {
                 }
             }, {})
             const row = {
-                employeeName: `${employee?.first_name} ${employee?.last_name}`,
+                employeeName: fullName(employee),
                 total: monthTotalByEmployee[employee.id.toString()],
                 ...shiftsDurationForEmployeeByDate
             }
@@ -166,7 +166,7 @@ const Shifts: NextPage = () => {
                 <div>
                     <h3>{t('header')}</h3>
                     <span className='font-bold'>
-                        {month.format('MMMM').at(0)?.toUpperCase()}
+                        {month.format('MMMM')[0]?.toUpperCase()}
                         {month.format('MMMM').slice(1)}, {month.format('YYYY')}
                     </span>
                 </div>

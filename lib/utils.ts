@@ -1,4 +1,5 @@
 import { supabase } from '@client'
+import { definitions } from '@types'
 import dayjs from 'dayjs'
 import { GetServerSideProps } from 'next'
 
@@ -35,4 +36,10 @@ export function getMonthDays(month: dayjs.Dayjs): dayjs.Dayjs[] {
         dateRange.push(month.date(date))
     }
     return dateRange
+}
+
+export function fullName(employee: definitions['employees']) {
+    if (!employee.last_name) return employee.first_name
+
+    return `${employee.first_name} ${employee.last_name}`
 }
