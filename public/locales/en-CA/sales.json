@@ -1,3 +1,7 @@
 {
-  "header": "Sales"
+  "header": "Sales",
+  "table_headers": {
+    "date": "Date",
+    "dayOfWeek": "Day of week"
+  }
 }
