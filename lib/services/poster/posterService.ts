@@ -2,7 +2,7 @@ import { EmployeesMonthlyStatDto } from '@interfaces'
 import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import { Deduction, SalesData } from 'interfaces/Poster'
+import { Deduction, SalePerDayDto, SalesData } from 'interfaces/Poster'
 import useSWR from 'swr'
 
 export const posterInstance = axios.create({
@@ -12,8 +12,8 @@ export const posterInstance = axios.create({
     }
 })
 
-async function posterGet(url: string) {
-    const response = await axios.get(`/api/poster/${url}`)
+async function posterGet(url: string, params?: Record<string, any>) {
+    const response = await axios.get(`/api/poster/${url}`, params ?? {})
     if (response.status === 400) {
         throw response.data.message
     }
@@ -89,5 +89,37 @@ export function usePosterGetSalesIncomeForEmployees(
         salesIncomeTotals, 
         salesIncomeTotalsLoading: !salesIncomeTotalsError && !salesIncomeTotals, 
         salesIncomeTotalsError
+    }
+}
+
+export function usePosterGetSales(dateFrom?: dayjs.Dayjs, dateTo?: dayjs.Dayjs) {
+    const { data: sales, error, mutate } = useSWR<SalesData>(
+        'dash.getAnalytics',
+        (url: string) => posterGet(
+            url,
+            {
+                dateFrom: dateFrom?.format('YYYYMMDD'),
+                dateTo: dateTo?.format('YYYYMMDD')
+            })
+    )
+    console.log(sales)
+
+    const salesError = error?.toString()
+
+    // if (!sales) {
+    //     return {
+    //         sales: [{}] as SalePerDayDto[],
+    //         salesLoading: !salesError,
+    //         salesError
+    //     }
+    // }
+    //
+    // const salesData = sales.data
+
+    return {
+        sales: [{ date: dayjs().startOf('week') }] as SalePerDayDto[],
+        salesLoading: !salesError && !sales,
+        salesError,
+        revalidateSales: mutate
     }
 }
