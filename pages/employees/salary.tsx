@@ -116,13 +116,13 @@ const Salary: NextPage = () => {
         }))
         const columns: Partial<Column>[] = [
             { key: 'employeeName', header: 'Name', width: 20 },
-            { key: 'hourlySalary', header: 'Hourly Wage', width: 15 },
+            { key: 'hourlySalary', header: 'Hourly Wage (₴)', width: 15 },
             { key: 'hoursTotal', header: 'Total Hours', width: 15 },
-            { key: 'salaryTotal', header: 'Total Salary', width: 15 },
-            { key: 'salesIncomeTotal', header: 'Sales Income', width: 15 },
-            { key: 'deductionsTotal', header: 'Deductions', width: 15 },
-            { key: 'bonusDto', header: 'Bonus', },
-            { key: 'incomeTotal', header: 'Income Total', width: 15 }
+            { key: 'salaryTotal', header: 'Total Wage (₴)', width: 15 },
+            { key: 'salesIncomeTotal', header: 'Sales Income (₴)', width: 15 },
+            { key: 'deductionsTotal', header: 'Deductions (₴)', width: 15 },
+            { key: 'bonusDto', header: 'Bonus (₴)', },
+            { key: 'incomeTotal', header: 'Income Total (₴)', width: 15 }
         ]
         await exportToXLSX(exportData, columns, `Salary ${dayjs().format('MMM YYYY')}`)
     }
@@ -146,7 +146,7 @@ const Salary: NextPage = () => {
     return <div className='flex flex-col items-center py-2 lg:mr-20 mr-10 mb-8'>
         <div className='w-full flex justify-between mb-8'>
             <div>
-                <h3>Salary</h3>
+                <h3>Wages</h3>
                 {dayjs().format('MMMM, YYYY')}
             </div>
             <div className='space-x-8'>
