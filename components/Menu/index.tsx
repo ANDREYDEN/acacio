@@ -54,9 +54,9 @@ const Menu: React.FC = ({ children }) => {
 
     return (
         <div className='flex'>
-            <nav className='grid place-items-center min-h-screen w-56 bg-light-green lg:mr-12 mr-8'>
+            <nav className='grid place-items-center min-h-screen w-56 bg-light-green mr-10'>
                 <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
-                <ul className='text-primary-blue font-header font-extrabold'>
+                <ul className='text-primary-blue font-header font-extrabold py-6'>
                     {Object.keys(AppRoutes).map((pageName, index) => {
                         const currentItem = AppRoutes[pageName]
                         return (
@@ -71,7 +71,7 @@ const Menu: React.FC = ({ children }) => {
                     <h5 className='ml-4 text-primary-blue'>Log Out</h5>
                 </button>
             </nav>
-            <span className='mt-16 flex-1'>{ children }</span>
+            <span className='mt-16 flex-1 mr-12 mb-6'>{ children }</span>
         </div>
     )
 }

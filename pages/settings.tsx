@@ -67,7 +67,7 @@ const Settings: NextPage = () => {
     }
 
     return (
-        <div className='flex flex-col py-2 lg:mr-20 mr-10'>
+        <div className='flex flex-col'>
             {showConfirmationModal &&
                 <ConfirmationModal
                     header={t('password.success_header')}

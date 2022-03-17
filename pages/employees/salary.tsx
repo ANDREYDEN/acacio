@@ -143,26 +143,28 @@ const Salary: NextPage = () => {
         salesIncomeTotalsError
     if (error) return <ErrorMessage message={error} />
 
-    return <div className='flex flex-col items-center py-2 lg:mr-20 mr-10 mb-8'>
-        <div className='w-full flex justify-between mb-8'>
-            <div>
-                <h3>Wages</h3>
-                {dayjs().format('MMMM, YYYY')}
-            </div>
-            <div className='space-x-8'>
-                <Button 
+    return (
+        <div className='flex flex-col items-center'>
+            <div className='w-full flex justify-between mb-8'>
+                <div>
+                    <h3>Wages</h3>
+                    {dayjs().format('MMMM, YYYY')}
+                </div>
+                <div className='space-x-8'>
+                    <Button 
                     // label={t('export', { ns: 'common' })} 
-                    label='Export'
-                    variant='secondary' 
-                    buttonClass='w-56'
-                    onClick={handleExport}
-                />
+                        label='Export'
+                        variant='secondary' 
+                        buttonClass='w-56'
+                        onClick={handleExport}
+                    />
+                </div>
             </div>
+            {upsertBonusLoading || deleteBonusLoading && <Loader />}
+            {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
+            <SalaryTable data={tableData} />
         </div>
-        {upsertBonusLoading || deleteBonusLoading && <Loader />}
-        {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-        <SalaryTable data={tableData} />
-    </div>
+    )
 }
 
 export default Salary

@@ -155,7 +155,7 @@ const Shifts: NextPage = () => {
     }
 
     return (
-        <div className='flex flex-col items-center py-2 lg:mr-20 mr-10 mb-8'>
+        <div className='flex flex-col items-center'>
             {shiftsError && (<ErrorMessage message={`Error fetching shifts: ${shiftsError}`} />)}
             {employeesError && (<ErrorMessage message={`Error fetching employees: ${employeesError}`} />)}
             {upsertShiftError && (<ErrorMessage message={`Error adding shift: ${upsertShiftError}`} />)}
