@@ -58,7 +58,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
         []
     )
 
-    return <Table columns={columns} data={data} tableSpacing='px-1' />
+    return <Table columns={columns} data={data} tableSpacing='px-2' />
 }
 
 export default SalaryTable

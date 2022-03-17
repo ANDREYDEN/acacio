@@ -66,7 +66,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data }: IEmployeeTable) => {
         [t]
     )
 
-    return <Table columns={columns} data={data} tableSpacing='px-8' />
+    return <Table columns={columns} data={data} tableSpacing='px-2' />
 }
 
 export default EmployeesTable
