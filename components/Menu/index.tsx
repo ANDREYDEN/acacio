@@ -71,7 +71,7 @@ const Menu: React.FC = ({ children }) => {
                     <h5 className='ml-4 text-primary-blue'>Log Out</h5>
                 </button>
             </nav>
-            <span className='mt-36 flex-1'>{ children }</span>
+            <span className='mt-16 flex-1'>{ children }</span>
         </div>
     )
 }
