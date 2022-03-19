@@ -8,8 +8,17 @@
         src: url(../public/fonts/Gilroy-Medium.ttf);
     }
     @font-face {
-        font-family: 'Manrope';
-        src: url(../public/fonts/Manrope-VariableFont_wght.ttf);
+        font-family: 'Manrope Regular';
+        src: url(../public/fonts/Manrope-Regular.ttf);
+    }
+    @font-face {
+        font-family: 'Manrope Bold';
+        src: url(../public/fonts/Manrope-Bold.ttf);
+    }
+    h1 {
+        @apply text-sm;
+        @apply font-bold;
+        @apply font-body-bold;
     }
     h2 {
         @apply font-header;

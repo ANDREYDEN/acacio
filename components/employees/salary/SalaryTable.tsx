@@ -16,49 +16,49 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
     const columns: Column<SalaryTableRow>[] = useMemo(
         () => [
             { 
-                Header: <h6>Employee</h6>,
+                Header: <h1>Employee</h1>,
                 accessor: 'employeeName'
             },
             { 
-                Header: <h6>Hourly Wage</h6>,
+                Header: <h1>Hourly Wage (₴/hr)</h1>,
                 accessor: 'hourlySalary',
-                Cell: ({ value }) => <>{value} UAH/hr</>
+                Cell: ({ value }) => <>{value}</>
             },
             { 
-                Header: <h6>Total Hours</h6>,
+                Header: <h1>Total Hours</h1>,
                 accessor: 'hoursTotal',
-                Cell: ({ value }) => <>{value} hrs</>
+                Cell: ({ value }) => <>{value}</>
             },
             { 
-                Header: <h6>Total Salary</h6>,
+                Header: <h1>Total Salary (₴)</h1>,
                 accessor: 'salaryTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: ({ value }) => <>{value}</>
             },
             { 
-                Header: <h6>Sales Income</h6>,
+                Header: <h1>Sales Income (₴)</h1>,
                 accessor: 'salesIncomeTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: ({ value }) => <>{value}</>
             },
             { 
-                Header: <h6>Deductions</h6>,
+                Header: <h1>Deductions (₴)</h1>,
                 accessor: 'deductionsTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: ({ value }) => <>{value}</>
             },
             { 
-                Header: <h6>Bonus</h6>,
+                Header: <h1>Bonus (₴)</h1>,
                 accessor: 'bonusDto',
                 Cell: ({ value: bonusDto }) => <NumberInputCell value={bonusDto.initialValue} onBlur={bonusDto.onChange} widthStyle='w-20'/>
             },
             { 
-                Header: <h6>Total Income</h6>,
+                Header: <h1>Total Income (₴)</h1>,
                 accessor: 'incomeTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: ({ value }) => <>{value}</>
             },
         ],
         []
     )
 
-    return <Table columns={columns} data={data} tableSpacing='px-1' />
+    return <Table columns={columns} data={data} tableSpacing='px-2' />
 }
 
 export default SalaryTable
