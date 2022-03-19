@@ -17,12 +17,12 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data }: ISchedul
     const columns: Column<ScheduleTableRow>[] = useMemo(
         () => [
             {
-                Header: <h6>{t('table.name').toString()}</h6>,
+                Header: <h1>{t('table.name').toString()}</h1>,
                 accessor: 'employeeName',
                 Cell: ({ value: employeeName }: { value: string }) => <b>{employeeName}</b>
             },
             {
-                Header: <h6 className='mx-1'>{t('table.total').toString()}</h6>,
+                Header: <h1 className='mx-1'>{t('table.total').toString()}</h1>,
                 accessor: 'total',
                 Cell: ({ value: total }: {value: number}) => <p className='text-center'>{total}</p>
             },
@@ -31,7 +31,7 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data }: ISchedul
                     <p className='font-light'>
                         {date.format('dd')[0]?.toUpperCase()}{date.format('dd').slice(1)}
                     </p>
-                    <h6>{date.format('DD')}</h6>
+                    <h1>{date.format('DD')}</h1>
                 </div>,
                 accessor: date.unix().toString(),
                 Cell: ({ value } : { value: ShiftDto }) => {
