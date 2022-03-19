@@ -141,7 +141,7 @@ const Employees: NextPage = () => {
     }
 
     return (
-        <div className='flex flex-col items-center py-2 lg:mr-20 mr-10'>
+        <div className='flex flex-col items-center'>
             {showEmployeeModal &&
                 <EmployeeModal
                     employee={employeeForModal()}
