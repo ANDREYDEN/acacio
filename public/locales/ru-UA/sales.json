@@ -2,6 +2,7 @@
   "header": "Продажи",
   "table_headers": {
     "date": "Дата",
-    "dayOfWeek": "День недели"
+    "dayOfWeek": "День недели",
+    "customers": "Посетители"
   }
 }

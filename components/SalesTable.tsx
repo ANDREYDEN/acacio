@@ -21,6 +21,10 @@ const SalesTable: React.FC<ISalesTable> = ({ data }: ISalesTable) => {
                 Header: <h6>{t('table_headers.dayOfWeek').toString()}</h6>,
                 accessor: 'dayOfWeek',
             },
+            {
+                Header: <h6>{t('table_headers.customers').toString()}</h6>,
+                accessor: 'customers',
+            },
         ],
         [t]
     )

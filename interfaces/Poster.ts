@@ -10,5 +10,6 @@ export interface SalesData {
 }
 
 export interface SalePerDayDto {
-  date: dayjs.Dayjs
+  date: dayjs.Dayjs,
+  customers: number
 }

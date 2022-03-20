@@ -6,14 +6,14 @@ import { Deduction, SalePerDayDto, SalesData } from 'interfaces/Poster'
 import useSWR from 'swr'
 
 export const posterInstance = axios.create({
-    baseURL: 'https://joinposter.com/api/',
+    baseURL: process.env.NEXT_PUBLIC_POSTER_URL,
     params: {
         token: process.env.NEXT_POSTER_ACCESS_TOKEN ?? ''
     }
 })
 
 async function posterGet(url: string, params?: Record<string, any>) {
-    const response = await axios.get(`/api/poster/${url}`, params ?? {})
+    const response = await axios.get(`/api/poster/${url}`, { params: params ?? {} })
     if (response.status === 400) {
         throw response.data.message
     }
@@ -92,34 +92,35 @@ export function usePosterGetSalesIncomeForEmployees(
     }
 }
 
-export function usePosterGetSales(dateFrom?: dayjs.Dayjs, dateTo?: dayjs.Dayjs) {
-    const { data: sales, error, mutate } = useSWR<SalesData>(
-        'dash.getAnalytics',
-        (url: string) => posterGet(
-            url,
-            {
-                dateFrom: dateFrom?.format('YYYYMMDD'),
-                dateTo: dateTo?.format('YYYYMMDD')
-            })
-    )
-    console.log(sales)
+export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs) {
+    const salesFinal: SalePerDayDto[] = []
+    const numberOfDays = dateTo.diff(dateFrom, 'day')
 
-    const salesError = error?.toString()
+    let currentDate = dateFrom
+    for (let i = 0; i < numberOfDays; i++) {
+        const sales = await getSalesForDay(currentDate)
+        const salesWorkshops = await getSalesForDay(currentDate, 'workshops')
 
-    // if (!sales) {
-    //     return {
-    //         sales: [{}] as SalePerDayDto[],
-    //         salesLoading: !salesError,
-    //         salesError
-    //     }
-    // }
-    //
-    // const salesData = sales.data
+        salesFinal.push({
+            date: currentDate,
+            customers: sales.counters.visitors
+        })
 
-    return {
-        sales: [{ date: dayjs().startOf('week') }] as SalePerDayDto[],
-        salesLoading: !salesError && !sales,
-        salesError,
-        revalidateSales: mutate
+        currentDate = currentDate.add(1, 'day')
     }
+
+    return salesFinal
+}
+
+async function getSalesForDay(day: dayjs.Dayjs, type?: string) {
+    const sales = await posterGet(
+        'dash.getAnalytics',
+        {
+            dateFrom: day.format('YYYYMMDD'),
+            dateTo: day.format('YYYYMMDD'),
+            type
+        }
+    )
+
+    return sales
 }
