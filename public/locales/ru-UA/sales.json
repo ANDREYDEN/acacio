@@ -3,6 +3,13 @@
   "table_headers": {
     "date": "Дата",
     "dayOfWeek": "День недели",
-    "customers": "Посетители"
+    "customers": "Посетители",
+    "averageBill": "Средний счет(₴)",
+    "kitchenRevenue": "Доход от кухни(₴)",
+    "kitchenProfit": "Прибыль от кухни(₴)",
+    "barRevenue": "Доход от бара(₴)",
+    "barProfit": "Прибыль от бара(₴)",
+    "totalRevenue": "Доход всего(₴)",
+    "totalProfit": "Прибыль всего(₴)"
   }
 }

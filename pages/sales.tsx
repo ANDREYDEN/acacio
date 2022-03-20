@@ -4,14 +4,12 @@ import { enforceAuthenticated } from '@lib/utils'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
 import { posterGetSales } from '@services/poster'
-import { SalesTableRow } from '@interfaces'
+import { SalesPerDay } from '@interfaces'
 import SalesTable from '@components/SalesTable'
-import { useRouter } from 'next/router'
 import 'dayjs/locale/ru'
 import Loader from '@components/Loader'
 import { useMounted } from '@lib/hooks'
 import dayjs from 'dayjs'
-import { SalePerDayDto } from '../interfaces/Poster'
 import ErrorMessage from '@components/ErrorMessage'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -22,11 +20,10 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
 
 const Sales: NextPage = () => {
     const { mounted } = useMounted()
-    const router = useRouter()
     const [dateFrom, setDateFrom] = useState(dayjs().subtract(2, 'month'))
     const [dateTo, setDateTo] = useState(dateFrom.add(3, 'day'))
     const { t } = useTranslation('sales')
-    const [sales, setSales] = useState<SalePerDayDto[]>([])
+    const [sales, setSales] = useState<SalesPerDay[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
@@ -43,20 +40,24 @@ const Sales: NextPage = () => {
         })()
     }, [dateFrom, dateTo])
 
-    const tableData: SalesTableRow[] = useMemo(() =>
+    const tableData: SalesPerDay[] = useMemo(() =>
         sales.map((salePerDay) => {
-            const dayOfWeekInNeededLanguage = salePerDay.date.locale(router.locale?.split('-')[0] ?? 'en').format('dd')
-            const dayOfWeek = `${dayOfWeekInNeededLanguage[0]?.toUpperCase()}${dayOfWeekInNeededLanguage.slice(1)}`
-
             const row = {
-                date: salePerDay.date.format('DD.MM'),
-                dayOfWeek,
-                customers: salePerDay.customers
+                date: salePerDay.date,
+                dayOfWeek: salePerDay.dayOfWeek,
+                customers: salePerDay.customers,
+                averageBill: salePerDay.averageBill,
+                kitchenRevenue: salePerDay.kitchenRevenue,
+                kitchenProfit: salePerDay.kitchenProfit,
+                barRevenue: salePerDay.barRevenue,
+                barProfit: salePerDay.barProfit,
+                totalRevenue: salePerDay.totalRevenue,
+                totalProfit: salePerDay.totalProfit,
             }
 
             return row
         }),
-    [router.locale, sales]
+    [sales]
     )
 
     if (!mounted || loading) {
@@ -64,7 +65,7 @@ const Sales: NextPage = () => {
     }
 
     return (
-        <div className='flex flex-col py-2 lg:mr-20 mr-10'>
+        <div className='flex flex-col'>
             <h3 className='mb-8'>{t('header').toString()}</h3>
             {error && (<ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />)}
             <SalesTable data={tableData} />

@@ -21,7 +21,7 @@
     "first_name_placeholder": "Enter employee’s first name",
     "last_name_placeholder": "Enter employee’s last name",
     "role_placeholder": "Select role",
-    "salary_placeholder": "0$/hr",
+    "salary_placeholder": "0₴/hr",
     "first_name_required": "First name is required",
     "role_required": "Role is required",
     "salary_required": "Salary is required",

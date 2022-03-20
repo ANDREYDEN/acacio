@@ -21,7 +21,7 @@
     "first_name_placeholder": "Введите имя сотрудника",
     "last_name_placeholder": "Введите фамилию сотрудника",
     "role_placeholder": "Выберите должность",
-    "salary_placeholder": "0 грн",
+    "salary_placeholder": "0₴/ч",
     "first_name_required": "Необходимо имя",
     "role_required": "Необходима дожность",
     "salary_required": "Необходима зарплата",

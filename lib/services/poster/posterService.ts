@@ -1,8 +1,8 @@
-import { EmployeesMonthlyStatDto } from '@interfaces'
+import { EmployeesMonthlyStatDto, SalesPerDay } from '@interfaces'
 import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import { Deduction, SalePerDayDto, SalesData } from 'interfaces/Poster'
+import { Deduction, SalesData } from 'interfaces/Poster'
 import useSWR from 'swr'
 
 export const posterInstance = axios.create({
@@ -93,7 +93,7 @@ export function usePosterGetSalesIncomeForEmployees(
 }
 
 export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs) {
-    const salesFinal: SalePerDayDto[] = []
+    const salesFinal: SalesPerDay[] = []
     const numberOfDays = dateTo.diff(dateFrom, 'day')
 
     let currentDate = dateFrom
@@ -101,9 +101,20 @@ export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs)
         const sales = await getSalesForDay(currentDate)
         const salesWorkshops = await getSalesForDay(currentDate, 'workshops')
 
+        const kitchenSales = salesWorkshops.find((sw: any) => sw.workshop_name.toLowerCase().trim() === 'кухня')
+        const barSales = salesWorkshops.find((sw: any) => sw.workshop_name.toLowerCase().trim() === 'бар')
+
         salesFinal.push({
             date: currentDate,
-            customers: sales.counters.visitors
+            dayOfWeek: currentDate,
+            customers: sales.counters.visitors,
+            averageBill: sales.counters.average_receipt,
+            kitchenRevenue: kitchenSales.revenue,
+            kitchenProfit: kitchenSales.prod_profit,
+            barRevenue: barSales.revenue,
+            barProfit: barSales.prod_profit,
+            totalRevenue: sales.counters.revenue,
+            totalProfit: sales.counters.profit
         })
 
         currentDate = currentDate.add(1, 'day')
