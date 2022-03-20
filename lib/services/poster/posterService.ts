@@ -109,10 +109,10 @@ export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs)
             dayOfWeek: currentDate,
             customers: sales.counters.visitors,
             averageBill: sales.counters.average_receipt,
-            kitchenRevenue: kitchenSales.revenue,
-            kitchenProfit: kitchenSales.prod_profit,
-            barRevenue: barSales.revenue,
-            barProfit: barSales.prod_profit,
+            kitchenRevenue: kitchenSales?.revenue ?? 0,
+            kitchenProfit: kitchenSales?.prod_profit ?? 0,
+            barRevenue: barSales?.revenue ?? 0,
+            barProfit: barSales?.prod_profit ?? 0,
             totalRevenue: sales.counters.revenue,
             totalProfit: sales.counters.profit
         })
