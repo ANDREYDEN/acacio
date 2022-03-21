@@ -7,15 +7,27 @@ import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
 import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
-import { fullName } from '@lib/utils'
+import { enforceAuthenticated, fullName } from '@lib/utils'
 import { definitions } from '@types'
 import dayjs from 'dayjs'
 import { Column } from 'exceljs'
 import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
+
+
+export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['salary', 'common']),
+    },
+}))
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
+    const { t } = useTranslation('salary')
+    const router = useRouter()
 
     const {
         data: employees, 
@@ -143,17 +155,18 @@ const Salary: NextPage = () => {
         salesIncomeTotalsError
     if (error) return <ErrorMessage message={error} />
 
+    const currentMonth = dayjs().locale(router.locale?.split('-')[0] ?? 'en').format('MMMM, YYYY')
+
     return (
         <div className='flex flex-col items-center'>
             <div className='w-full flex justify-between mb-8'>
                 <div>
                     <h3>Wages</h3>
-                    {dayjs().format('MMMM, YYYY')}
+                    {currentMonth}
                 </div>
                 <div className='space-x-8'>
                     <Button 
-                    // label={t('export', { ns: 'common' })} 
-                        label='Export'
+                        label={t('export', { ns: 'common' })} 
                         variant='secondary' 
                         buttonClass='w-56'
                         onClick={handleExport}
