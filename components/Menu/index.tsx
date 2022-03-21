@@ -23,7 +23,7 @@ const AppRoutes: AppRoutesType = {
         }
     },
     Stock: {
-        route: '/ingredients-movement',
+        route: '/stock',
         icon: <TickSquare />,
         iconFilled: <TickSquare filled={true} />
     },

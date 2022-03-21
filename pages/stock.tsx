@@ -1,19 +1,22 @@
 import { NextPage } from 'next'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { posterInstance } from '@services/poster'
 import { Column, useSortBy, useTable } from 'react-table'
 import { enforceAuthenticated, snakeCaseToPascalCase } from '@lib/utils'
 import { Ingredient } from '@lib/posterTypes'
 import ErrorMessage from '@components/ErrorMessage'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
-export const getServerSideProps = enforceAuthenticated(async () => {
+export const getServerSideProps = enforceAuthenticated(async (context: any) => {
     try {
         const { data } = await posterInstance.get('storage.getReportMovement')
         if (data.error) throw data.error
         const ingredients = data.response
         return {
             props: {
-                ingredients
+                ingredients,
+                ...await serverSideTranslations(context.locale, ['stock', 'common']),
             }
         }
     } catch(e: any) {
@@ -21,18 +24,21 @@ export const getServerSideProps = enforceAuthenticated(async () => {
             props:
             {
                 ingredients: [],
-                error: e.message
+                error: e.message,
+                ...await serverSideTranslations(context.locale, ['stock', 'common']),
             }
         }
     }  
 })
 
-type IngredientsMovementProps = {
+type StockProps = {
   ingredients: Ingredient[],
   error: string | null
 }
 
-const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, error }) => {
+const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
+    const { t } = useTranslation('stock')
+
     const columns: Column<Ingredient>[] = useMemo<Column<Ingredient>[]>(
         () => {
             const columnAccessors: (keyof Ingredient)[] = ['ingredient_id', 'ingredient_name', 'start', 'end']
@@ -62,7 +68,8 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
     }
 
     return (
-        <div>
+        <div className='flex flex-col'>
+            <h3 className='mb-8'>{t('header').toString()}</h3>
             <table {...getTableProps()} className='table-auto'>
                 <thead>
                     <tr>
@@ -100,4 +107,4 @@ const IngredientsMovement: NextPage<IngredientsMovementProps> = ({ ingredients, 
     )
 }
 
-export default IngredientsMovement
+export default Stock
