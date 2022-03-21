@@ -1,0 +1,13 @@
+{
+  "header": "Зарплата",
+  "table": {
+    "employee": "Сотрудник",
+    "hourlyWage": "Ставка(₴/ч)",
+    "hoursTotal": "Часов",
+    "salaryTotal": "ЗП(₴)",
+    "salesIncomeTotal": "Кассовый бонус(₴)",
+    "deductionsTotal": "Удержания(₴)",
+    "bonus": "Бонус(₴)",
+    "incomeTotal": "Начисление(₴)"
+  }
+}
