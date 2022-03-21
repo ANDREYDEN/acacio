@@ -127,14 +127,14 @@ const Salary: NextPage = () => {
             bonusDto: row.bonusDto.initialValue 
         }))
         const columns: Partial<Column>[] = [
-            { key: 'employeeName', header: 'Name', width: 20 },
-            { key: 'hourlySalary', header: 'Hourly Wage (₴)', width: 15 },
-            { key: 'hoursTotal', header: 'Total Hours', width: 15 },
-            { key: 'salaryTotal', header: 'Total Wage (₴)', width: 15 },
-            { key: 'salesIncomeTotal', header: 'Sales Income (₴)', width: 15 },
-            { key: 'deductionsTotal', header: 'Deductions (₴)', width: 15 },
-            { key: 'bonusDto', header: 'Bonus (₴)', },
-            { key: 'incomeTotal', header: 'Income Total (₴)', width: 15 }
+            { key: 'employeeName', header: t('table.employee').toString(), width: 20 },
+            { key: 'hourlySalary', header: t('table.hourlyWage').toString(), width: 15 },
+            { key: 'hoursTotal', header: t('table.hoursTotal').toString(), width: 15 },
+            { key: 'salaryTotal', header: t('table.salaryTotal').toString(), width: 15 },
+            { key: 'salesIncomeTotal', header: t('table.salesIncomeTotal').toString(), width: 20 },
+            { key: 'deductionsTotal', header: t('table.deductionsTotal').toString(), width: 15 },
+            { key: 'bonusDto', header: t('table.bonus').toString(), },
+            { key: 'incomeTotal', header: t('table.incomeTotal').toString(), width: 15 }
         ]
         await exportToXLSX(exportData, columns, `Salary ${dayjs().format('MMM YYYY')}`)
     }
