@@ -161,7 +161,7 @@ const Salary: NextPage = () => {
         <div className='flex flex-col items-center'>
             <div className='w-full flex justify-between mb-8'>
                 <div>
-                    <h3>Wages</h3>
+                    <h3>{t('header')}</h3>
                     {currentMonth}
                 </div>
                 <div className='space-x-8'>

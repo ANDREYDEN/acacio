@@ -1,0 +1,13 @@
+{
+  "header": "Wages",
+  "table": {
+    "employee": "Employee",
+    "hourlyWage": "Hourly Wage(₴/h)",
+    "hoursTotal": "Total Hours",
+    "salaryTotal": "Total Salary(₴)",
+    "salesIncomeTotal": "Sales Income(₴)",
+    "deductionsTotal": "Deductions(₴)",
+    "bonus": "Bonus(₴)",
+    "incomeTotal": "Total Income(₴)"
+  }
+}
