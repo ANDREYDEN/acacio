@@ -1,18 +1,18 @@
-import { CurrencyCell, Table } from '@components'
+import Table from '@components/Table'
 import { SalesPerDay } from '@interfaces'
-import dayjs from 'dayjs'
 import { useTranslation } from 'next-i18next'
-import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 import { Column } from 'react-table'
-import { capitalizeWord } from '@lib/utils'
+import dayjs from 'dayjs'
+import { useRouter } from 'next/router'
+import NumberInputCell from '@components/NumberInputCell'
+import NumericCell from '@components/NumericCell'
 
 interface ISalesTable {
     data: SalesPerDay[]
-    selectedColumns: string[]
 }
 
-const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTable) => {
+const SalesTable: React.FC<ISalesTable> = ({ data }: ISalesTable) => {
     const { t } = useTranslation('sales')
     const router = useRouter()
 
@@ -28,7 +28,7 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
                 accessor: 'dayOfWeek',
                 Cell: ({ value: dayOfWeek }: { value: dayjs.Dayjs }) => {
                     const dayOfWeekInNeededLanguage = dayOfWeek.locale(router.locale?.split('-')[0] ?? 'en').format('dd')
-                    const formattedDay = capitalizeWord(dayOfWeekInNeededLanguage)
+                    const formattedDay = `${dayOfWeekInNeededLanguage[0]?.toUpperCase()}${dayOfWeekInNeededLanguage.slice(1)}`
 
                     return <span>{formattedDay}</span>
                 }
@@ -40,47 +40,43 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
             {
                 Header: <h1>{t('table_headers.averageBill').toString()}</h1>,
                 accessor: 'averageBill',
-                Cell: CurrencyCell
+                Cell: NumericCell
             },
             {
                 Header: <h1>{t('table_headers.kitchenRevenue').toString()}</h1>,
                 accessor: 'kitchenRevenue',
-                Cell: CurrencyCell
+                Cell: NumericCell
             },
             {
                 Header: <h1>{t('table_headers.kitchenProfit').toString()}</h1>,
                 accessor: 'kitchenProfit',
-                Cell: CurrencyCell
+                Cell: NumericCell
             },
             {
                 Header: <h1>{t('table_headers.barRevenue').toString()}</h1>,
                 accessor: 'barRevenue',
-                Cell: CurrencyCell
+                Cell: NumericCell
             },
             {
                 Header: <h1>{t('table_headers.barProfit').toString()}</h1>,
                 accessor: 'barProfit',
-                Cell: CurrencyCell
+                Cell: NumericCell
             },
             {
                 Header: <h1>{t('table_headers.totalRevenue').toString()}</h1>,
                 accessor: 'totalRevenue',
-                Cell: CurrencyCell
+                Cell: NumericCell
             },
             {
                 Header: <h1>{t('table_headers.totalProfit').toString()}</h1>,
                 accessor: 'totalProfit',
-                Cell: CurrencyCell
+                Cell: NumericCell
             },
         ],
         [router.locale, t]
     )
 
-    const filteredColumns = useMemo(() => {
-        return columns.filter(c => c.accessor && selectedColumns.includes(c.accessor as string))
-    }, [columns, selectedColumns])
-
-    return <Table columns={filteredColumns} data={data} tableSpacing='px-2' />
+    return <Table columns={columns} data={data} tableSpacing='px-2' />
 }
 
 export default SalesTable
