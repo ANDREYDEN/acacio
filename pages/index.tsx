@@ -29,7 +29,7 @@ const Login: NextPage = () => {
             setLoading(true)
             const { error } = await supabase.auth.signIn({ email, password })
             if (error) throw new Error(error.message)
-            router.replace('/employees')
+            router.replace('/sales')
         } catch (error: any) {
             setError(error.error_description || error.message)
         } finally {

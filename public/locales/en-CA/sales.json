@@ -1,0 +1,15 @@
+{
+  "header": "Sales",
+  "table_headers": {
+    "date": "Date",
+    "dayOfWeek": "Day of week",
+    "customers": "Customers",
+    "averageBill": "Average bill(₴)",
+    "kitchenRevenue": "Kitchen revenue(₴)",
+    "kitchenProfit": "Kitchen profit(₴)",
+    "barRevenue": "Bar revenue(₴)",
+    "barProfit": "Bar profit(₴)",
+    "totalRevenue": "Total revenue(₴)",
+    "totalProfit": "Total profit(₴)"
+  }
+}

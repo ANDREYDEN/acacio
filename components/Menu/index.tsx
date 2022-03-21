@@ -8,7 +8,7 @@ import { supabase } from '@client'
 
 const AppRoutes: AppRoutesType = {
     Sales: {
-        route: '/reports',
+        route: '/sales',
         icon: <Home />,
         iconFilled: <Home filled={true} />
     },
@@ -54,7 +54,7 @@ const Menu: React.FC = ({ children }) => {
 
     return (
         <div className='grid grid-cols-[14rem_1fr]'>
-            <nav className='grid place-items-center min-h-screen w-56 bg-light-green p-4'>
+            <nav className='grid place-items-center sticky top-0 h-screen w-56 bg-light-green p-4'>
                 <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
                 <ul className='text-primary-blue font-header font-extrabold py-6'>
                     {Object.keys(AppRoutes).map((pageName, index) => {
