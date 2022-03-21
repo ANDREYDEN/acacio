@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { enforceAuthenticated } from '@lib/utils'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
@@ -11,6 +11,7 @@ import Loader from '@components/Loader'
 import { useMounted } from '@lib/hooks'
 import dayjs from 'dayjs'
 import ErrorMessage from '@components/ErrorMessage'
+import useSWR from 'swr'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -23,25 +24,12 @@ const Sales: NextPage = () => {
     const [dateFrom, setDateFrom] = useState(dayjs().subtract(7, 'day'))
     const [dateTo, setDateTo] = useState(dayjs())
     const { t } = useTranslation('sales')
-    const [sales, setSales] = useState<SalesPerDay[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState('')
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const sales = await posterGetSales(dateFrom, dateTo)
-                setSales(sales)
-            } catch (e: any) {
-                setError(e.toString())
-            } finally {
-                setLoading(false)
-            }
-        })()
-    }, [dateFrom, dateTo])
+    const { data: sales, error } = useSWR('getSales', () => posterGetSales(dateFrom, dateTo))
+    const loading = !sales
 
     const tableData: SalesPerDay[] = useMemo(() =>
-        sales.map((salePerDay) => {
+        (sales ?? []).map((salePerDay) => {
             const row = {
                 date: salePerDay.date,
                 dayOfWeek: salePerDay.dayOfWeek,

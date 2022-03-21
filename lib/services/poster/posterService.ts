@@ -96,29 +96,30 @@ export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs)
     const salesFinal: SalesPerDay[] = []
     const numberOfDays = dateTo.diff(dateFrom, 'day')
 
-    let currentDate = dateFrom
-    for (let i = 0; i < numberOfDays; i++) {
-        const sales = await getSalesForDay(currentDate)
-        const salesWorkshops = await getSalesForDay(currentDate, 'workshops')
+    await Promise.all([...Array(numberOfDays)].map((_, i) => {
+        return (async () => {
+            const currentDate = dateFrom.add(i, 'day')
+            const sales = await getSalesForDay(currentDate)
+            const salesWorkshops = await getSalesForDay(currentDate, 'workshops')
 
-        const kitchenSales = salesWorkshops.find((sw: any) => sw.workshop_name.toLowerCase().trim() === 'кухня')
-        const barSales = salesWorkshops.find((sw: any) => sw.workshop_name.toLowerCase().trim() === 'бар')
+            const kitchenSales = salesWorkshops.find((sw: any) => sw.workshop_name.toLowerCase().trim() === 'кухня')
+            const barSales = salesWorkshops.find((sw: any) => sw.workshop_name.toLowerCase().trim() === 'бар')
 
-        salesFinal.push({
-            date: currentDate,
-            dayOfWeek: currentDate,
-            customers: sales.counters.visitors,
-            averageBill: sales.counters.average_receipt,
-            kitchenRevenue: kitchenSales?.revenue ?? 0,
-            kitchenProfit: kitchenSales?.prod_profit ?? 0,
-            barRevenue: barSales?.revenue ?? 0,
-            barProfit: barSales?.prod_profit ?? 0,
-            totalRevenue: sales.counters.revenue,
-            totalProfit: sales.counters.profit
-        })
-
-        currentDate = currentDate.add(1, 'day')
-    }
+            salesFinal.push({
+                date: currentDate,
+                dayOfWeek: currentDate,
+                customers: sales.counters.visitors,
+                averageBill: sales.counters.average_receipt,
+                kitchenRevenue: kitchenSales?.revenue ?? 0,
+                kitchenProfit: kitchenSales?.prod_profit ?? 0,
+                barRevenue: barSales?.revenue ?? 0,
+                barProfit: barSales?.prod_profit ?? 0,
+                totalRevenue: sales.counters.revenue,
+                totalProfit: sales.counters.profit
+            })
+        })()
+    }))
+    salesFinal.sort((s1, s2) => s1.date.diff(s2.date))
 
     return salesFinal
 }
