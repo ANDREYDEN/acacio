@@ -2,19 +2,12 @@
   "header": "Wages",
   "table": {
     "employee": "Employee",
-    "hourlyWage": "Hourly wage(₴/h)",
-    "hoursTotal": "Total hours",
-    "salaryTotal": "Total wage(₴)",
-    "salesIncomeTotal": "Sales income(₴)",
+    "hourlyWage": "Hourly Wage(₴/h)",
+    "hoursTotal": "Total Hours",
+    "salaryTotal": "Total Salary(₴)",
+    "salesIncomeTotal": "Sales Income(₴)",
     "deductionsTotal": "Deductions(₴)",
-    "prepaidExpense": "Prepaid Expense(₴)",
-    "retention": "Retention from inventorization(₴)",
     "bonus": "Bonus(₴)",
-    "incomeTotal": "Total income(₴)"
-  },
-  "bonus_comment": {
-    "header": "Bonus comment",
-    "message": "Why did this employee get the bonus?",
-    "comment": "Comment"
+    "incomeTotal": "Total Income(₴)"
   }
 }

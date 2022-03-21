@@ -7,14 +7,7 @@
     "salaryTotal": "ЗП(₴)",
     "salesIncomeTotal": "Кассовый бонус(₴)",
     "deductionsTotal": "Удержания(₴)",
-    "prepaidExpense": "Аванс(₴)",
-    "retention": "Удержание от инвентаризации(₴)",
     "bonus": "Бонус(₴)",
     "incomeTotal": "Начисление(₴)"
-  },
-  "bonus_comment": {
-    "header": "Комментарий к бонусу",
-    "message": "Почему этот сотрудник получил бонус?",
-    "comment": "Комментарий"
   }
 }
