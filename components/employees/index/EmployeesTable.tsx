@@ -3,6 +3,7 @@ import { IAction, IEmployeesTableRow } from '@interfaces'
 import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
 import { Column } from 'react-table'
+import NumericCell from '@components/NumericCell'
 
 interface IEmployeeTable {
     data: IEmployeesTableRow[]
@@ -29,7 +30,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data }: IEmployeeTable) => {
             {
                 Header: <h1>{t('table_headers.salary').toString()}</h1>,
                 accessor: 'salary',
-                Cell: ({ value: salary }: { value: number }) => <span>{salary}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
             {
                 Header: <h1>{t('table_headers.revenue_percentage').toString()}</h1>,

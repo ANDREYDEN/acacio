@@ -5,6 +5,8 @@ import React, { useMemo } from 'react'
 import { Column } from 'react-table'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/router'
+import NumberInputCell from '@components/NumberInputCell'
+import NumericCell from '@components/NumericCell'
 
 interface ISalesTable {
     data: SalesPerDay[]
@@ -38,37 +40,37 @@ const SalesTable: React.FC<ISalesTable> = ({ data }: ISalesTable) => {
             {
                 Header: <h1>{t('table_headers.averageBill').toString()}</h1>,
                 accessor: 'averageBill',
-                Cell: ({ value: averageBill }: { value: number }) => <span>{averageBill.toFixed(2)}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
             {
                 Header: <h1>{t('table_headers.kitchenRevenue').toString()}</h1>,
                 accessor: 'kitchenRevenue',
-                Cell: ({ value: kitchenRevenue }: { value: number }) => <span>{Number(kitchenRevenue).toFixed(2)}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
             {
                 Header: <h1>{t('table_headers.kitchenProfit').toString()}</h1>,
                 accessor: 'kitchenProfit',
-                Cell: ({ value: kitchenProfit }: { value: number }) => <span>{Number(kitchenProfit).toFixed(2)}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
             {
                 Header: <h1>{t('table_headers.barRevenue').toString()}</h1>,
                 accessor: 'barRevenue',
-                Cell: ({ value: barRevenue }: { value: number }) => <span>{Number(barRevenue).toFixed(2)}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
             {
                 Header: <h1>{t('table_headers.barProfit').toString()}</h1>,
                 accessor: 'barProfit',
-                Cell: ({ value: barProfit }: { value: number }) => <span>{Number(barProfit).toFixed(2)}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
             {
                 Header: <h1>{t('table_headers.totalRevenue').toString()}</h1>,
                 accessor: 'totalRevenue',
-                Cell: ({ value: totalRevenue }: { value: number }) => <span>{Number(totalRevenue).toFixed(2)}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
             {
                 Header: <h1>{t('table_headers.totalProfit').toString()}</h1>,
                 accessor: 'totalProfit',
-                Cell: ({ value: totalProfit }: { value: number }) => <span>{Number(totalProfit).toFixed(2)}</span>
+                Cell: ({ value }) => <NumericCell value={value} />
             },
         ],
         [router.locale, t]

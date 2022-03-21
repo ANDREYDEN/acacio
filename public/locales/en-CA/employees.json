@@ -4,7 +4,7 @@
     "name": "Name",
     "role": "Role",
     "birth_date": "Birth date",
-    "salary": "Salary",
+    "salary": "Salary(₴)",
     "revenue_percentage": "Revenue %"
   },
   "add_employee": "Add employee",
