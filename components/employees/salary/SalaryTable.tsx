@@ -31,17 +31,17 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
             { 
                 Header: <h1>Total Salary(₴)</h1>,
                 accessor: 'salaryTotal',
-                Cell: ({ value }) => <NumericCell value={value} />
+                Cell: NumericCell
             },
             { 
                 Header: <h1>Sales Income(₴)</h1>,
                 accessor: 'salesIncomeTotal',
-                Cell: ({ value }) => <NumericCell value={value} />
+                Cell: NumericCell
             },
             { 
                 Header: <h1>Deductions(₴)</h1>,
                 accessor: 'deductionsTotal',
-                Cell: ({ value }) => <NumericCell value={value} />
+                Cell: NumericCell
             },
             { 
                 Header: <h1>Bonus(₴)</h1>,
@@ -51,7 +51,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
             { 
                 Header: <h1>Total Income(₴)</h1>,
                 accessor: 'incomeTotal',
-                Cell: ({ value }) => <NumericCell value={value} />
+                Cell: NumericCell
             },
         ],
         []

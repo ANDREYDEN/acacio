@@ -30,7 +30,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data }: IEmployeeTable) => {
             {
                 Header: <h1>{t('table_headers.salary').toString()}</h1>,
                 accessor: 'salary',
-                Cell: ({ value }) => <NumericCell value={value} />
+                Cell: NumericCell
             },
             {
                 Header: <h1>{t('table_headers.revenue_percentage').toString()}</h1>,
