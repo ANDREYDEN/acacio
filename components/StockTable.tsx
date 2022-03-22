@@ -1,7 +1,7 @@
-import Table from '@components/Table'
-import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
+import { Table } from '@components'
 import { Ingredient } from '@lib/posterTypes'
 import { snakeCaseToPascalCase } from '@lib/utils'
 
