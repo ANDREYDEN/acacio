@@ -1,10 +1,9 @@
-import Table from '@components/Table'
-import { ScheduleTableRow, ShiftDto } from '@interfaces'
-import dayjs from 'dayjs'
-import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
-import NumberInputCell from '../../NumberInputCell'
+import dayjs from 'dayjs'
+import { Table,NumberInputCell } from '@components'
+import { ScheduleTableRow, ShiftDto } from '@interfaces'
 
 interface IScheduleTable {
   dateColumns: dayjs.Dayjs[]

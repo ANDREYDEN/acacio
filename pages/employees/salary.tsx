@@ -1,21 +1,24 @@
-import Button from '@components/Button'
-import SalaryTable from '@components/employees/salary/SalaryTable'
-import ErrorMessage from '@components/ErrorMessage'
-import Loader from '@components/Loader'
-import { SalaryTableRow } from '@interfaces'
-import { useMounted } from '@lib/hooks'
-import exportToXLSX from '@lib/services/exportService'
-import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
-import { enforceAuthenticated, fullName } from '@lib/utils'
-import { definitions } from '@types'
-import dayjs from 'dayjs'
+import { useCallback, useMemo } from 'react'
 import { Column } from 'exceljs'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useCallback, useMemo } from 'react'
+import dayjs from 'dayjs'
+import { Button, SalaryTable, ErrorMessage, Loader } from '@components'
+import { SalaryTableRow } from '@interfaces'
+import { useMounted } from '@lib/hooks'
+import exportToXLSX from '@lib/services/exportService'
+import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
+import { enforceAuthenticated, fullName } from '@lib/utils'
+import { definitions } from '@types'
+import {
+    useSupabaseDeleteEntity,
+    useSupabaseGetBonuses,
+    useSupabaseGetEmployees,
+    useSupabaseGetShifts,
+    useSupabaseUpsertEntity
+} from '@lib/services/supabase'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {

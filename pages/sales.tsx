@@ -1,17 +1,15 @@
-import { NextPage } from 'next'
 import React, { useMemo, useState } from 'react'
-import { enforceAuthenticated } from '@lib/utils'
+import { NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ru'
+import useSWR from 'swr'
 import { posterGetSales } from '@services/poster'
 import { SalesPerDay } from '@interfaces'
-import SalesTable from '@components/SalesTable'
-import 'dayjs/locale/ru'
-import Loader from '@components/Loader'
+import { ErrorMessage, Loader, SalesTable } from '@components'
+import { enforceAuthenticated } from '@lib/utils'
 import { useMounted } from '@lib/hooks'
-import dayjs from 'dayjs'
-import ErrorMessage from '@components/ErrorMessage'
-import useSWR from 'swr'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {

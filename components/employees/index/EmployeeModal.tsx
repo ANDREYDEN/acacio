@@ -1,12 +1,9 @@
 import React, { ReactElement, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import Modal from '@components/Modal'
-import Button from '@components/Button'
-import { definitions } from '@types'
-import TextInput from '@components/TextInput'
-import ValidatedDropdown from '@components/ValidatedDropdown'
-import { IDropdownOption } from '@interfaces'
 import { useTranslation } from 'next-i18next'
+import { Modal, Button, TextInput, ValidatedDropdown } from '@components'
+import { definitions } from '@types'
+import { IDropdownOption } from '@interfaces'
 
 interface IEmployeeModal {
     onUpsertEmployee: (currentEmployee: Partial<definitions['employees']>) => Promise<void>
