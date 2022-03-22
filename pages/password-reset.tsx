@@ -2,13 +2,11 @@ import React, { useState } from 'react'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import { supabase } from '@client'
-import Button from '@components/Button'
-import TextInput from '@components/TextInput'
-import ErrorMessage from '@components/ErrorMessage'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { supabase } from '@client'
+import { Button, ErrorMessage, TextInput } from '@components'
 
 export const getServerSideProps = async (context: any) => ({
     props: {

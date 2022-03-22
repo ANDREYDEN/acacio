@@ -1,12 +1,11 @@
-import { NextPage } from 'next'
 import React, { useMemo } from 'react'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { posterInstance } from '@services/poster'
 import { enforceAuthenticated } from '@lib/utils'
 import { Ingredient } from '@lib/posterTypes'
-import ErrorMessage from '@components/ErrorMessage'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import StockTable from '@components/StockTable'
+import { ErrorMessage, StockTable } from '@components'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => {
     try {

@@ -1,9 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'next-i18next'
 import { useForm } from 'react-hook-form'
-import TextInput from './TextInput'
-import Button from './Button'
-import { useTranslation } from 'next-i18next'
+import { Button,TextInput } from '@components'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>

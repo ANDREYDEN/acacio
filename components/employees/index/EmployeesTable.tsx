@@ -1,9 +1,8 @@
-import Table from '@components/Table'
-import { IAction, IEmployeesTableRow } from '@interfaces'
-import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
-import NumericCell from '@components/NumericCell'
+import { Table, NumericCell } from '@components'
+import { IAction, IEmployeesTableRow } from '@interfaces'
 
 interface IEmployeeTable {
     data: IEmployeesTableRow[]

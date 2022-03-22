@@ -1,10 +1,8 @@
-import Table from '@components/Table'
-import NumberInputCell from '@components/NumberInputCell'
-import { SalaryTableRow } from '@interfaces'
-import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
-import NumericCell from '@components/NumericCell'
+import { Table, NumberInputCell, NumericCell } from '@components'
+import { SalaryTableRow } from '@interfaces'
 
 interface ISalaryTable {
   data: SalaryTableRow[]

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { supabase } from '@client'
-import Button from '@components/Button'
-import TextInput from '@components/TextInput'
+import { NextPage } from 'next'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import ErrorMessage from '@components/ErrorMessage'
+import { supabase } from '@client'
+import { ErrorMessage, Button, TextInput } from '@components'
 
 const SendPasswordReset: NextPage = () => {
     const defaultValues = {
