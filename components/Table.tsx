@@ -1,5 +1,5 @@
 import React from 'react'
-import { Column, useSortBy, useTable } from 'react-table'
+import { Column, useTable } from 'react-table'
 
 interface ITable<T extends Object> {
     columns: Column<T>[]
@@ -11,7 +11,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
     const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<T>({
         columns,
         data
-    }, useSortBy)
+    })
 
     return (
         <div className='border border-table-grey rounded-lg w-full overflow-scroll max-h-[calc(100vh-165px)]'>
