@@ -17,7 +17,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import { useCallback, useMemo } from 'react'
 
-
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
         ...await serverSideTranslations(context.locale, ['salary', 'common']),

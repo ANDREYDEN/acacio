@@ -5,7 +5,6 @@ import React, { useMemo } from 'react'
 import { Column } from 'react-table'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/router'
-import NumberInputCell from '@components/NumberInputCell'
 import NumericCell from '@components/NumericCell'
 
 interface ISalesTable {

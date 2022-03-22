@@ -23,7 +23,7 @@ const AppRoutes: AppRoutesType = {
         }
     },
     Stock: {
-        route: '/ingredients-movement',
+        route: '/stock',
         icon: <TickSquare />,
         iconFilled: <TickSquare filled={true} />
     },
@@ -71,7 +71,7 @@ const Menu: React.FC = ({ children }) => {
                     <h5 className='ml-4 text-primary-blue'>Log Out</h5>
                 </button>
             </nav>
-            <div className='pt-16 px-12 pb-6 overflow-hidden'>{ children }</div>
+            <div className='pt-16 px-12 pb-8 overflow-hidden'>{ children }</div>
         </div>
     )
 }
