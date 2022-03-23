@@ -17,15 +17,15 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter }: IDropdown
                 <>
                     <Popover.Button>
                         <div className={`flex items-center space-x-2 p-2 border border-table-grey rounded-lg
-                            ${open ? 'bg-secondary-background' : ''}`}>
+                                ${open ? 'bg-secondary-background' : ''}`}>
                             {icon}
                             <p className='text-dark-grey font-body-bold text-sm'>{label}</p>
-                            {open ? <ChevronDown primaryColor='grey' /> : <ChevronUp primaryColor='grey' />}
+                            {open ? <ChevronUp primaryColor='grey' /> : <ChevronDown primaryColor='grey' />}
                         </div>
                     </Popover.Button>
                     <Popover.Panel>
                         <div className='flex flex-col w-44 items-start bg-white absolute
-                    space-y-2 left-0 z-0 mt-4 shadow-filter rounded-lg py-2'>
+                                space-y-2 left-0 z-0 mt-4 shadow-filter rounded-lg py-2'>
                             {filter &&
                         <button
                             onClick={filter}
@@ -41,7 +41,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter }: IDropdown
                                         key={item.label}
                                         onClick={item.action}
                                         className={`w-full text-left px-4 hover:bg-blue hover:text-secondary-background
-                                    ${item.selected && 'bg-blue text-white'}`}
+                                            ${item.selected && 'bg-blue text-white'}`}
                                     >
                                         {item.label}
                                     </button>
