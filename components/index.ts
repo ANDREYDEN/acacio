@@ -1,6 +1,7 @@
 export { default as Button } from './Button'
 export { default as ConfirmationModal } from './ConfirmationModal'
 export { default as DeletionModal } from './DeletionModal'
+export { default as Dropdown } from './Dropdown'
 export { default as ErrorMessage } from './ErrorMessage'
 export { default as Loader } from './Loader'
 export { default as LoginForm } from './LoginForm'
