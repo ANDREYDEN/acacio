@@ -24,30 +24,38 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter }: IDropdown
                         </div>
                     </Popover.Button>
                     <Popover.Panel>
-                        <div className='flex flex-col w-44 items-start bg-white absolute
+                        {({ close }) => (
+                            <div className='flex flex-col w-44 items-start bg-white absolute
                                 space-y-2 left-0 z-0 mt-4 shadow-filter rounded-lg py-2'>
-                            {filter &&
-                        <button
-                            onClick={filter}
-                            className='underline mb-2 px-4 w-full text-left hover:bg-blue hover:text-secondary-background'
-                        >
-                            Clear filter
-                        </button>
-                            }
-
-                            {items.map(item => {
-                                return (
+                                {filter &&
                                     <button
-                                        key={item.label}
-                                        onClick={item.action}
-                                        className={`w-full text-left px-4 hover:bg-blue hover:text-secondary-background
-                                            ${item.selected && 'bg-blue text-white'}`}
+                                        onClick={() => {
+                                            filter()
+                                            close()
+                                        }}
+                                        className='underline mb-2 px-4 w-full text-left hover:bg-blue hover:text-secondary-background'
                                     >
-                                        {item.label}
+                                        Clear filter
                                     </button>
-                                )
-                            })}
-                        </div>
+                                }
+
+                                {items.map(item => {
+                                    return (
+                                        <button
+                                            key={item.label}
+                                            onClick={() => {
+                                                item.action()
+                                                close()
+                                            }}
+                                            className={`w-full text-left px-4 hover:bg-blue hover:text-secondary-background
+                                            ${item.selected && 'bg-blue text-white'}`}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                        )}
                     </Popover.Panel>
                 </>
             )}
