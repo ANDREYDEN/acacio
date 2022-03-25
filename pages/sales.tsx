@@ -24,6 +24,7 @@ const Sales: NextPage = () => {
     const { mounted } = useMounted()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
+    const [selectedTimeframe, setSelectedTimeframe] = useState('')
     const { t } = useTranslation('sales')
 
     const { data: sales, error } = useSWR('getSales', () => posterGetSales(dateFrom, dateTo))
@@ -50,13 +51,17 @@ const Sales: NextPage = () => {
     )
 
     const timeframeFilter = () => {
+        setSelectedTimeframe('')
         setDateFrom(defaultDateFrom)
         setDateTo(defaultDateTo)
     }
+
+    // TODO: refactor this
     const timeFrameOptions: IDropdownItem[] = [
         {
             label: 'Last Day',
             action: () => {
+                setSelectedTimeframe('Last Day')
                 setDateFrom(dayjs().subtract(1, 'day'))
                 setDateTo(dayjs())
             }
@@ -64,6 +69,7 @@ const Sales: NextPage = () => {
         {
             label: 'Last 14 days',
             action: () => {
+                setSelectedTimeframe('Last 14 days')
                 setDateFrom(dayjs().subtract(14, 'day'))
                 setDateTo(dayjs())
             }
@@ -83,8 +89,9 @@ const Sales: NextPage = () => {
                 <Dropdown
                     label='Timeframe'
                     items={timeFrameOptions}
-                    icon={<Calendar primaryColor='grey' />}
+                    icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
                     filter={timeframeFilter}
+                    selectedOption={selectedTimeframe}
                 />
             </div>
 

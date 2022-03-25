@@ -7,20 +7,24 @@ export interface IDropdown {
     label: string
     items: IDropdownItem[]
     icon?: ReactElement<IconProps>
-    filter?: () => void
+    filter?: () => void,
+    selectedOption?: string
 }
 
-const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter }: IDropdown) => {
+const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter, selectedOption }: IDropdown) => {
+    const chevronColor = selectedOption ? 'white' : 'grey'
+
     return (
         <Popover className='relative'>
             {({ open }) => (
                 <>
                     <Popover.Button>
-                        <div className={`flex items-center space-x-2 p-2 border border-table-grey rounded-lg
-                                ${open ? 'bg-secondary-background' : ''}`}>
+                        <div className={`flex items-center justify-center space-x-2 p-2 rounded-lg font-body-bold text-sm w-36
+                                ${open ? 'bg-secondary-background' : ''}
+                                ${selectedOption ? 'bg-blue text-white' : 'border border-table-grey text-dark-grey'}`}>
                             {icon}
-                            <p className='text-dark-grey font-body-bold text-sm'>{label}</p>
-                            {open ? <ChevronUp primaryColor='grey' /> : <ChevronDown primaryColor='grey' />}
+                            <span>{selectedOption ? selectedOption : label}</span>
+                            {open ? <ChevronUp primaryColor={chevronColor} /> : <ChevronDown primaryColor={chevronColor} />}
                         </div>
                     </Popover.Button>
                     <Popover.Panel>
