@@ -7,7 +7,7 @@ import 'dayjs/locale/ru'
 import useSWR from 'swr'
 import { Calendar } from 'react-iconly'
 import { posterGetSales } from '@services/poster'
-import { IDropdownItem, SalesPerDay } from '@interfaces'
+import { SalesPerDay } from '@interfaces'
 import { Dropdown, ErrorMessage, Loader, SalesTable } from '@components'
 import { enforceAuthenticated } from '@lib/utils'
 import { useMounted } from '@lib/hooks'
@@ -18,12 +18,12 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
     },
 }))
 
-enum TimeframeOptions {
-    LastDay = 'Last Day',
-    Last7Days = 'Last 7 days',
-    Last14Days = 'Last 14 days',
-    Last30Days = 'Last 30 days',
-    LastQuarter = 'Last quarter'
+const TimeframeOptions: Record<string, dayjs.Dayjs> = {
+    'Last Day': dayjs().subtract(1, 'day'),
+    'Last 7 days': dayjs().subtract(7, 'day'),
+    'Last 14 days': dayjs().subtract(14, 'day'),
+    'Last 30 days': dayjs().subtract(30, 'day'),
+    'Last quarter': dayjs().subtract(3, 'month')
 }
 
 const Sales: NextPage = () => {
@@ -64,49 +64,11 @@ const Sales: NextPage = () => {
         setDateTo(defaultDateTo)
     }
 
-    // TODO: refactor this
-    const timeFrameOptions: IDropdownItem[] = [
-        {
-            label: TimeframeOptions.LastDay,
-            action: () => {
-                setSelectedTimeframe(TimeframeOptions.LastDay)
-                setDateFrom(dayjs().subtract(1, 'day'))
-                setDateTo(dayjs())
-            }
-        },
-        {
-            label: TimeframeOptions.Last7Days,
-            action: () => {
-                setSelectedTimeframe(TimeframeOptions.Last7Days)
-                setDateFrom(dayjs().subtract(7, 'day'))
-                setDateTo(dayjs())
-            }
-        },
-        {
-            label: TimeframeOptions.Last14Days,
-            action: () => {
-                setSelectedTimeframe(TimeframeOptions.Last14Days)
-                setDateFrom(dayjs().subtract(14, 'day'))
-                setDateTo(dayjs())
-            }
-        },
-        {
-            label: TimeframeOptions.Last30Days,
-            action: () => {
-                setSelectedTimeframe(TimeframeOptions.Last30Days)
-                setDateFrom(dayjs().subtract(30, 'day'))
-                setDateTo(dayjs())
-            }
-        },
-        {
-            label: TimeframeOptions.LastQuarter,
-            action: () => {
-                setSelectedTimeframe(TimeframeOptions.LastQuarter)
-                setDateFrom(dayjs().subtract(3, 'month'))
-                setDateTo(dayjs())
-            }
-        }
-    ]
+    const onItemSelected = (item: string) => {
+        setSelectedTimeframe(item)
+        setDateFrom(TimeframeOptions[item])
+        setDateTo(dayjs())
+    }
 
     if (!mounted) {
         return <Loader />
@@ -120,7 +82,8 @@ const Sales: NextPage = () => {
             <div className='w-full flex items-center mb-6'>
                 <Dropdown
                     label='Timeframe'
-                    items={timeFrameOptions}
+                    items={Object.keys(TimeframeOptions)}
+                    onItemSelected={onItemSelected}
                     icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
                     filter={timeframeFilter}
                     selectedOption={selectedTimeframe}

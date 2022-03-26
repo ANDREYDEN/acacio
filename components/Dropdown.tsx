@@ -1,17 +1,17 @@
 import React, { ReactElement } from 'react'
 import { Popover } from '@headlessui/react'
 import { ChevronDown, ChevronUp, IconProps } from 'react-iconly'
-import { IDropdownItem } from '@interfaces'
 
 export interface IDropdown {
     label: string
-    items: IDropdownItem[]
+    items: string[]
+    onItemSelected: (item: string) => void
     icon?: ReactElement<IconProps>
     filter?: () => void,
     selectedOption?: string
 }
 
-const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter, selectedOption }: IDropdown) => {
+const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, filter, selectedOption }: IDropdown) => {
     const chevronColor = selectedOption ? 'white' : 'grey'
 
     return (
@@ -19,7 +19,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter, selectedOpt
             {({ open }) => (
                 <>
                     <Popover.Button>
-                        <div className={`flex items-center justify-center space-x-2 p-2 rounded-lg font-body-bold text-sm w-36
+                        <div className={`flex items-center justify-center space-x-2 p-2 rounded-lg font-body-bold text-sm
                                 ${open ? 'bg-secondary-background' : ''}
                                 ${selectedOption ? 'bg-blue text-white' : 'border border-table-grey text-dark-grey'}`}>
                             {icon}
@@ -30,7 +30,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter, selectedOpt
                     <Popover.Panel>
                         {({ close }) => (
                             <div className='flex flex-col w-44 items-start bg-white absolute
-                                space-y-2 left-0 z-0 mt-4 shadow-filter rounded-lg py-2'>
+                                left-0 z-0 mt-4 shadow-filter rounded-lg py-2'>
                                 {filter &&
                                     <button
                                         onClick={() => {
@@ -46,15 +46,15 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, icon, filter, selectedOpt
                                 {items.map(item => {
                                     return (
                                         <button
-                                            key={item.label}
+                                            key={item}
                                             onClick={() => {
-                                                item.action()
+                                                onItemSelected(item)
                                                 close()
                                             }}
-                                            className={`w-full text-left px-4 hover:bg-blue hover:text-secondary-background
-                                            ${item.selected && 'bg-blue text-white'}`}
+                                            className={`w-full text-left hover:bg-blue hover:text-secondary-background
+                                            ${item === selectedOption && 'bg-blue text-white'} px-4 py-1`}
                                         >
-                                            {item.label}
+                                            {item}
                                         </button>
                                     )
                                 })}
