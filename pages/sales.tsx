@@ -18,6 +18,14 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
     },
 }))
 
+enum TimeframeOptions {
+    LastDay = 'Last Day',
+    Last7Days = 'Last 7 days',
+    Last14Days = 'Last 14 days',
+    Last30Days = 'Last 30 days',
+    LastQuarter = 'Last quarter'
+}
+
 const Sales: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(7, 'day')
     const defaultDateTo = dayjs()
@@ -59,18 +67,42 @@ const Sales: NextPage = () => {
     // TODO: refactor this
     const timeFrameOptions: IDropdownItem[] = [
         {
-            label: 'Last Day',
+            label: TimeframeOptions.LastDay,
             action: () => {
-                setSelectedTimeframe('Last Day')
+                setSelectedTimeframe(TimeframeOptions.LastDay)
                 setDateFrom(dayjs().subtract(1, 'day'))
                 setDateTo(dayjs())
             }
         },
         {
-            label: 'Last 14 days',
+            label: TimeframeOptions.Last7Days,
             action: () => {
-                setSelectedTimeframe('Last 14 days')
+                setSelectedTimeframe(TimeframeOptions.Last7Days)
+                setDateFrom(dayjs().subtract(7, 'day'))
+                setDateTo(dayjs())
+            }
+        },
+        {
+            label: TimeframeOptions.Last14Days,
+            action: () => {
+                setSelectedTimeframe(TimeframeOptions.Last14Days)
                 setDateFrom(dayjs().subtract(14, 'day'))
+                setDateTo(dayjs())
+            }
+        },
+        {
+            label: TimeframeOptions.Last30Days,
+            action: () => {
+                setSelectedTimeframe(TimeframeOptions.Last30Days)
+                setDateFrom(dayjs().subtract(30, 'day'))
+                setDateTo(dayjs())
+            }
+        },
+        {
+            label: TimeframeOptions.LastQuarter,
+            action: () => {
+                setSelectedTimeframe(TimeframeOptions.LastQuarter)
+                setDateFrom(dayjs().subtract(3, 'month'))
                 setDateTo(dayjs())
             }
         }
