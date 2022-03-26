@@ -27,7 +27,7 @@ const Sales: NextPage = () => {
     const [selectedTimeframe, setSelectedTimeframe] = useState('')
     const { t } = useTranslation('sales')
 
-    const { data: sales, error } = useSWR('getSales', () => posterGetSales(dateFrom, dateTo))
+    const { data: sales, error } = useSWR(['getSales', dateFrom, dateTo], () => posterGetSales(dateFrom, dateTo))
     const loading = !sales
 
     const tableData: SalesPerDay[] = useMemo(() =>
@@ -76,7 +76,7 @@ const Sales: NextPage = () => {
         }
     ]
 
-    if (!mounted || loading) {
+    if (!mounted) {
         return <Loader />
     }
 
@@ -96,7 +96,7 @@ const Sales: NextPage = () => {
             </div>
 
             {error && (<ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />)}
-            <SalesTable data={tableData} />
+            {loading ? <Loader /> : <SalesTable data={tableData} />}
         </div>
     )
 }
