@@ -13,17 +13,10 @@ import { useMounted } from '@lib/hooks'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
-        ...await serverSideTranslations(context.locale, ['sales']),
+        ...await serverSideTranslations(context.locale, ['sales', 'timeframe', 'common']),
     },
 }))
 
-const TimeframeOptions: Record<string, dayjs.Dayjs> = {
-    'Last Day': dayjs().subtract(1, 'day'),
-    'Last 7 days': dayjs().subtract(7, 'day'),
-    'Last 14 days': dayjs().subtract(14, 'day'),
-    'Last 30 days': dayjs().subtract(30, 'day'),
-    'Last quarter': dayjs().subtract(3, 'month')
-}
 
 const Sales: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(7, 'day')
@@ -33,6 +26,13 @@ const Sales: NextPage = () => {
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t } = useTranslation('sales')
 
+    const timeframeOptions: Record<string, dayjs.Dayjs> = {
+        [t('last_day', { ns: 'timeframe' })]: dayjs().subtract(1, 'day'),
+        [t('last_7_days', { ns: 'timeframe' })]: dayjs().subtract(7, 'day'),
+        [t('last_14_days', { ns: 'timeframe' })]: dayjs().subtract(14, 'day'),
+        [t('last_30_days', { ns: 'timeframe' })]: dayjs().subtract(30, 'day'),
+        [t('last_quarter', { ns: 'timeframe' })]: dayjs().subtract(3, 'month')
+    }
     const { data: sales, error } = useSWR(['getSales', dateFrom, dateTo], () => posterGetSales(dateFrom, dateTo))
     const loading = !sales
 
@@ -63,7 +63,7 @@ const Sales: NextPage = () => {
     return (
         <div className='flex flex-col'>
             <div className='w-full flex items-center mb-6'>
-                <h3>{t('header').toString()}</h3>
+                <h3>{t('header')}</h3>
             </div>
             <div className='w-full flex items-center mb-6'>
                 <TimeframeDropdown
@@ -71,7 +71,7 @@ const Sales: NextPage = () => {
                     setDateTo={setDateTo}
                     defaultDateFrom={defaultDateFrom}
                     defaultDateTo={defaultDateTo}
-                    timeframeOptions={TimeframeOptions}
+                    timeframeOptions={timeframeOptions}
                 />
             </div>
 

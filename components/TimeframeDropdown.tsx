@@ -4,6 +4,7 @@ import { Button, Dropdown, TextInput } from '@components/index'
 import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
 import { Popover } from '@headlessui/react'
+import { useTranslation } from 'next-i18next'
 
 interface ITimeframeDropdown {
     setDateFrom: any
@@ -15,14 +16,15 @@ interface ITimeframeDropdown {
 
 const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({ setDateFrom, setDateTo, defaultDateFrom, defaultDateTo, timeframeOptions }) => {
     const [selectedTimeframe, setSelectedTimeframe] = useState('')
+    const { t } = useTranslation('timeframe')
 
     const defaultValues = {
         startDate: '',
         endDate: '',
     }
     const { register, handleSubmit, trigger, control, reset } = useForm({ defaultValues })
-    register('startDate', { required: 'Enter start date' })
-    register('endDate', { required: 'Enter start date' })
+    register('startDate', { required: t('start_date_required').toString() })
+    register('endDate', { required: t('end_date_required').toString() })
 
     const timeframeFilter = () => {
         setSelectedTimeframe('')
@@ -37,36 +39,50 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({ setDateFrom, setDateT
     }
 
     const handleCustomTimeframe = async (data: any) => {
-        setDateFrom(dayjs(data.startDate))
-        setDateTo(dayjs(data.endDate))
-        // TODO: closePopover()
+        const dateFrom = dayjs(data.startDate)
+        const dateTo = dayjs(data.endDate)
+
+        setDateFrom(dateFrom)
+        setDateTo(dateTo)
+        setSelectedTimeframe(`${dateFrom.format('DD/MM/YYYY')}-${dateTo.format('DD/MM/YYYY')}`)
     }
 
     const customFilter = {
-        label: 'Custom timeframe',
+        label: t('custom_timeframe'),
         popoverPanel: <Popover.Panel>
             {({ close }) => (
-                <form
-                    className='flex flex-col items-center bg-white absolute left-56 top-0 z-0 shadow-filter rounded-lg p-6 space-y-6'
-                    onSubmit={handleSubmit(handleCustomTimeframe)}
-                >
+                <form className='flex flex-col items-center bg-white absolute left-64 top-0 z-0 shadow-filter rounded-lg p-6 space-y-6'>
                     <TextInput
                         type='date'
                         name='startDate'
-                        label='Start Date'
+                        label={t('start_date')}
                         control={control}
                         trigger={trigger}
+                        textInputClass='w-full'
                     />
                     <TextInput
                         type='date'
                         name='endDate'
-                        label='End Date'
+                        label={t('end_date')}
                         control={control}
                         trigger={trigger}
+                        textInputClass='w-full'
                     />
                     <div className='flex w-full space-x-4'>
-                        <Button label='Clear' variant='secondary' buttonClass='w-full' onClick={() => reset(defaultValues)} />
-                        <Button label='Done' buttonClass='w-full' />
+                        <Button
+                            label={t('clear', { ns: 'common' })}
+                            variant='secondary'
+                            buttonClass='w-full'
+                            onClick={() => reset(defaultValues)}
+                        />
+                        <Button
+                            label={t('done', { ns: 'common' })}
+                            buttonClass='w-full'
+                            onClick={() => {
+                                handleSubmit(handleCustomTimeframe)()
+                                close()
+                            }}
+                        />
                     </div>
                 </form>
             )}
@@ -75,7 +91,7 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({ setDateFrom, setDateT
     
     return (
         <Dropdown
-            label='Timeframe'
+            label={t('label')}
             items={Object.keys(timeframeOptions)}
             onItemSelected={onItemSelected}
             icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
