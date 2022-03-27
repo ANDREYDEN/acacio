@@ -1,26 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Calendar } from 'react-iconly'
 import { Button, Dropdown, TextInput } from '@components/index'
 import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
 import { Popover } from '@headlessui/react'
 import { useTranslation } from 'next-i18next'
-import { IDropdownItem } from '@interfaces'
 
 interface ITimeframeDropdown {
-    setDateFrom: (date: dayjs.Dayjs) => void
-    setDateTo: (date: dayjs.Dayjs) => void
+    setDateFrom: any
+    setDateTo: any
     defaultDateFrom: dayjs.Dayjs
     defaultDateTo: dayjs.Dayjs
-    timeframeOptions: IDropdownItem[]
-    selectedTimeframe: string
-    setSelectedTimeframe: (timeframe: string) => void
-    defaultTimeframe?: string
+    timeframeOptions: Record<string, dayjs.Dayjs>
 }
 
-const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
-    setDateFrom, setDateTo, defaultDateFrom, defaultDateTo, timeframeOptions, selectedTimeframe, setSelectedTimeframe, defaultTimeframe = ''
-}) => {
+const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({ setDateFrom, setDateTo, defaultDateFrom, defaultDateTo, timeframeOptions }) => {
+    const [selectedTimeframe, setSelectedTimeframe] = useState('')
     const { t } = useTranslation('timeframe')
 
     const defaultValues = {
@@ -31,16 +26,15 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
     register('startDate', { required: t('start_date_required').toString() })
     register('endDate', { required: t('end_date_required').toString() })
 
-    const onItemSelected = (item: IDropdownItem | undefined) => {
-        if (!item) {
-            setSelectedTimeframe('')
-            setDateFrom(defaultDateFrom)
-            setDateTo(defaultDateTo)
-            return
-        }
+    const timeframeFilter = () => {
+        setSelectedTimeframe('')
+        setDateFrom(defaultDateFrom)
+        setDateTo(defaultDateTo)
+    }
 
-        setSelectedTimeframe(item.label)
-        setDateFrom(item?.value as dayjs.Dayjs)
+    const onItemSelected = (item: string) => {
+        setSelectedTimeframe(item)
+        setDateFrom(timeframeOptions[item])
         setDateTo(dayjs())
     }
 
@@ -98,10 +92,10 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
     return (
         <Dropdown
             label={t('label')}
-            items={timeframeOptions}
+            items={Object.keys(timeframeOptions)}
             onItemSelected={onItemSelected}
-            icon={<Calendar primaryColor={selectedTimeframe ? 'white' : '#B3B3B3'} />}
-            withClearFilter={!defaultTimeframe}
+            icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
+            filter={timeframeFilter}
             selectedOption={selectedTimeframe}
             customFilter={customFilter}
         />
