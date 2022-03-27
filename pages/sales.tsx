@@ -7,23 +7,33 @@ import 'dayjs/locale/ru'
 import useSWR from 'swr'
 import { posterGetSales } from '@services/poster'
 import { SalesPerDay } from '@interfaces'
-import { ErrorMessage, Loader, SalesTable } from '@components'
+import { ErrorMessage, Loader, SalesTable, TimeframeDropdown } from '@components'
 import { enforceAuthenticated } from '@lib/utils'
 import { useMounted } from '@lib/hooks'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
-        ...await serverSideTranslations(context.locale, ['sales']),
+        ...await serverSideTranslations(context.locale, ['sales', 'timeframe', 'common']),
     },
 }))
 
+
 const Sales: NextPage = () => {
+    const defaultDateFrom = dayjs().subtract(7, 'day')
+    const defaultDateTo = dayjs()
     const { mounted } = useMounted()
-    const [dateFrom, setDateFrom] = useState(dayjs().subtract(7, 'day'))
-    const [dateTo, setDateTo] = useState(dayjs())
+    const [dateFrom, setDateFrom] = useState(defaultDateFrom)
+    const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t } = useTranslation('sales')
 
-    const { data: sales, error } = useSWR('getSales', () => posterGetSales(dateFrom, dateTo))
+    const timeframeOptions: Record<string, dayjs.Dayjs> = {
+        [t('last_day', { ns: 'timeframe' })]: dayjs().subtract(1, 'day'),
+        [t('last_7_days', { ns: 'timeframe' })]: dayjs().subtract(7, 'day'),
+        [t('last_14_days', { ns: 'timeframe' })]: dayjs().subtract(14, 'day'),
+        [t('last_30_days', { ns: 'timeframe' })]: dayjs().subtract(30, 'day'),
+        [t('last_quarter', { ns: 'timeframe' })]: dayjs().subtract(3, 'month')
+    }
+    const { data: sales, error } = useSWR(['getSales', dateFrom, dateTo], () => posterGetSales(dateFrom, dateTo))
     const loading = !sales
 
     const tableData: SalesPerDay[] = useMemo(() =>
@@ -46,15 +56,29 @@ const Sales: NextPage = () => {
     [sales]
     )
 
-    if (!mounted || loading) {
+    if (!mounted) {
         return <Loader />
     }
 
     return (
         <div className='flex flex-col'>
-            <h3 className='mb-8'>{t('header').toString()}</h3>
-            {error && (<ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />)}
-            <SalesTable data={tableData} />
+            <div className='w-full flex items-center mb-6'>
+                <h3>{t('header')}</h3>
+            </div>
+            <div className='w-full flex items-center mb-6'>
+                <TimeframeDropdown
+                    setDateFrom={setDateFrom}
+                    setDateTo={setDateTo}
+                    defaultDateFrom={defaultDateFrom}
+                    defaultDateTo={defaultDateTo}
+                    timeframeOptions={timeframeOptions}
+                />
+            </div>
+
+            {error
+                ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />
+                : loading ? <Loader /> : <SalesTable data={tableData} />
+            }
         </div>
     )
 }
