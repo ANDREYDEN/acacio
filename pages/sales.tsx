@@ -8,9 +8,11 @@ import useSWR from 'swr'
 import { Calendar } from 'react-iconly'
 import { posterGetSales } from '@services/poster'
 import { SalesPerDay } from '@interfaces'
-import { Dropdown, ErrorMessage, Loader, SalesTable } from '@components'
+import { Button, Dropdown, ErrorMessage, Loader, SalesTable, TextInput } from '@components'
 import { enforceAuthenticated } from '@lib/utils'
 import { useMounted } from '@lib/hooks'
+import { Popover } from '@headlessui/react'
+import { useForm } from 'react-hook-form'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -70,6 +72,47 @@ const Sales: NextPage = () => {
         setDateTo(dayjs())
     }
 
+    const defaultValues = {
+        startDate: '',
+        endDate: '',
+    }
+    const { register, handleSubmit, trigger, control, reset } = useForm({ defaultValues })
+    register('startDate', { required: 'Enter start date' })
+    register('endDate', { required: 'Enter start date' })
+    const handleCustomTimeframe = async (data: any) => {
+        setDateFrom(dayjs(data.startDate))
+        setDateTo(dayjs(data.endDate))
+        // TODO: closePopover()
+    }
+
+    const customFilter = { label: 'Custom timeframe', popoverPanel: <Popover.Panel>
+        {({ close }) => (
+            <form
+                className='flex flex-col items-center bg-white absolute left-56 top-0 z-0 shadow-filter rounded-lg p-6 space-y-6'
+                onSubmit={handleSubmit(handleCustomTimeframe)}
+            >
+                <TextInput
+                    type='date'
+                    name='startDate'
+                    label='Start Date'
+                    control={control}
+                    trigger={trigger}
+                />
+                <TextInput
+                    type='date'
+                    name='endDate'
+                    label='End Date'
+                    control={control}
+                    trigger={trigger}
+                />
+                <div className='flex w-full space-x-4'>
+                    <Button label='Clear' variant='secondary' buttonClass='w-full' onClick={() => reset(defaultValues)} />
+                    <Button label='Done' buttonClass='w-full' />
+                </div>
+            </form>
+        )}
+    </Popover.Panel> }
+
     if (!mounted) {
         return <Loader />
     }
@@ -87,11 +130,14 @@ const Sales: NextPage = () => {
                     icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
                     filter={timeframeFilter}
                     selectedOption={selectedTimeframe}
+                    customFilter={customFilter}
                 />
             </div>
 
-            {error && (<ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />)}
-            {loading ? <Loader /> : <SalesTable data={tableData} />}
+            {error
+                ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />
+                : loading ? <Loader /> : <SalesTable data={tableData} />
+            }
         </div>
     )
 }

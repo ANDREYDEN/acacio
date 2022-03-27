@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 import { Popover } from '@headlessui/react'
-import { ChevronDown, ChevronUp, IconProps } from 'react-iconly'
+import { ChevronDown, ChevronUp, IconProps, Plus } from 'react-iconly'
 
 export interface IDropdown {
     label: string
@@ -9,9 +9,10 @@ export interface IDropdown {
     icon?: ReactElement<IconProps>
     filter?: () => void,
     selectedOption?: string
+    customFilter?: any
 }
 
-const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, filter, selectedOption }: IDropdown) => {
+const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, filter, selectedOption, customFilter }: IDropdown) => {
     const chevronColor = selectedOption ? 'white' : 'grey'
 
     return (
@@ -29,8 +30,8 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                     </Popover.Button>
                     <Popover.Panel>
                         {({ close }) => (
-                            <div className='flex flex-col w-44 items-start bg-white absolute
-                                left-0 z-0 mt-4 shadow-filter rounded-lg py-2'>
+                            <div className='flex flex-col w-52 items-start bg-white absolute
+                                 z-0 mt-4 shadow-filter rounded-lg py-2'>
                                 {filter &&
                                     <button
                                         onClick={() => {
@@ -58,6 +59,18 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                                         </button>
                                     )
                                 })}
+
+                                {customFilter &&
+                                    <Popover className='relative'>
+                                        <Popover.Button>
+                                            <div className='flex items-center mt-2 px-4 w-52 text-left hover:bg-blue hover:text-secondary-background'>
+                                                <Plus size='small' />
+                                                <span className='ml-2'>{customFilter.label}</span>
+                                            </div>
+                                        </Popover.Button>
+                                        {customFilter.popoverPanel}
+                                    </Popover>
+                                }
                             </div>
                         )}
                     </Popover.Panel>
