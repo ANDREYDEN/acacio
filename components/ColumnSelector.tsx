@@ -25,6 +25,7 @@ const ColumnSelector: React.FC<IColumnSelectorDropdown> = ({ columns, defaultCol
         <Multiselect
             label={t('display')}
             icon={<Document primaryColor='grey' />}
+            buttonClass='w-32'
             items={columns.map(toLabel)}
             selectedItems={selectedColumns.map(toLabel)}
             disabledItems={defaultColumns.map(toLabel)}
