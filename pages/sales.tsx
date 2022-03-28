@@ -1,6 +1,6 @@
 import { ErrorMessage, Loader, SalesTable, TimeframeDropdown } from '@components'
 import Button from '@components/Button'
-import ColumnSelectorDropdown from '@components/ColumnSelectorDropdown'
+import ColumnSelector from '@components/ColumnSelector'
 import { SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import { enforceAuthenticated } from '@lib/utils'
@@ -103,7 +103,7 @@ const Sales: NextPage = () => {
                     defaultDateTo={defaultDateTo}
                     timeframeOptions={timeframeOptions}
                 />
-                <ColumnSelectorDropdown
+                <ColumnSelector
                     columns={columnSelectorOptions}
                 />
             </div>
