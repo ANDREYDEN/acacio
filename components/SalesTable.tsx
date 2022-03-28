@@ -1,16 +1,17 @@
-import React, { useMemo } from 'react'
-import { useTranslation } from 'next-i18next'
-import { Column } from 'react-table'
-import dayjs from 'dayjs'
-import { useRouter } from 'next/router'
-import { Table, NumericCell } from '@components'
+import { NumericCell, Table } from '@components'
 import { SalesPerDay } from '@interfaces'
+import dayjs from 'dayjs'
+import { useTranslation } from 'next-i18next'
+import { useRouter } from 'next/router'
+import React, { useMemo } from 'react'
+import { Column } from 'react-table'
 
 interface ISalesTable {
     data: SalesPerDay[]
+    selectedColumns: string[]
 }
 
-const SalesTable: React.FC<ISalesTable> = ({ data }: ISalesTable) => {
+const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTable) => {
     const { t } = useTranslation('sales')
     const router = useRouter()
 
@@ -74,7 +75,11 @@ const SalesTable: React.FC<ISalesTable> = ({ data }: ISalesTable) => {
         [router.locale, t]
     )
 
-    return <Table columns={columns} data={data} tableSpacing='px-2' />
+    return <Table 
+        columns={columns.filter(c => c.accessor && selectedColumns.includes(c.accessor as string))} 
+        data={data} 
+        tableSpacing='px-2'
+    />
 }
 
 export default SalesTable

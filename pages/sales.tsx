@@ -21,12 +21,31 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
 
 
 const Sales: NextPage = () => {
+    const { t } = useTranslation('sales')
     const defaultDateFrom = dayjs().subtract(1, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const { t } = useTranslation('sales')
+
+    const columnSelectorOptions = [
+        'date',
+        'dayOfWeek',
+        'customers',
+        'averageBill',
+        'kitchenRevenue',
+        'kitchenProfit',
+        'barRevenue',
+        'barProfit',
+        'totalRevenue',
+        'totalProfit',
+    ]
+
+    const defaultColumns = [
+        'date'
+    ]
+
+    const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
 
     const timeframeOptions: Record<string, dayjs.Dayjs> = {
         [t('last_day', { ns: 'timeframe' })]: dayjs().subtract(1, 'day'),
@@ -58,18 +77,9 @@ const Sales: NextPage = () => {
     [sales]
     )
 
-    const columnSelectorOptions = [
-        t('table_headers.date').toString(),
-        t('table_headers.dayOfWeek').toString(),
-        t('table_headers.customers').toString(),
-        t('table_headers.averageBill').toString(),
-        t('table_headers.kitchenRevenue').toString(),
-        t('table_headers.kitchenProfit').toString(),
-        t('table_headers.barRevenue').toString(),
-        t('table_headers.barProfit').toString(),
-        t('table_headers.totalRevenue').toString(),
-        t('table_headers.totalProfit').toString(),
-    ]
+    const handleSelectionChanged = (columns: string[]) => {
+        setSelectedColumns(columns)
+    }
 
     const handleExport = () => {
         // TODO: implement export
@@ -105,12 +115,14 @@ const Sales: NextPage = () => {
                 />
                 <ColumnSelector
                     columns={columnSelectorOptions}
+                    onSelectionChanged={handleSelectionChanged}
+                    defaultColumns={defaultColumns}
                 />
             </div>
 
             {error
                 ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />
-                : loading ? <Loader /> : <SalesTable data={tableData} />
+                : loading ? <Loader /> : <SalesTable data={tableData} selectedColumns={selectedColumns} />
             }
         </div>
     )
