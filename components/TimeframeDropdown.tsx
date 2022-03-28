@@ -12,10 +12,13 @@ interface ITimeframeDropdown {
     defaultDateFrom: dayjs.Dayjs
     defaultDateTo: dayjs.Dayjs
     timeframeOptions: Record<string, dayjs.Dayjs>
+    defaultTimeframe?: string
 }
 
-const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({ setDateFrom, setDateTo, defaultDateFrom, defaultDateTo, timeframeOptions }) => {
-    const [selectedTimeframe, setSelectedTimeframe] = useState('')
+const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
+    setDateFrom, setDateTo, defaultDateFrom, defaultDateTo, timeframeOptions, defaultTimeframe = ''
+}) => {
+    const [selectedTimeframe, setSelectedTimeframe] = useState(defaultTimeframe)
     const { t } = useTranslation('timeframe')
 
     const defaultValues = {
@@ -95,7 +98,7 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({ setDateFrom, setDateT
             items={Object.keys(timeframeOptions)}
             onItemSelected={onItemSelected}
             icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
-            filter={timeframeFilter}
+            filter={defaultTimeframe ? undefined : timeframeFilter}
             selectedOption={selectedTimeframe}
             customFilter={customFilter}
         />
