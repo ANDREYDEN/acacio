@@ -35,6 +35,9 @@ module.exports = {
             },
             spacing: {
                 '116': '28rem',
+            },
+            boxShadow: {
+                'filter': '0 3px 20px #CCC'
             }
         },
     },

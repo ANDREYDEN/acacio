@@ -1,15 +1,13 @@
-import { supabase } from '@client'
-import ErrorMessage from '@components/ErrorMessage'
-import Loader from '@components/Loader'
-import LoginForm from '@components/LoginForm'
-import { useMounted } from '@lib/hooks'
+import React, { useState } from 'react'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import { supabase } from '@client'
+import { ErrorMessage, Loader, LoginForm } from '@components'
+import { useMounted } from '@lib/hooks'
 
 export const getServerSideProps = async (context: any) => ({
     props: {

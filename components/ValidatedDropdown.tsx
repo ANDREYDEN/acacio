@@ -11,7 +11,6 @@ export interface IValidatedDropdown {
     dropdownClass?: string
 }
 
-// TODO: use headless ui to style dropdown better
 const ValidatedDropdown: React.FC<IValidatedDropdown> = ({
     label, name, data, control, defaultOption, dropdownClass
 }: IValidatedDropdown) => {

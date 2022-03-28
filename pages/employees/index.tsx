@@ -1,10 +1,12 @@
-import Button from '@components/Button'
-import ConfirmationModal from '@components/ConfirmationModal'
-import DeletionModal from '@components/DeletionModal'
-import EmployeeModal from '@components/employees/index/EmployeeModal'
-import ErrorMessage from '@components/ErrorMessage'
-import Loader from '@components/Loader'
-import EmployeesTable from '@components/employees/index/EmployeesTable'
+import React, { useMemo, useState } from 'react'
+import type { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { Column } from 'exceljs'
+import { Button, ConfirmationModal, DeletionModal, ErrorMessage, Loader, EmployeeModal, EmployeesTable } from '@components'
+import { definitions } from '@types'
+import exportToXLSX from '@lib/services/exportService'
+import { enforceAuthenticated, fullName } from '@lib/utils'
 import { IEmployeesTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import {
@@ -13,14 +15,6 @@ import {
     useSupabaseGetEmployees,
     useSupabaseUpsertEntity
 } from '@services/supabase'
-import { definitions } from '@types'
-import type { NextPage } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import React, { useMemo, useState } from 'react'
-import exportToXLSX from '@lib/services/exportService'
-import { Column } from 'exceljs'
-import { enforceAuthenticated, fullName } from '@lib/utils'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {

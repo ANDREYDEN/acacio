@@ -1,12 +1,10 @@
-import Table from '@components/Table'
-import { SalesPerDay } from '@interfaces'
-import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/router'
-import NumberInputCell from '@components/NumberInputCell'
-import NumericCell from '@components/NumericCell'
+import { Table, NumericCell } from '@components'
+import { SalesPerDay } from '@interfaces'
 
 interface ISalesTable {
     data: SalesPerDay[]

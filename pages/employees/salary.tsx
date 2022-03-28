@@ -1,21 +1,35 @@
-import Button from '@components/Button'
-import SalaryTable from '@components/employees/salary/SalaryTable'
-import ErrorMessage from '@components/ErrorMessage'
-import Loader from '@components/Loader'
+import { useCallback, useMemo } from 'react'
+import { Column } from 'exceljs'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import dayjs from 'dayjs'
+import { Button, SalaryTable, ErrorMessage, Loader } from '@components'
 import { SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
-import { fullName } from '@lib/utils'
+import { enforceAuthenticated, fullName } from '@lib/utils'
 import { definitions } from '@types'
-import dayjs from 'dayjs'
-import { Column } from 'exceljs'
-import { NextPage } from 'next'
-import { useCallback, useMemo } from 'react'
+import {
+    useSupabaseDeleteEntity,
+    useSupabaseGetBonuses,
+    useSupabaseGetEmployees,
+    useSupabaseGetShifts,
+    useSupabaseUpsertEntity
+} from '@lib/services/supabase'
+
+export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['salary', 'common']),
+    },
+}))
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
+    const { t } = useTranslation('salary')
+    const router = useRouter()
 
     const {
         data: employees, 
@@ -115,14 +129,14 @@ const Salary: NextPage = () => {
             bonusDto: row.bonusDto.initialValue 
         }))
         const columns: Partial<Column>[] = [
-            { key: 'employeeName', header: 'Name', width: 20 },
-            { key: 'hourlySalary', header: 'Hourly Wage (₴)', width: 15 },
-            { key: 'hoursTotal', header: 'Total Hours', width: 15 },
-            { key: 'salaryTotal', header: 'Total Wage (₴)', width: 15 },
-            { key: 'salesIncomeTotal', header: 'Sales Income (₴)', width: 15 },
-            { key: 'deductionsTotal', header: 'Deductions (₴)', width: 15 },
-            { key: 'bonusDto', header: 'Bonus (₴)', },
-            { key: 'incomeTotal', header: 'Income Total (₴)', width: 15 }
+            { key: 'employeeName', header: t('table.employee').toString(), width: 20 },
+            { key: 'hourlySalary', header: t('table.hourlyWage').toString(), width: 15 },
+            { key: 'hoursTotal', header: t('table.hoursTotal').toString(), width: 15 },
+            { key: 'salaryTotal', header: t('table.salaryTotal').toString(), width: 15 },
+            { key: 'salesIncomeTotal', header: t('table.salesIncomeTotal').toString(), width: 20 },
+            { key: 'deductionsTotal', header: t('table.deductionsTotal').toString(), width: 15 },
+            { key: 'bonusDto', header: t('table.bonus').toString(), },
+            { key: 'incomeTotal', header: t('table.incomeTotal').toString(), width: 15 }
         ]
         await exportToXLSX(exportData, columns, `Salary ${dayjs().format('MMM YYYY')}`)
     }
@@ -143,17 +157,18 @@ const Salary: NextPage = () => {
         salesIncomeTotalsError
     if (error) return <ErrorMessage message={error} />
 
+    const currentMonth = dayjs().locale(router.locale?.split('-')[0] ?? 'en').format('MMMM, YYYY')
+
     return (
         <div className='flex flex-col items-center'>
             <div className='w-full flex justify-between mb-8'>
                 <div>
-                    <h3>Wages</h3>
-                    {dayjs().format('MMMM, YYYY')}
+                    <h3>{t('header')}</h3>
+                    {currentMonth}
                 </div>
                 <div className='space-x-8'>
                     <Button 
-                    // label={t('export', { ns: 'common' })} 
-                        label='Export'
+                        label={t('export', { ns: 'common' })} 
                         variant='secondary' 
                         buttonClass='w-56'
                         onClick={handleExport}

@@ -1,28 +1,25 @@
-import dayjs from 'dayjs'
-import { NextPage } from 'next'
 import React, { useCallback, useMemo, useState } from 'react'
-import ScheduleTable from '@components/employees/schedule/ScheduleTable'
-import Loader from '@components/Loader'
+import { NextPage } from 'next'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ru'
+import { useTranslation } from 'next-i18next'
+import { Column } from 'exceljs'
+import { ChevronLeft, ChevronRight } from 'react-iconly'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
 import { ScheduleTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
+import { fullName, getMonthDays } from '@lib/utils'
+import { definitions } from '@types'
+import exportToXLSX from '@services/exportService'
+import { ScheduleTable, Loader, ErrorMessage, Button } from '@components'
+import { enforceAuthenticated } from '@lib/utils'
 import {
     useSupabaseDeleteEntity,
     useSupabaseGetEmployees,
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
-import { fullName, getMonthDays } from '@lib/utils'
-import { definitions } from '@types'
-import ErrorMessage from '@components/ErrorMessage'
-import { useTranslation } from 'next-i18next'
-import Button from '@components/Button'
-import { Column } from 'exceljs'
-import exportToXLSX from '@services/exportService'
-import { ChevronLeft, ChevronRight } from 'react-iconly'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
-import 'dayjs/locale/ru'
-import { enforceAuthenticated } from '@lib/utils'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {

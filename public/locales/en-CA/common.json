@@ -6,5 +6,7 @@
   "done": "Done",
   "save": "Save",
   "cancel": "Cancel",
-  "display": "Display"
+  "display": "Display",
+  "clear": "Clear",
+  "clear_filter": "Clear filter"
 }

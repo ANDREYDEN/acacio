@@ -1,34 +1,41 @@
-import { NextPage } from 'next'
-import React, { useMemo, useState } from 'react'
-import { enforceAuthenticated } from '@lib/utils'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useTranslation } from 'next-i18next'
-import { posterGetSales } from '@services/poster'
-import { SalesPerDay } from '@interfaces'
-import SalesTable from '@components/SalesTable'
-import 'dayjs/locale/ru'
-import Loader from '@components/Loader'
-import { useMounted } from '@lib/hooks'
-import dayjs from 'dayjs'
-import ErrorMessage from '@components/ErrorMessage'
-import useSWR from 'swr'
+import { ErrorMessage, Loader, SalesTable, TimeframeDropdown } from '@components'
 import Button from '@components/Button'
-import ValidatedDropdown from '@components/ValidatedDropdown'
-import { useForm } from 'react-hook-form'
+import ColumnSelectorDropdown from '@components/ColumnSelectorDropdown'
+import { SalesPerDay } from '@interfaces'
+import { useMounted } from '@lib/hooks'
+import { enforceAuthenticated } from '@lib/utils'
+import { posterGetSales } from '@services/poster'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ru'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import React, { useMemo, useState } from 'react'
+import useSWR from 'swr'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
-        ...await serverSideTranslations(context.locale, ['sales']),
+        ...await serverSideTranslations(context.locale, ['sales', 'timeframe', 'common']),
     },
 }))
 
+
 const Sales: NextPage = () => {
+    const defaultDateFrom = dayjs().subtract(7, 'day')
+    const defaultDateTo = dayjs()
     const { mounted } = useMounted()
-    const [dateFrom, setDateFrom] = useState(dayjs().subtract(3, 'day'))
-    const [dateTo, setDateTo] = useState(dayjs())
+    const [dateFrom, setDateFrom] = useState(defaultDateFrom)
+    const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t } = useTranslation('sales')
 
-    const { data: sales, error } = useSWR('getSales', () => posterGetSales(dateFrom, dateTo))
+    const timeframeOptions: Record<string, dayjs.Dayjs> = {
+        [t('last_day', { ns: 'timeframe' })]: dayjs().subtract(1, 'day'),
+        [t('last_7_days', { ns: 'timeframe' })]: dayjs().subtract(7, 'day'),
+        [t('last_14_days', { ns: 'timeframe' })]: dayjs().subtract(14, 'day'),
+        [t('last_30_days', { ns: 'timeframe' })]: dayjs().subtract(30, 'day'),
+        [t('last_quarter', { ns: 'timeframe' })]: dayjs().subtract(3, 'month')
+    }
+    const { data: sales, error } = useSWR(['getSales', dateFrom, dateTo], () => posterGetSales(dateFrom, dateTo))
     const loading = !sales
 
     const tableData: SalesPerDay[] = useMemo(() =>
@@ -55,15 +62,13 @@ const Sales: NextPage = () => {
         // TODO: implement export
     }
 
-    const { control } = useForm()
-
-    if (!mounted || loading) {
+    if (!mounted) {
         return <Loader />
     }
 
     return (
         <div className='flex flex-col'>
-            <div className='w-full flex justify-between mb-8'>
+            <div className='w-full flex justify-between mb-6'>
                 <div>
                     <h3>{t('header').toString()}</h3>
                     {dayjs().format('MMMM, YYYY')}
@@ -79,18 +84,23 @@ const Sales: NextPage = () => {
             </div>
             <div className='w-full flex justify-between mb-8'>
                 <div className='space-x-8'>
-                    <ValidatedDropdown
-                        label={t('display', { ns: 'common' })}
-                        name='role_id'
-                        data={Object.keys(tableData).map(key => ({ label: key, value: key }))}
-                        defaultOption={t('modal.role_placeholder')}
-                        dropdownClass='mb-6' 
-                        control={control} 
+                    <ColumnSelectorDropdown
+                        columns={Object.keys(tableData)}
+                    />
+                    <TimeframeDropdown
+                        setDateFrom={setDateFrom}
+                        setDateTo={setDateTo}
+                        defaultDateFrom={defaultDateFrom}
+                        defaultDateTo={defaultDateTo}
+                        timeframeOptions={timeframeOptions}
                     />
                 </div>
             </div>
-            {error && (<ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />)}
-            <SalesTable data={tableData} />
+
+            {error
+                ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />
+                : loading ? <Loader /> : <SalesTable data={tableData} />
+            }
         </div>
     )
 }
