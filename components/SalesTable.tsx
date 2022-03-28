@@ -75,11 +75,11 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
         [router.locale, t]
     )
 
-    return <Table 
-        columns={columns.filter(c => c.accessor && selectedColumns.includes(c.accessor as string))} 
-        data={data} 
-        tableSpacing='px-2'
-    />
+    const filteredColumns = useMemo(() => {
+        return columns.filter(c => c.accessor && selectedColumns.includes(c.accessor as string))
+    }, [columns, selectedColumns])
+
+    return <Table columns={filteredColumns} data={data} tableSpacing='px-2' />
 }
 
 export default SalesTable

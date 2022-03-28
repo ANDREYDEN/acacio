@@ -28,7 +28,7 @@ const Sales: NextPage = () => {
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
 
-    const columnSelectorOptions = [
+    const columnSelectorOptions: (keyof SalesPerDay)[] = [
         'date',
         'dayOfWeek',
         'customers',
@@ -41,7 +41,7 @@ const Sales: NextPage = () => {
         'totalProfit',
     ]
 
-    const defaultColumns = [
+    const defaultColumns: (keyof SalesPerDay)[] = [
         'date'
     ]
 
@@ -81,6 +81,8 @@ const Sales: NextPage = () => {
         setSelectedColumns(columns)
     }
 
+    const columnAccessorToLabel = (accessor: string) => t(`table_headers.${accessor}`).toString()
+
     const handleExport = () => {
         // TODO: implement export
     }
@@ -94,7 +96,6 @@ const Sales: NextPage = () => {
             <div className='w-full flex justify-between mb-6'>
                 <div>
                     <h3>{t('header').toString()}</h3>
-                    {dayjs().format('MMMM, YYYY')}
                 </div>
                 <div className='space-x-8'>
                     <Button 
@@ -117,6 +118,7 @@ const Sales: NextPage = () => {
                     columns={columnSelectorOptions}
                     onSelectionChanged={handleSelectionChanged}
                     defaultColumns={defaultColumns}
+                    toLabel={columnAccessorToLabel}
                 />
             </div>
 
