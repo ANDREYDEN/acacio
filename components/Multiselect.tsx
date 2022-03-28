@@ -4,16 +4,17 @@ import { ChevronDown, ChevronUp, IconProps } from 'react-iconly'
 
 export interface IMultiselect {
     label: string
+    items: string[]
+    onSelectionChanged: (selectedItems: string[]) => void
     icon?: ReactElement<IconProps>
     buttonClass?: string
-    items: string[]
     selectedItems?: string[]
     disabledItems?: string[]
-    onSelectionChanged: (selectedItems: string[]) => void
 }
 
 const Multiselect: React.FC<IMultiselect> = ({ label, icon, buttonClass, items, onSelectionChanged, selectedItems = [], disabledItems = [] }: IMultiselect) => {
     const handleItemSelected = (item: string) => {
+        if (disabledItems.includes(item)) return
         const itemSelected = selectedItems.includes(item)
         onSelectionChanged(itemSelected ? selectedItems.filter(i => i !== item) : [...selectedItems, item])
     }
@@ -35,34 +36,36 @@ const Multiselect: React.FC<IMultiselect> = ({ label, icon, buttonClass, items, 
                         </div>
                     </Popover.Button>
                     <Popover.Panel>
-                        {() => (
-                            <div className='flex flex-col min-w-52 items-start bg-white absolute
+                        <div className='flex flex-col min-w-52 items-start bg-white absolute
                                  z-0 mt-4 shadow-filter rounded-lg py-2'>
-                                <button
-                                    onClick={() => selectAll()}
-                                    className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1 whitespace-nowrap'
-                                >
-                                    <span className='underline'><b>Select all</b></span>
-                                </button>
+                            <button
+                                onClick={() => selectAll()}
+                                className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1 whitespace-nowrap'
+                            >
+                                <span className='underline'><b>Select all</b></span>
+                            </button>
 
-                                {items.map(item => {
-                                    return (
-                                        <button
-                                            key={item}
-                                            onClick={() => handleItemSelected(item)}
-                                            className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1 whitespace-nowrap'
-                                        >
+                            {items.map(item => {
+                                return (
+                                    <button
+                                        key={item}
+                                        onClick={() => handleItemSelected(item)}
+                                        className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1 whitespace-nowrap'
+                                    >
+                                        <label>
                                             <input 
                                                 type='checkbox' 
+                                                id={item}
                                                 checked={selectedItems.includes(item)} 
                                                 disabled={disabledItems.includes(item)} 
-                                                className='mr-1 checked:bg-blue disabled:bg-secondary-background' />
+                                                className='mr-1 checked:bg-blue disabled:bg-secondary-background' 
+                                            />
                                             {item}
-                                        </button>
-                                    )
-                                })}
-                            </div>
-                        )}
+                                        </label>
+                                    </button>
+                                )
+                            })}
+                        </div>
                     </Popover.Panel>
                 </>
             )}

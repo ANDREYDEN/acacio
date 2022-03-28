@@ -22,7 +22,7 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
 
 const Sales: NextPage = () => {
     const { t } = useTranslation('sales')
-    const defaultDateFrom = dayjs().subtract(1, 'day')
+    const defaultDateFrom = dayjs().subtract(7, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
