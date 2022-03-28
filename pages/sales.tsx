@@ -13,7 +13,7 @@ import { useMounted } from '@lib/hooks'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
-        ...await serverSideTranslations(context.locale, ['sales', 'timeframe', 'common']),
+        ...await serverSideTranslations(context.locale, ['sales', 'common', 'timeframe']),
     },
 }))
 
@@ -25,13 +25,14 @@ const Sales: NextPage = () => {
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t } = useTranslation('sales')
+    const { t: timeframeTranslation } = useTranslation('timeframe')
 
     const timeframeOptions: Record<string, dayjs.Dayjs> = {
-        [t('last_day', { ns: 'timeframe' })]: dayjs().subtract(1, 'day'),
-        [t('last_7_days', { ns: 'timeframe' })]: dayjs().subtract(7, 'day'),
-        [t('last_14_days', { ns: 'timeframe' })]: dayjs().subtract(14, 'day'),
-        [t('last_30_days', { ns: 'timeframe' })]: dayjs().subtract(30, 'day'),
-        [t('last_quarter', { ns: 'timeframe' })]: dayjs().subtract(3, 'month')
+        [timeframeTranslation('last_day')]: dayjs().subtract(1, 'day'),
+        [timeframeTranslation('last_7_days')]: dayjs().subtract(7, 'day'),
+        [timeframeTranslation('last_14_days')]: dayjs().subtract(14, 'day'),
+        [timeframeTranslation('last_30_days')]: dayjs().subtract(30, 'day'),
+        [timeframeTranslation('last_quarter')]: dayjs().subtract(3, 'month')
     }
     const { data: sales, error } = useSWR(['getSales', dateFrom, dateTo], () => posterGetSales(dateFrom, dateTo))
     const loading = !sales

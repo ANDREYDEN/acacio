@@ -5,7 +5,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { posterInstance } from '@services/poster'
 import { enforceAuthenticated } from '@lib/utils'
 import { Ingredient } from '@lib/posterTypes'
-import { ErrorMessage, Loader, StockTable, TimeframeDropdown } from '@components'
+import { Button, ErrorMessage, Loader, StockTable, TimeframeDropdown } from '@components'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 dayjs.extend(weekday)
@@ -45,12 +45,13 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t } = useTranslation('stock')
+    const { t: timeframeTranslation } = useTranslation('timeframe')
 
     const timeframeOptions: Record<string, dayjs.Dayjs> = {
-        [t('1_week', { ns: 'timeframe' })]: dayjs().subtract(1, 'week'),
-        [t('1_and_half_weeks', { ns: 'timeframe' })]: dayjs().subtract(7, 'day'),
-        [t('2_weeks', { ns: 'timeframe' })]: dayjs().subtract(2, 'week'),
-        [t('1_month', { ns: 'timeframe' })]: dayjs().subtract(1, 'month'),
+        [timeframeTranslation('1_week')]: dayjs().subtract(1, 'week'),
+        [timeframeTranslation('1_and_half_weeks')]: dayjs().subtract(7, 'day'),
+        [timeframeTranslation('2_weeks')]: dayjs().subtract(2, 'week'),
+        [timeframeTranslation('1_month')]: dayjs().subtract(1, 'month'),
     }
 
     const data = useMemo(
@@ -71,7 +72,7 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
                     defaultDateFrom={defaultDateFrom}
                     defaultDateTo={defaultDateTo}
                     timeframeOptions={timeframeOptions}
-                    defaultTimeframe={t('1_and_half_weeks', { ns: 'timeframe' })}
+                    defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
                 />
             </div>
             {error
