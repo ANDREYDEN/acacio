@@ -1,4 +1,4 @@
-import { Button, ErrorMessage, Multiselect, StockTable } from '@components'
+import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdown } from '@components'
 import { Ingredient } from '@lib/posterTypes'
 import { enforceAuthenticated } from '@lib/utils'
 import { posterInstance } from '@services/poster'
@@ -7,6 +7,9 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Document } from 'react-iconly'
+import dayjs from 'dayjs'
+import weekday from 'dayjs/plugin/weekday'
+dayjs.extend(weekday)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => {
     try {
@@ -16,7 +19,7 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => {
         return {
             props: {
                 ingredients,
-                ...await serverSideTranslations(context.locale, ['stock', 'common']),
+                ...await serverSideTranslations(context.locale, ['stock', 'common', 'timeframe']),
             }
         }
     } catch(e: any) {
@@ -25,7 +28,7 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => {
             {
                 ingredients: [],
                 error: e.message,
-                ...await serverSideTranslations(context.locale, ['stock', 'common']),
+                ...await serverSideTranslations(context.locale, ['stock', 'common', 'timeframe']),
             }
         }
     }  
@@ -37,7 +40,20 @@ type StockProps = {
 }
 
 const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
+    const defaultDateFrom = dayjs().subtract(2, 'week').weekday(4)
+    const defaultDateTo = dayjs().weekday(0)
+    // TODO: when retrieving needed data, take dateFrom and dateTo into the account
+    const [dateFrom, setDateFrom] = useState(defaultDateFrom)
+    const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t } = useTranslation('stock')
+    const { t: timeframeTranslation } = useTranslation('timeframe')
+
+    const timeframeOptions: Record<string, dayjs.Dayjs> = {
+        [timeframeTranslation('1_week')]: dayjs().subtract(1, 'week'),
+        [timeframeTranslation('1_and_half_weeks')]: dayjs().subtract(7, 'day'),
+        [timeframeTranslation('2_weeks')]: dayjs().subtract(2, 'week'),
+        [timeframeTranslation('1_month')]: dayjs().subtract(1, 'month'),
+    }
 
     const columnSelectorOptions: (keyof Ingredient)[] = useMemo(() => [
         'ingredient_id',
@@ -54,7 +70,7 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
 
     const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [])
     const fromLabel = useCallback(
-        (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label, 
+        (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label,
         [columnSelectorOptions, toLabel]
     )
 
@@ -70,23 +86,32 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
         () => ingredients, 
         [ingredients]
     )
+    const loading = !data
 
     return (
         <div className='flex flex-col'>
             <div className='w-full flex justify-between mb-6'>
                 <div>
-                    <h3>{t('header').toString()}</h3>
+                    <h3>{t('header')}</h3>
                 </div>
                 <div className='space-x-8'>
-                    <Button 
-                        label={t('export', { ns: 'common' })} 
-                        variant='secondary' 
+                    <Button
+                        label={t('export', { ns: 'common' })}
+                        variant='secondary'
                         buttonClass='w-56'
                         onClick={handleExport}
                     />
                 </div>
             </div>
-            <div className='w-full flex justify-between mb-8'>
+            <div className='w-full flex justify-between mb-6'>
+                <TimeframeDropdown
+                    setDateFrom={setDateFrom}
+                    setDateTo={setDateTo}
+                    defaultDateFrom={defaultDateFrom}
+                    defaultDateTo={defaultDateTo}
+                    timeframeOptions={timeframeOptions}
+                    defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
+                />
                 <Multiselect
                     label={t('display', { ns: 'common' })}
                     icon={<Document primaryColor='grey' />}
@@ -98,8 +123,10 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
                     itemFormatter={toLabel}
                 />
             </div>
-            {error && <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />}
-            <StockTable selectedColumns={selectedColumns} data={data} />
+            {error
+                ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
+                : loading ? <Loader /> : <StockTable data={data} selectedColumns={selectedColumns} />
+            }
         </div>
     )
 }
