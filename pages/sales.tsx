@@ -21,7 +21,7 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
 
 
 const Sales: NextPage = () => {
-    const defaultDateFrom = dayjs().subtract(7, 'day')
+    const defaultDateFrom = dayjs().subtract(1, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
@@ -58,6 +58,19 @@ const Sales: NextPage = () => {
     [sales]
     )
 
+    const columnSelectorOptions = [
+        t('table_headers.date').toString(),
+        t('table_headers.dayOfWeek').toString(),
+        t('table_headers.customers').toString(),
+        t('table_headers.averageBill').toString(),
+        t('table_headers.kitchenRevenue').toString(),
+        t('table_headers.kitchenProfit').toString(),
+        t('table_headers.barRevenue').toString(),
+        t('table_headers.barProfit').toString(),
+        t('table_headers.totalRevenue').toString(),
+        t('table_headers.totalProfit').toString(),
+    ]
+
     const handleExport = () => {
         // TODO: implement export
     }
@@ -83,18 +96,16 @@ const Sales: NextPage = () => {
                 </div>
             </div>
             <div className='w-full flex justify-between mb-8'>
-                <div className='space-x-8'>
-                    <ColumnSelectorDropdown
-                        columns={Object.keys(tableData)}
-                    />
-                    <TimeframeDropdown
-                        setDateFrom={setDateFrom}
-                        setDateTo={setDateTo}
-                        defaultDateFrom={defaultDateFrom}
-                        defaultDateTo={defaultDateTo}
-                        timeframeOptions={timeframeOptions}
-                    />
-                </div>
+                <TimeframeDropdown
+                    setDateFrom={setDateFrom}
+                    setDateTo={setDateTo}
+                    defaultDateFrom={defaultDateFrom}
+                    defaultDateTo={defaultDateTo}
+                    timeframeOptions={timeframeOptions}
+                />
+                <ColumnSelectorDropdown
+                    columns={columnSelectorOptions}
+                />
             </div>
 
             {error

@@ -1,7 +1,7 @@
 import { Dropdown } from '@components/index'
 import { useTranslation } from 'next-i18next'
 import React, { useState } from 'react'
-import { Calendar } from 'react-iconly'
+import { Document } from 'react-iconly'
 
 interface IColumnSelectorDropdown {
   columns: string[]
@@ -21,7 +21,7 @@ const ColumnSelectorDropdown: React.FC<IColumnSelectorDropdown> = ({ columns }) 
             label={t('display')}
             items={columns}
             onItemSelected={onItemSelected}
-            icon={<Calendar primaryColor={selectedColumn ? 'white' : 'grey'} />}
+            icon={<Document primaryColor={selectedColumn ? 'white' : 'grey'} />}
             selectedOption={selectedColumn}
         />
     )
