@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react'
+import { Button, ErrorMessage, Multiselect, StockTable } from '@components'
+import { Ingredient } from '@lib/posterTypes'
+import { enforceAuthenticated } from '@lib/utils'
+import { posterInstance } from '@services/poster'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { posterInstance } from '@services/poster'
-import { enforceAuthenticated } from '@lib/utils'
-import { Ingredient } from '@lib/posterTypes'
-import { Button, ErrorMessage, StockTable } from '@components'
-import ColumnSelector from '@components/ColumnSelector'
+import React, { useMemo, useState } from 'react'
+import { Document } from 'react-iconly'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => {
     try {
@@ -52,11 +52,12 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
 
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
 
-    const handleSelectionChanged = (items: string[]) => {
-        setSelectedColumns(items)
-    }
+    const toLabel = (accessor: string) => t(`table_headers.${accessor}`).toString()
+    const fromLabel = (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label
 
-    const columnAccessorToLabel = (accessor: string) => t(`table_headers.${accessor}`).toString()
+    const handleSelectionChanged = (items: string[]) => {
+        setSelectedColumns(items.map(fromLabel))
+    }
 
     const handleExport = () => {
         // TODO: add export
@@ -83,19 +84,14 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
                 </div>
             </div>
             <div className='w-full flex justify-between mb-8'>
-                {/* TODO: Add timeframe picker */}
-                {/* <TimeframeDropdown
-                    setDateFrom={setDateFrom}
-                    setDateTo={setDateTo}
-                    defaultDateFrom={defaultDateFrom}
-                    defaultDateTo={defaultDateTo}
-                    timeframeOptions={timeframeOptions}
-                /> */}
-                <ColumnSelector
-                    columns={columnSelectorOptions}
+                <Multiselect
+                    label={t('display', { ns: 'common' })}
+                    icon={<Document primaryColor='grey' />}
+                    buttonClass='w-32'
+                    items={columnSelectorOptions.map(toLabel)}
+                    selectedItems={selectedColumns.map(toLabel)}
+                    disabledItems={defaultColumns.map(toLabel)}
                     onSelectionChanged={handleSelectionChanged}
-                    defaultColumns={defaultColumns}
-                    toLabel={columnAccessorToLabel}
                 />
             </div>
             {error && <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />}

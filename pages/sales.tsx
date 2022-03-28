@@ -1,6 +1,5 @@
-import { ErrorMessage, Loader, SalesTable, TimeframeDropdown } from '@components'
+import { ErrorMessage, Loader, Multiselect, SalesTable, TimeframeDropdown } from '@components'
 import Button from '@components/Button'
-import ColumnSelector from '@components/ColumnSelector'
 import { SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import { enforceAuthenticated } from '@lib/utils'
@@ -11,6 +10,7 @@ import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useMemo, useState } from 'react'
+import { Document } from 'react-iconly'
 import useSWR from 'swr'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -77,11 +77,12 @@ const Sales: NextPage = () => {
     [sales]
     )
 
-    const handleSelectionChanged = (columns: string[]) => {
-        setSelectedColumns(columns)
-    }
+    const toLabel = (accessor: string) => t(`table_headers.${accessor}`).toString()
+    const fromLabel = (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label
 
-    const columnAccessorToLabel = (accessor: string) => t(`table_headers.${accessor}`).toString()
+    const handleSelectionChanged = (columns: string[]) => {
+        setSelectedColumns(columns.map(fromLabel))
+    }
 
     const handleExport = () => {
         // TODO: implement export
@@ -114,11 +115,14 @@ const Sales: NextPage = () => {
                     defaultDateTo={defaultDateTo}
                     timeframeOptions={timeframeOptions}
                 />
-                <ColumnSelector
-                    columns={columnSelectorOptions}
+                <Multiselect
+                    label={t('display', { ns: 'common' })}
+                    icon={<Document primaryColor='grey' />}
+                    buttonClass='w-32'
+                    items={columnSelectorOptions.map(toLabel)}
+                    selectedItems={selectedColumns.map(toLabel)}
+                    disabledItems={defaultColumns.map(toLabel)}
                     onSelectionChanged={handleSelectionChanged}
-                    defaultColumns={defaultColumns}
-                    toLabel={columnAccessorToLabel}
                 />
             </div>
 

@@ -52,16 +52,14 @@ const Multiselect: React.FC<IMultiselect> = ({ label, icon, buttonClass, items, 
                                         onClick={() => handleItemSelected(item)}
                                         className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1 whitespace-nowrap'
                                     >
-                                        <label>
-                                            <input 
-                                                type='checkbox' 
-                                                id={item}
-                                                checked={selectedItems.includes(item)} 
-                                                disabled={disabledItems.includes(item)} 
-                                                className='mr-1 checked:bg-blue disabled:bg-secondary-background' 
-                                            />
-                                            {item}
-                                        </label>
+                                        <input 
+                                            type='checkbox' 
+                                            checked={selectedItems.includes(item)} 
+                                            disabled={disabledItems.includes(item)} 
+                                            className='mr-1 checked:bg-blue disabled:bg-secondary-background' 
+                                        />
+                                        {/* // TODO: add labels (#95) */}
+                                        {item}
                                     </button>
                                 )
                             })}
