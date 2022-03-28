@@ -7,9 +7,11 @@ import { snakeCaseToPascalCase } from '@lib/utils'
 
 interface IStockTable {
     data: Ingredient[]
+    selectedColumns: string[]
 }
 
-const StockTable: React.FC<IStockTable> = ({ data }: IStockTable) => {
+const StockTable: React.FC<IStockTable> = ({ data, selectedColumns }: IStockTable) => {
+    // TODO: implement translation
     const { t } = useTranslation('stock')
 
     const columns: Column<Ingredient>[] = useMemo<Column<Ingredient>[]>(
@@ -23,7 +25,11 @@ const StockTable: React.FC<IStockTable> = ({ data }: IStockTable) => {
         []
     )
 
-    return <Table columns={columns} data={data} tableSpacing='px-2' />
+    const filteredColumns = useMemo(() => {
+        return columns.filter(c => c.accessor && selectedColumns.includes(c.accessor as string))
+    }, [columns, selectedColumns])
+
+    return <Table columns={filteredColumns} data={data} tableSpacing='px-2' />
 }
 
 export default StockTable
