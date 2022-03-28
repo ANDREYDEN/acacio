@@ -9,7 +9,7 @@ import 'dayjs/locale/ru'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Document } from 'react-iconly'
 import useSWR from 'swr'
 
@@ -28,7 +28,7 @@ const Sales: NextPage = () => {
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
 
-    const columnSelectorOptions: (keyof SalesPerDay)[] = [
+    const columnSelectorOptions: (keyof SalesPerDay)[] = useMemo(() => [
         'date',
         'dayOfWeek',
         'customers',
@@ -39,11 +39,11 @@ const Sales: NextPage = () => {
         'barProfit',
         'totalRevenue',
         'totalProfit',
-    ]
+    ], [])
 
-    const defaultColumns: (keyof SalesPerDay)[] = [
+    const defaultColumns: (keyof SalesPerDay)[] = useMemo(() => [
         'date'
-    ]
+    ], [])
 
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
 
@@ -77,8 +77,11 @@ const Sales: NextPage = () => {
     [sales]
     )
 
-    const toLabel = (accessor: string) => t(`table_headers.${accessor}`).toString()
-    const fromLabel = (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label
+    const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [t])
+    const fromLabel = useCallback(
+        (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label, 
+        [columnSelectorOptions, toLabel]
+    )
 
     const handleSelectionChanged = (columns: string[]) => {
         setSelectedColumns(columns.map(fromLabel))
@@ -119,10 +122,11 @@ const Sales: NextPage = () => {
                     label={t('display', { ns: 'common' })}
                     icon={<Document primaryColor='grey' />}
                     buttonClass='w-32'
-                    items={columnSelectorOptions.map(toLabel)}
-                    selectedItems={selectedColumns.map(toLabel)}
-                    disabledItems={defaultColumns.map(toLabel)}
+                    items={columnSelectorOptions}
+                    selectedItems={selectedColumns}
+                    disabledItems={defaultColumns}
                     onSelectionChanged={handleSelectionChanged}
+                    itemFormatter={toLabel}
                 />
             </div>
 

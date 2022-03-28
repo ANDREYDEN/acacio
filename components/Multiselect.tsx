@@ -10,9 +10,19 @@ export interface IMultiselect {
     buttonClass?: string
     selectedItems?: string[]
     disabledItems?: string[]
+    itemFormatter?: (item: string) => string
 }
 
-const Multiselect: React.FC<IMultiselect> = ({ label, icon, buttonClass, items, onSelectionChanged, selectedItems = [], disabledItems = [] }: IMultiselect) => {
+const Multiselect: React.FC<IMultiselect> = ({ 
+    label, 
+    icon, 
+    buttonClass, 
+    items, 
+    onSelectionChanged, 
+    selectedItems = [], 
+    disabledItems = [], 
+    itemFormatter = i => i
+}: IMultiselect) => {
     const handleItemSelected = (item: string) => {
         if (disabledItems.includes(item)) return
         const itemSelected = selectedItems.includes(item)
@@ -59,7 +69,7 @@ const Multiselect: React.FC<IMultiselect> = ({ label, icon, buttonClass, items, 
                                             className='mr-1 checked:bg-blue disabled:bg-secondary-background' 
                                         />
                                         {/* // TODO: add labels (#95) */}
-                                        {item}
+                                        {itemFormatter(item)}
                                     </button>
                                 )
                             })}
