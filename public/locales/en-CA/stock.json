@@ -1,6 +1,21 @@
 {
   "header": "Stock",
   "table_headers": {
-    "ingredient_name": "Name"
+    "ingredientName": "Name",
+    "category": "Category",
+    "supplier": "Supplier",
+    "initialBalance": "Init. Bal.",
+    "initialAvgCost": "Init. Avg. Cost(₴)",
+    "sold": "Sold",
+    "soldCost": "Sold(₴)",
+    "writeOff": "Write-off",
+    "writeOffCost": "Write-off(₴)",
+    "lastSupply": "Last supply",
+    "finalBalance": "Final Bal.",
+    "finalBalanceCost": "Final Bal.(₴)",
+    "finalAverageCost": "Final Avg. Cost(₴)",
+    "reorder": "Re-order",
+    "toOrder": "To order",
+    "totalCost": "Total Cost"
   }
 }

@@ -1,6 +1,21 @@
 {
   "header": "Инвентарь",
   "table_headers": {
-    "ingredient_name": "Название"
+    "ingredientName": "Нашвание",
+    "category": "Категория",
+    "supplier": "Поставщик",
+    "initialBalance": "Нач. остаток",
+    "initialAvgCost": "Нач. средняя себестоимость(₴)",
+    "sold": "расход",
+    "soldCost": "расход(₴)",
+    "writeOff": "Списания",
+    "writeOffCost": "Списания(₴)",
+    "lastSupply": "Last supply",
+    "finalBalance": "Кон. остаток",
+    "finalBalanceCost": "Кон. остаток(₴)",
+    "finalAverageCost": "Нач. средняя себестоимость(₴)",
+    "reorder": "Дозаказ (Авт.)",
+    "toOrder": "Дозаказ",
+    "totalCost": "Итого(₴)"
   }
 }

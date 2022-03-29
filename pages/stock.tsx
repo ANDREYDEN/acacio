@@ -30,8 +30,8 @@ const Stock: NextPage<StockProps> = () => {
     // TODO: when retrieving needed data, take dateFrom and dateTo into the account
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
+    const { t } = useTranslation('stock')
 
     const timeframeOptions: Record<string, dayjs.Dayjs> = {
         [timeframeTranslation('1_week')]: dayjs().subtract(1, 'week'),

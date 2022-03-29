@@ -1,9 +1,8 @@
-import React, { useMemo } from 'react'
-import { useTranslation } from 'next-i18next'
-import { Column } from 'react-table'
 import { Table } from '@components'
-import { snakeCaseToPascalCase } from '@lib/utils'
 import { StockTableRow } from '@interfaces'
+import { useTranslation } from 'next-i18next'
+import React, { useMemo } from 'react'
+import { Column } from 'react-table'
 import NumberInputCell from './NumberInputCell'
 
 interface IStockTable {
@@ -12,7 +11,6 @@ interface IStockTable {
 }
 
 const StockTable: React.FC<IStockTable> = ({ data, selectedColumns }: IStockTable) => {
-    // TODO: implement translation
     const { t } = useTranslation('stock')
 
     const readonlyAccessors: (keyof StockTableRow)[] = useMemo(() => [
@@ -36,13 +34,13 @@ const StockTable: React.FC<IStockTable> = ({ data, selectedColumns }: IStockTabl
 
     const columns: Column<StockTableRow>[] = useMemo<Column<StockTableRow>[]>(
         () => readonlyAccessors.map((accessor) => ({
-            Header: <h1>{snakeCaseToPascalCase(accessor)}</h1>,
+            Header: <h1>{t(`table_headers.${accessor}`).toString()}</h1>,
             accessor: accessor,
             Cell: accessor === 'toOrder' 
                 ? ({ value }: { value: number}) => <NumberInputCell value={value} onBlur={() => {}} /> 
                 : ({ value }: { value: any}) => value,
         })),
-        [readonlyAccessors]
+        [readonlyAccessors, t]
     )
 
     const filteredColumns = useMemo(() => {
