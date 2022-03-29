@@ -1,3 +1,6 @@
 {
-  "header": "Stock"
+  "header": "Stock",
+  "table_headers": {
+    "ingredient_name": "Name"
+  }
 }

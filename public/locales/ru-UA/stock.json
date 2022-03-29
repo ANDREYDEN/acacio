@@ -1,3 +1,6 @@
 {
-  "header": "Инвентарь"
+  "header": "Инвентарь",
+  "table_headers": {
+    "ingredient_name": "Название"
+  }
 }

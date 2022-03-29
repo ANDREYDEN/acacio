@@ -1,4 +1,5 @@
 import { EmployeesMonthlyStatDto, SalesPerDay } from '@interfaces'
+import { IngredientMovementVM } from '@lib/posterTypes'
 import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
@@ -135,4 +136,16 @@ async function getSalesForDay(day: dayjs.Dayjs, type?: string) {
     )
 
     return sales
+}
+
+export async function posterGetIngredientMovement(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs) {
+    const ingredients = await posterGet(
+        'storage.getReportMovement',
+        {
+            dateFrom: dateFrom.format('YYYYMMDD'),
+            dateTo: dateTo.format('YYYYMMDD'),
+        }
+    )
+
+    return ingredients as IngredientMovementVM[]
 }

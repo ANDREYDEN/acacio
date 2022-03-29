@@ -1,58 +1,64 @@
-import { Button, ErrorMessage, Multiselect, StockTable } from '@components'
-import { Ingredient } from '@lib/posterTypes'
+import { Button, ErrorMessage, Loader, Multiselect, StockTable } from '@components'
+import { StockTableRow } from '@interfaces'
+import { IngredientMovementVM } from '@lib/posterTypes'
+import { posterGetIngredientMovement } from '@lib/services/poster'
 import { enforceAuthenticated } from '@lib/utils'
-import { posterInstance } from '@services/poster'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Document } from 'react-iconly'
+import useSWR from 'swr'
 
-export const getServerSideProps = enforceAuthenticated(async (context: any) => {
-    try {
-        const { data } = await posterInstance.get('storage.getReportMovement')
-        if (data.error) throw data.error
-        const ingredients = data.response
-        return {
-            props: {
-                ingredients,
-                ...await serverSideTranslations(context.locale, ['stock', 'common']),
-            }
-        }
-    } catch(e: any) {
-        return { 
-            props:
-            {
-                ingredients: [],
-                error: e.message,
-                ...await serverSideTranslations(context.locale, ['stock', 'common']),
-            }
-        }
-    }  
-})
+export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['stock', 'common']),
+    }
+}))
 
 type StockProps = {
-  ingredients: Ingredient[],
+  ingredients: IngredientMovementVM[],
   error: string | null
 }
 
-const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
+const Stock: NextPage<StockProps> = () => {
     const { t } = useTranslation('stock')
+    const { data: ingredients, error } = useSWR(
+        ['getIngredients', dateFrom, dateTo], 
+        () => posterGetIngredientMovement(dateFrom, dateTo)
+    )
+    const loading = !ingredients
 
-    const columnSelectorOptions: (keyof Ingredient)[] = useMemo(() => [
-        'ingredient_id',
-        'ingredient_name',
-        'start',
-        'end'
+    const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
+        'ingredientName',
+        'category',
+        'supplier',
+        'initialBalance',
+        'initialAvgCost',
+        'sold',
+        'soldCost',
+        'writeOff',
+        'writeOffCost',
+        'lastSupply',
+        'finalBalance',
+        'finalBalanceCost',
+        'finalAverageCost',
+        'reorder',
+        'toOrder',
+        'totalCost',
     ], [])
 
-    const defaultColumns: (keyof Ingredient)[] = [
-        'ingredient_id'
+    const defaultColumns: (keyof StockTableRow)[] = [
+        'ingredientName',
+        'category',
+        'supplier',
+        'toOrder',
+        'totalCost'
     ]
 
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
 
-    const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [])
+    const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [t])
     const fromLabel = useCallback(
         (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label, 
         [columnSelectorOptions, toLabel]
@@ -66,8 +72,25 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
         // TODO: add export
     }
 
-    const data = useMemo(
-        () => ingredients, 
+    const data: StockTableRow[] = useMemo(
+        () => (ingredients ?? []).map(ingredient => ({
+            ingredientName: ingredient.ingredient_name,
+            category: '',
+            supplier: '',
+            initialBalance: ingredient.start.toString(),
+            initialAvgCost: ingredient.cost_start,
+            sold: '',
+            soldCost: 0,
+            writeOff: ingredient.write_offs.toString(),
+            writeOffCost: 0,
+            lastSupply: '',
+            finalBalance: ingredient.end.toString(),
+            finalBalanceCost: 0,
+            finalAverageCost: ingredient.cost_end,
+            reorder: '',
+            toOrder: '',
+            totalCost: 0,
+        })), 
         [ingredients]
     )
 
@@ -98,8 +121,12 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
                     itemFormatter={toLabel}
                 />
             </div>
-            {error && <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />}
-            <StockTable selectedColumns={selectedColumns} data={data} />
+            {error 
+                ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
+                : loading 
+                    ? <Loader /> 
+                    : <StockTable selectedColumns={selectedColumns} data={data} />
+            }
         </div>
     )
 }
