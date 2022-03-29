@@ -1,4 +1,4 @@
-import { ErrorMessage, Loader, Multiselect, SalesTable, TimeframeDropdown } from '@components'
+import { Dropdown, ErrorMessage, Loader, Multiselect, SalesTable, TimeframeDropdown } from '@components'
 import Button from '@components/Button'
 import { SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
@@ -10,7 +10,7 @@ import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useCallback, useMemo, useState } from 'react'
-import { Document } from 'react-iconly'
+import { Calendar, Document } from 'react-iconly'
 import useSWR from 'swr'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -19,13 +19,13 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
     },
 }))
 
-
 const Sales: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(7, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
+    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState('')
     const { t } = useTranslation('sales')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -35,6 +35,15 @@ const Sales: NextPage = () => {
         [timeframeTranslation('last_14_days')]: dayjs().subtract(14, 'day'),
         [timeframeTranslation('last_30_days')]: dayjs().subtract(30, 'day'),
         [timeframeTranslation('last_quarter')]: dayjs().subtract(3, 'month')
+    }
+    const dayOfWeekOptions: Record<string, dayjs.Dayjs> = {
+        [t('day_of_week_filter.monday')]: dayjs().day(1),
+        [t('day_of_week_filter.tuesday')]: dayjs().day(2),
+        [t('day_of_week_filter.wednesday')]: dayjs().day(3),
+        [t('day_of_week_filter.thursday')]: dayjs().day(4),
+        [t('day_of_week_filter.friday')]: dayjs().day(5),
+        [t('day_of_week_filter.saturday')]: dayjs().day(6),
+        [t('day_of_week_filter.sunday')]: dayjs().day(7)
     }
     const { data: sales, error } = useSWR(['getSales', dateFrom, dateTo], () => posterGetSales(dateFrom, dateTo))
     const loading = !sales
@@ -85,6 +94,10 @@ const Sales: NextPage = () => {
         setSelectedColumns(columns.map(fromLabel))
     }
 
+    const dayOfWeekFilter = () => {
+        setSelectedDayOfWeek('')
+    }
+
     const handleExport = () => {
         // TODO: implement export
     }
@@ -96,26 +109,32 @@ const Sales: NextPage = () => {
     return (
         <div className='flex flex-col'>
             <div className='w-full flex justify-between mb-6'>
-                <div>
-                    <h3>{t('header')}</h3>
-                </div>
-                <div className='space-x-8'>
-                    <Button
-                        label={t('export', { ns: 'common' })}
-                        variant='secondary'
-                        buttonClass='w-56'
-                        onClick={handleExport}
-                    />
-                </div>
+                <h3>{t('header')}</h3>
+                <Button
+                    label={t('export', { ns: 'common' })}
+                    variant='secondary'
+                    buttonClass='w-56'
+                    onClick={handleExport}
+                />
             </div>
             <div className='w-full flex justify-between mb-8'>
-                <TimeframeDropdown
-                    setDateFrom={setDateFrom}
-                    setDateTo={setDateTo}
-                    defaultDateFrom={defaultDateFrom}
-                    defaultDateTo={defaultDateTo}
-                    timeframeOptions={timeframeOptions}
-                />
+                <div className='flex space-x-4'>
+                    <TimeframeDropdown
+                        setDateFrom={setDateFrom}
+                        setDateTo={setDateTo}
+                        defaultDateFrom={defaultDateFrom}
+                        defaultDateTo={defaultDateTo}
+                        timeframeOptions={timeframeOptions}
+                    />
+                    <Dropdown
+                        label={t('day_of_week_filter.label')}
+                        items={Object.keys(dayOfWeekOptions)}
+                        onItemSelected={(item) => setSelectedDayOfWeek(item)}
+                        icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : 'grey'} />}
+                        filter={dayOfWeekFilter}
+                        selectedOption={selectedDayOfWeek}
+                    />
+                </div>
                 <Multiselect
                     label={t('display', { ns: 'common' })}
                     icon={<Document primaryColor='grey' />}

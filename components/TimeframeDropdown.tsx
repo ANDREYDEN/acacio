@@ -7,8 +7,8 @@ import { Popover } from '@headlessui/react'
 import { useTranslation } from 'next-i18next'
 
 interface ITimeframeDropdown {
-    setDateFrom: any
-    setDateTo: any
+    setDateFrom: (date: dayjs.Dayjs) => void
+    setDateTo: (date: dayjs.Dayjs) => void
     defaultDateFrom: dayjs.Dayjs
     defaultDateTo: dayjs.Dayjs
     timeframeOptions: Record<string, dayjs.Dayjs>

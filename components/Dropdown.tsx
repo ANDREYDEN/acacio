@@ -18,6 +18,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
     const { t } = useTranslation('common')
 
     return (
+        // TODO: set static width
         <Popover className='relative'>
             {({ open }) => (
                 <>
@@ -32,7 +33,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                     </Popover.Button>
                     <Popover.Panel>
                         {({ close }) => (
-                            <div className='flex flex-col min-w-52 items-start bg-white absolute
+                            <div className='flex flex-col items-start bg-white absolute
                                  z-0 mt-4 shadow-filter rounded-lg py-2'>
                                 {filter &&
                                     <button
@@ -40,7 +41,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                                             filter()
                                             close()
                                         }}
-                                        className='underline mb-2 px-4 w-full text-left hover:bg-blue hover:text-secondary-background'
+                                        className='underline py-1 mb-1 px-4 w-full text-left hover:bg-blue hover:text-secondary-background'
                                     >
                                         {t('clear_filter')}
                                     </button>
@@ -65,7 +66,10 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                                 {customFilter &&
                                     <Popover className='relative'>
                                         <Popover.Button>
-                                            <div className='flex items-center mt-2 px-4 w-60 text-left hover:bg-blue hover:text-secondary-background'>
+                                            <div
+                                                className='flex items-center py-1 mt-1 px-4 w-60 text-left
+                                                    hover:bg-blue hover:text-secondary-background'
+                                            >
                                                 <Plus size='small' />
                                                 <span className='ml-2'>{customFilter.label}</span>
                                             </div>

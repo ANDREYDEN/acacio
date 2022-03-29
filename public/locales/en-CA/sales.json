@@ -11,5 +11,15 @@
     "barProfit": "Bar profit(₴)",
     "totalRevenue": "Total revenue(₴)",
     "totalProfit": "Total profit(₴)"
+  },
+  "day_of_week_filter": {
+    "label": "Day of week",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
   }
 }
