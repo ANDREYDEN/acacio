@@ -36,10 +36,11 @@ const StockTable: React.FC<IStockTable> = ({ data, selectedColumns }: IStockTabl
 
     const columns: Column<StockTableRow>[] = useMemo<Column<StockTableRow>[]>(
         () => readonlyAccessors.map((accessor) => ({
-            Header: accessor === 'toOrder' 
-                ? <h1>{snakeCaseToPascalCase(accessor)}</h1> 
-                : ({ value }: { value: number}) => <NumberInputCell value={value} onBlur={() => {}} />,
-            accessor: accessor
+            Header: <h1>{snakeCaseToPascalCase(accessor)}</h1>,
+            accessor: accessor,
+            Cell: accessor === 'toOrder' 
+                ? ({ value }: { value: number}) => <NumberInputCell value={value} onBlur={() => {}} /> 
+                : ({ value }: { value: any}) => value,
         })),
         [readonlyAccessors]
     )
