@@ -12,14 +12,5 @@
     "totalRevenue": "Доход всего(₴)",
     "totalProfit": "Прибыль всего(₴)"
   },
-  "day_of_week_filter": {
-    "label": "День недели",
-    "monday": "Понедельник",
-    "tuesday": "Вторник",
-    "wednesday": "Среда",
-    "thursday": "Четверг",
-    "friday": "Пятница",
-    "saturday": "Суббота",
-    "sunday": "Воскресенье"
-  }
+  "day_of_week_filter": "День недели"
 }

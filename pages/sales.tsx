@@ -12,6 +12,9 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Calendar, Document } from 'react-iconly'
 import useSWR from 'swr'
+import localeData from 'dayjs/plugin/localeData'
+import { useRouter } from 'next/router'
+dayjs.extend(localeData)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -23,9 +26,10 @@ const Sales: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(7, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
+    const router = useRouter()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState('')
+    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>()
     const { t } = useTranslation('sales')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -36,16 +40,11 @@ const Sales: NextPage = () => {
         [timeframeTranslation('last_30_days')]: dayjs().subtract(30, 'day'),
         [timeframeTranslation('last_quarter')]: dayjs().subtract(3, 'month')
     }
-    const dayOfWeekOptions: Record<string, dayjs.Dayjs> = {
-        [t('day_of_week_filter.monday')]: dayjs().day(1),
-        [t('day_of_week_filter.tuesday')]: dayjs().day(2),
-        [t('day_of_week_filter.wednesday')]: dayjs().day(3),
-        [t('day_of_week_filter.thursday')]: dayjs().day(4),
-        [t('day_of_week_filter.friday')]: dayjs().day(5),
-        [t('day_of_week_filter.saturday')]: dayjs().day(6),
-        [t('day_of_week_filter.sunday')]: dayjs().day(7)
-    }
-    const { data: sales, error } = useSWR(['getSales', dateFrom, dateTo], () => posterGetSales(dateFrom, dateTo))
+
+    const { data: sales, error } = useSWR(
+        ['getSales', dateFrom, dateTo, selectedDayOfWeek],
+        () => posterGetSales(dateFrom, dateTo, selectedDayOfWeek)
+    )
     const loading = !sales
 
     const columnSelectorOptions: (keyof SalesPerDay)[] = useMemo(() => [
@@ -84,6 +83,8 @@ const Sales: NextPage = () => {
     [sales]
     )
 
+    const weekDays = dayjs().locale(router.locale?.split('-')[0] ?? 'en').localeData().weekdays()
+
     const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [t])
     const fromLabel = useCallback(
         (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label,
@@ -95,7 +96,7 @@ const Sales: NextPage = () => {
     }
 
     const dayOfWeekFilter = () => {
-        setSelectedDayOfWeek('')
+        setSelectedDayOfWeek(undefined)
     }
 
     const handleExport = () => {
@@ -127,12 +128,12 @@ const Sales: NextPage = () => {
                         timeframeOptions={timeframeOptions}
                     />
                     <Dropdown
-                        label={t('day_of_week_filter.label')}
-                        items={Object.keys(dayOfWeekOptions)}
-                        onItemSelected={(item) => setSelectedDayOfWeek(item)}
+                        label={t('day_of_week_filter')}
+                        items={weekDays}
+                        onItemSelected={(item) => setSelectedDayOfWeek(weekDays.indexOf(item))}
                         icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : 'grey'} />}
                         filter={dayOfWeekFilter}
-                        selectedOption={selectedDayOfWeek}
+                        selectedOption={selectedDayOfWeek ? weekDays.at(selectedDayOfWeek) : undefined}
                     />
                 </div>
                 <Multiselect
