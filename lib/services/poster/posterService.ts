@@ -104,13 +104,18 @@ export function usePosterGetSalesIncomeForEmployees(
     }
 }
 
-export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs) {
+export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs, weekDay?: number) {
     const salesFinal: SalesPerDay[] = []
     const numberOfDays = dateTo.diff(dateFrom, 'day')
 
     await Promise.all([...Array(numberOfDays)].map((_, i) => {
         return (async () => {
             const currentDate = dateFrom.add(i, 'day')
+
+            if (weekDay !== undefined && weekDay !== currentDate.day()) {
+                return
+            }
+
             const sales = await getSalesForDay(currentDate)
             const salesWorkshops = await getSalesForDay(currentDate, 'workshops')
 

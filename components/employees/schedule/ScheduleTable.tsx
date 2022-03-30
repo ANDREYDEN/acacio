@@ -4,6 +4,7 @@ import { Column } from 'react-table'
 import dayjs from 'dayjs'
 import { Table,NumberInputCell } from '@components'
 import { ScheduleTableRow, ShiftDto } from '@interfaces'
+import { capitalizeWord } from '@lib/utils'
 
 interface IScheduleTable {
   dateColumns: dayjs.Dayjs[]
@@ -28,7 +29,7 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data }: ISchedul
             ...dateColumns.map((date) => ({
                 Header: <div className='flex flex-col items-center'>
                     <p className='font-light'>
-                        {date.format('dd')[0]?.toUpperCase()}{date.format('dd').slice(1)}
+                        {capitalizeWord(date.format('dd'))}
                     </p>
                     <h1>{date.format('DD')}</h1>
                 </div>,
