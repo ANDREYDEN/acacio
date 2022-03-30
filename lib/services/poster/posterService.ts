@@ -173,7 +173,7 @@ export async function posterGetIngredientMovement(
         const ingredientWriteOffs = writeOffs.filter(wo => wo.ingredient_id === ingredientMovement.ingredient_id)
         const writeOff = ingredientWriteOffs.reduce((acc, writeOff) => acc + writeOff.weight, 0)
         const writeOffCost = ingredientWriteOffs.reduce((acc, writeOff) => acc + +writeOff.cost, 0) / 100
-        const sold = ingredientMovement.write_offs
+        const sold = ingredientMovement.write_offs // TODO: doublecheck as this might also include wastes
         const finalBalance = ingredientMovement.end
         const reorder = Math.max(0, sold + writeOff - finalBalance).toString()
 
