@@ -29,7 +29,7 @@ const Sales: NextPage = () => {
     const router = useRouter()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<IDropdownItem>()
+    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<IDropdownItem | undefined>()
     const { t } = useTranslation('sales')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -98,10 +98,6 @@ const Sales: NextPage = () => {
         setSelectedColumns(columns.map(fromLabel))
     }
 
-    const dayOfWeekFilter = () => {
-        setSelectedDayOfWeek(undefined)
-    }
-
     const handleExport = () => {
         // TODO: implement export
     }
@@ -135,7 +131,7 @@ const Sales: NextPage = () => {
                         items={weekDaysDropdownItems}
                         onItemSelected={item => setSelectedDayOfWeek(item)}
                         icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : 'grey'} />}
-                        filter={dayOfWeekFilter}
+                        withClearFilter={true}
                         selectedOption={selectedDayOfWeek?.label}
                     />
                 </div>

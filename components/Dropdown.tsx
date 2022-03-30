@@ -7,21 +7,23 @@ import { DropdownItemValue, IDropdownItem } from '@interfaces'
 export interface IDropdown {
     label: string
     items: IDropdownItem[]
-    onItemSelected: (item: IDropdownItem) => void
+    onItemSelected: (item: IDropdownItem | undefined) => void
     icon?: ReactElement<IconProps>
-    filter?: () => void
+    withClearFilter?: boolean
     selectedOption?: DropdownItemValue
     customFilter?: any
 }
 
-const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, filter, selectedOption, customFilter }: IDropdown) => {
+const Dropdown: React.FC<IDropdown> = ({
+    label, items, onItemSelected, icon, withClearFilter = false, selectedOption, customFilter
+}: IDropdown) => {
     const chevronColor = selectedOption ? 'white' : 'grey'
     const { t } = useTranslation('common')
 
     const buttonLabel = (selectedOption ? selectedOption : label).toString()
     const formattedButtonLabel = buttonLabel.length > 13 ? `${buttonLabel.slice(0, 13)}...` : buttonLabel
 
-    const getItemButton = (item: IDropdownItem) => {
+    const getItemButton = (item: IDropdownItem, close: () => void) => {
         const itemLabel = item.label
 
         return (
@@ -69,10 +71,10 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                     <Popover.Panel>
                         {({ close }) => (
                             <div className='flex flex-col items-start min-w-full bg-white absolute z-0 mt-4 shadow-filter rounded-lg py-2'>
-                                {filter &&
+                                {withClearFilter &&
                                     <button
                                         onClick={() => {
-                                            filter()
+                                            onItemSelected(undefined)
                                             close()
                                         }}
                                         className='underline py-1 mb-1 px-4 w-full text-left hover:bg-blue hover:text-secondary-background'
@@ -81,7 +83,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                                     </button>
                                 }
 
-                                {items.map(item => getItemButton(item))}
+                                {items.map(item => getItemButton(item, close))}
                                 {customFilter && getCustomFilterPopover()}
                             </div>
                         )}

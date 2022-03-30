@@ -30,15 +30,16 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
     register('startDate', { required: t('start_date_required').toString() })
     register('endDate', { required: t('end_date_required').toString() })
 
-    const timeframeFilter = () => {
-        setSelectedTimeframe('')
-        setDateFrom(defaultDateFrom)
-        setDateTo(defaultDateTo)
-    }
+    const onItemSelected = (item: IDropdownItem | undefined) => {
+        if (!item) {
+            setSelectedTimeframe('')
+            setDateFrom(defaultDateFrom)
+            setDateTo(defaultDateTo)
+            return
+        }
 
-    const onItemSelected = (item: IDropdownItem) => {
         setSelectedTimeframe(item.label)
-        setDateFrom(item.value as dayjs.Dayjs)
+        setDateFrom(item?.value as dayjs.Dayjs)
         setDateTo(dayjs())
     }
 
@@ -99,7 +100,7 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
             items={timeframeOptions}
             onItemSelected={onItemSelected}
             icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
-            filter={defaultTimeframe ? undefined : timeframeFilter}
+            withClearFilter={!defaultTimeframe}
             selectedOption={selectedTimeframe}
             customFilter={customFilter}
         />
