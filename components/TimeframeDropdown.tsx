@@ -5,13 +5,14 @@ import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
 import { Popover } from '@headlessui/react'
 import { useTranslation } from 'next-i18next'
+import { IDropdownItem } from '@interfaces'
 
 interface ITimeframeDropdown {
     setDateFrom: (date: dayjs.Dayjs) => void
     setDateTo: (date: dayjs.Dayjs) => void
     defaultDateFrom: dayjs.Dayjs
     defaultDateTo: dayjs.Dayjs
-    timeframeOptions: Record<string, dayjs.Dayjs>
+    timeframeOptions: IDropdownItem[]
     defaultTimeframe?: string
 }
 
@@ -35,9 +36,9 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
         setDateTo(defaultDateTo)
     }
 
-    const onItemSelected = (item: string) => {
-        setSelectedTimeframe(item)
-        setDateFrom(timeframeOptions[item])
+    const onItemSelected = (item: IDropdownItem) => {
+        setSelectedTimeframe(item.label)
+        setDateFrom(item.value as dayjs.Dayjs)
         setDateTo(dayjs())
     }
 
@@ -95,7 +96,7 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
     return (
         <Dropdown
             label={t('label')}
-            items={Object.keys(timeframeOptions)}
+            items={timeframeOptions}
             onItemSelected={onItemSelected}
             icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
             filter={defaultTimeframe ? undefined : timeframeFilter}

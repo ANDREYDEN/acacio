@@ -1,8 +1,8 @@
 import { Dropdown, ErrorMessage, Loader, Multiselect, SalesTable, TimeframeDropdown } from '@components'
 import Button from '@components/Button'
-import { SalesPerDay } from '@interfaces'
+import { IDropdownItem, SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
-import { enforceAuthenticated } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated } from '@lib/utils'
 import { posterGetSales } from '@services/poster'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
@@ -29,21 +29,21 @@ const Sales: NextPage = () => {
     const router = useRouter()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<number>()
+    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<IDropdownItem>()
     const { t } = useTranslation('sales')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
-    const timeframeOptions: Record<string, dayjs.Dayjs> = {
-        [timeframeTranslation('last_day')]: dayjs().subtract(1, 'day'),
-        [timeframeTranslation('last_7_days')]: dayjs().subtract(7, 'day'),
-        [timeframeTranslation('last_14_days')]: dayjs().subtract(14, 'day'),
-        [timeframeTranslation('last_30_days')]: dayjs().subtract(30, 'day'),
-        [timeframeTranslation('last_quarter')]: dayjs().subtract(3, 'month')
-    }
+    const timeframeOptions: IDropdownItem[] = [
+        { label: timeframeTranslation('last_day'), value: dayjs().subtract(1, 'day') },
+        { label: timeframeTranslation('last_7_days'), value: dayjs().subtract(7, 'day') },
+        { label: timeframeTranslation('last_14_days'), value: dayjs().subtract(14, 'day') },
+        { label: timeframeTranslation('last_30_days'), value: dayjs().subtract(30, 'day') },
+        { label: timeframeTranslation('last_quarter'), value: dayjs().subtract(3, 'month' ) }
+    ]
 
     const { data: sales, error } = useSWR(
         ['getSales', dateFrom, dateTo, selectedDayOfWeek],
-        () => posterGetSales(dateFrom, dateTo, selectedDayOfWeek)
+        () => posterGetSales(dateFrom, dateTo, selectedDayOfWeek?.value as number)
     )
     const loading = !sales
 
@@ -84,6 +84,9 @@ const Sales: NextPage = () => {
     )
 
     const weekDays = dayjs().locale(router.locale?.split('-')[0] ?? 'en').localeData().weekdays()
+    const weekDaysDropdownItems: IDropdownItem[] = weekDays.map((day, index) => {
+        return { label: capitalizeWord(day), value: index }
+    })
 
     const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [t])
     const fromLabel = useCallback(
@@ -129,11 +132,11 @@ const Sales: NextPage = () => {
                     />
                     <Dropdown
                         label={t('day_of_week_filter')}
-                        items={weekDays}
-                        onItemSelected={(item) => setSelectedDayOfWeek(weekDays.indexOf(item))}
+                        items={weekDaysDropdownItems}
+                        onItemSelected={item => setSelectedDayOfWeek(item)}
                         icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : 'grey'} />}
                         filter={dayOfWeekFilter}
-                        selectedOption={selectedDayOfWeek ? weekDays.at(selectedDayOfWeek) : undefined}
+                        selectedOption={selectedDayOfWeek?.label}
                     />
                 </div>
                 <Multiselect

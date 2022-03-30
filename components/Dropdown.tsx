@@ -2,20 +2,39 @@ import React, { ReactElement } from 'react'
 import { Popover } from '@headlessui/react'
 import { ChevronDown, ChevronUp, IconProps, Plus } from 'react-iconly'
 import { useTranslation } from 'next-i18next'
+import { DropdownItemValue, IDropdownItem } from '@interfaces'
 
 export interface IDropdown {
     label: string
-    items: string[]
-    onItemSelected: (item: string) => void
+    items: IDropdownItem[]
+    onItemSelected: (item: IDropdownItem) => void
     icon?: ReactElement<IconProps>
-    filter?: () => void,
-    selectedOption?: string
+    filter?: () => void
+    selectedOption?: DropdownItemValue
     customFilter?: any
 }
 
 const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, filter, selectedOption, customFilter }: IDropdown) => {
     const chevronColor = selectedOption ? 'white' : 'grey'
     const { t } = useTranslation('common')
+
+    const getItemButton = (item: IDropdownItem) => {
+        const itemLabel = item.label
+
+        return (
+            <button
+                key={itemLabel}
+                onClick={() => {
+                    onItemSelected(item)
+                    close()
+                }}
+                className={`w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1
+                    ${itemLabel === selectedOption && 'bg-blue text-white'}`}
+            >
+                {itemLabel}
+            </button>
+        )
+    }
 
     return (
         // TODO: set static width
@@ -47,21 +66,7 @@ const Dropdown: React.FC<IDropdown> = ({ label, items, onItemSelected, icon, fil
                                     </button>
                                 }
 
-                                {items.map(item => {
-                                    return (
-                                        <button
-                                            key={item}
-                                            onClick={() => {
-                                                onItemSelected(item)
-                                                close()
-                                            }}
-                                            className={`w-full text-left hover:bg-blue hover:text-secondary-background
-                                            ${item === selectedOption && 'bg-blue text-white'} px-4 py-1`}
-                                        >
-                                            {item}
-                                        </button>
-                                    )
-                                })}
+                                {items.map(item => getItemButton(item))}
 
                                 {customFilter &&
                                     <Popover className='relative'>
