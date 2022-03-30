@@ -1,4 +1,4 @@
-import { NumericCell, Table } from '@components'
+import { CurrencyCell, Table } from '@components'
 import { SalesPerDay } from '@interfaces'
 import dayjs from 'dayjs'
 import { useTranslation } from 'next-i18next'
@@ -39,37 +39,37 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
             {
                 Header: <h1>{t('table_headers.averageBill').toString()}</h1>,
                 accessor: 'averageBill',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             {
                 Header: <h1>{t('table_headers.kitchenRevenue').toString()}</h1>,
                 accessor: 'kitchenRevenue',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             {
                 Header: <h1>{t('table_headers.kitchenProfit').toString()}</h1>,
                 accessor: 'kitchenProfit',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             {
                 Header: <h1>{t('table_headers.barRevenue').toString()}</h1>,
                 accessor: 'barRevenue',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             {
                 Header: <h1>{t('table_headers.barProfit').toString()}</h1>,
                 accessor: 'barProfit',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             {
                 Header: <h1>{t('table_headers.totalRevenue').toString()}</h1>,
                 accessor: 'totalRevenue',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             {
                 Header: <h1>{t('table_headers.totalProfit').toString()}</h1>,
                 accessor: 'totalProfit',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
         ],
         [router.locale, t]
