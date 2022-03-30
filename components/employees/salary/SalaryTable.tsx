@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
-import { Table, NumberInputCell, NumericCell } from '@components'
+import { Table, NumberInputCell, CurrencyCell } from '@components'
 import { SalaryTableRow } from '@interfaces'
 
 interface ISalaryTable {
@@ -28,17 +28,17 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
             { 
                 Header: <h1>{t('table.salaryTotal')}</h1>,
                 accessor: 'salaryTotal',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             { 
                 Header: <h1>{t('table.salesIncomeTotal')}</h1>,
                 accessor: 'salesIncomeTotal',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             { 
                 Header: <h1>{t('table.deductionsTotal')}</h1>,
                 accessor: 'deductionsTotal',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             { 
                 Header: <h1>{t('table.bonus')}</h1>,
@@ -48,7 +48,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
             { 
                 Header: <h1>{t('table.incomeTotal')}</h1>,
                 accessor: 'incomeTotal',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
         ],
         [t]

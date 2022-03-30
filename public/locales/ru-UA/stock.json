@@ -1,3 +1,21 @@
 {
-  "header": "Инвентарь"
+  "header": "Инвентарь",
+  "table_headers": {
+    "ingredientName": "Название",
+    "category": "Категория",
+    "supplier": "Поставщик",
+    "initialBalance": "Нач. остаток",
+    "initialAvgCost": "Нач. средняя себестоимость(₴)",
+    "sold": "Расход",
+    "soldCost": "Расход(₴)",
+    "writeOff": "Списания",
+    "writeOffCost": "Списания(₴)",
+    "lastSupply": "Посленяя поставка",
+    "finalBalance": "Кон. остаток",
+    "finalBalanceCost": "Кон. остаток(₴)",
+    "finalAverageCost": "Нач. средняя себестоимость(₴)",
+    "reorder": "Дозаказ (Авт.)",
+    "toOrder": "Дозаказ",
+    "totalCost": "Итого(₴)"
+  }
 }
