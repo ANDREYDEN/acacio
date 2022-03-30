@@ -1,8 +1,7 @@
-import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdown } from '@components'
+import { Button, ErrorMessage, Loader, Multiselect, SearchBar, StockTable, TimeframeDropdown } from '@components'
 import { StockTableRow } from '@interfaces'
 import { posterGetIngredientMovement } from '@lib/services/poster'
 import { enforceAuthenticated } from '@lib/utils'
-import { posterInstance } from '@services/poster'
 import { IDropdownItem } from '@interfaces'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
@@ -25,6 +24,7 @@ const Stock: NextPage = () => {
     const defaultDateTo = dayjs().weekday(0)
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
+    const [searchInput, setSearchInput] = useState('')
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -87,27 +87,26 @@ const Stock: NextPage = () => {
     return (
         <div className='flex flex-col'>
             <div className='w-full flex justify-between mb-6'>
-                <div>
-                    <h3>{t('header')}</h3>
-                </div>
-                <div className='space-x-8'>
-                    <Button
-                        label={t('export', { ns: 'common' })}
-                        variant='secondary'
-                        buttonClass='w-56'
-                        onClick={handleExport}
-                    />
-                </div>
+                <h3>{t('header')}</h3>
+                <Button
+                    label={t('export', { ns: 'common' })}
+                    variant='secondary'
+                    buttonClass='w-56'
+                    onClick={handleExport}
+                />
             </div>
             <div className='w-full flex justify-between mb-6'>
-                <TimeframeDropdown
-                    setDateFrom={setDateFrom}
-                    setDateTo={setDateTo}
-                    defaultDateFrom={defaultDateFrom}
-                    defaultDateTo={defaultDateTo}
-                    timeframeOptions={timeframeOptions}
-                    defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
-                />
+                <div className='flex items-center space-x-6'>
+                    <SearchBar searchInput={searchInput} onValueChange={setSearchInput} />
+                    <TimeframeDropdown
+                        setDateFrom={setDateFrom}
+                        setDateTo={setDateTo}
+                        defaultDateFrom={defaultDateFrom}
+                        defaultDateTo={defaultDateTo}
+                        timeframeOptions={timeframeOptions}
+                        defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
+                    />
+                </div>
                 <Multiselect
                     label={t('display', { ns: 'common' })}
                     icon={<Document primaryColor='grey' />}
