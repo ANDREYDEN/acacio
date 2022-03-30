@@ -28,8 +28,6 @@ export interface Ingredient {
   category_id: number
   supplier: string
   last_supply: string
-  write_off: number
-  write_off_cost: number
 }
 
 export interface Supply {

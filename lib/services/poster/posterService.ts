@@ -152,39 +152,38 @@ export async function posterGetIngredientMovement(
     const supplies: Supply[] = await posterGet('storage.getSupplies', params)
 
     await Promise.all(supplies.map(async (supply) => {
-        const supplyIngredients: SupplyIngredient[] = await posterGet(
-            'storage.getSupplyIngredients', 
-            {
-                supply_id: supply.supply_id
-            }
-        )
-        if (supplyIngredients.length === 0) return
-
-        const lastSupply = supplyIngredients[0]
-        const ingredientId = lastSupply.ingredient_id
-        const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
-        if (!ingredient) return
-
-        ingredient.supplier = supply.supplier_name
-        ingredient.last_supply = lastSupply.supply_ingredient_num.toString()
+        try {
+            const supplyIngredients: SupplyIngredient[] = await posterGet(
+                'storage.getSupplyIngredients', 
+                {
+                    supply_id: supply.supply_id
+                }
+            )
+            if (supplyIngredients.length === 0) return
+    
+            const lastSupply = supplyIngredients[0]
+            const ingredientId = lastSupply.ingredient_id
+            const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
+            if (!ingredient) return
+    
+            ingredient.supplier = supply.supplier_name
+            ingredient.last_supply = lastSupply.supply_ingredient_num.toString()
+        } catch (e: any) {
+            console.error(`Failed to fetch supply ingredients for supply ${supply.supply_id}`)
+        }
     }))
 
     const writeOffs: IngredientWriteOff[] = await posterGet('storage.getIngredientWriteOff', params)
-    for (const writeOff of writeOffs) {
-        const ingredient = ingredients.find(i => i.ingredient_id === +writeOff.ingredient_id)
-        if (!ingredient) continue
-
-        ingredient.write_off += writeOff.weight
-        ingredient.write_off_cost += +writeOff.cost
-    }
 
     return (ingredientMovements ?? []).map(ingredientMovement => {
         // TODO: optimize
         const ingredient = ingredients.find(i => i.ingredient_id === +ingredientMovement.ingredient_id)
         const category = categories.find(c => +c.category_id === ingredient?.category_id)
 
+        const ingredientWriteOffs = writeOffs.filter(wo => wo.ingredient_id === ingredientMovement.ingredient_id)
+        const writeOff = ingredientWriteOffs.reduce((acc, writeOff) => acc + writeOff.weight, 0)
+        const writeOffCost = ingredientWriteOffs.reduce((acc, writeOff) => acc + +writeOff.cost, 0)
         const sold = ingredientMovement.write_offs
-        const writeOff = ingredient?.write_off ?? 0
         const finalBalance = ingredientMovement.end
         const reorder = Math.max(0, finalBalance - sold - writeOff).toString()
 
@@ -196,8 +195,8 @@ export async function posterGetIngredientMovement(
             initialAvgCost: ingredientMovement.cost_start,
             sold: sold.toString(),
             soldCost: 0, // TODO
-            writeOff: writeOff?.toString() ?? '',
-            writeOffCost: ingredient?.write_off_cost ?? 0,
+            writeOff: writeOff.toString() ?? '',
+            writeOffCost,
             lastSupply: ingredient?.last_supply ?? '',
             finalBalance: finalBalance.toString(),
             finalAverageCost: ingredientMovement.cost_end,
