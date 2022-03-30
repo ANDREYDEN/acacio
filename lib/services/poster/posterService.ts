@@ -1,8 +1,20 @@
-import { EmployeesMonthlyStatDto, SalesPerDay } from '@interfaces'
+import { 
+    Waste, 
+    EmployeesMonthlyStatDto, 
+    Ingredient, 
+    IngredientCategory, 
+    IngredientMovementVM, 
+    SalesData, 
+    SalesPerDay, 
+    StockTableRow, 
+    Supply, 
+    SupplyIngredient, 
+    WriteOff, 
+    WriteOffIngredient 
+} from '@interfaces'
 import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import { Deduction, SalesData } from 'interfaces/Poster'
 import useSWR from 'swr'
 
 export const posterInstance = axios.create({
@@ -21,7 +33,7 @@ async function posterGet(url: string, params?: Record<string, any>) {
 }
 
 export function usePosterGetDeductionsForEmployees(employees: definitions['employees'][]) {
-    const { data: wastes, error } = useSWR<Deduction[]>('storage.getWastes', posterGet)
+    const { data: wastes, error } = useSWR<Waste[]>('storage.getWastes', posterGet)
 
     const deductionsTotalsError = error?.toString()
 
@@ -140,4 +152,93 @@ async function getSalesForDay(day: dayjs.Dayjs, type?: string) {
     )
 
     return sales
+}
+
+export async function posterGetIngredientMovement(
+    dateFrom: dayjs.Dayjs, 
+    dateTo: dayjs.Dayjs
+): Promise<StockTableRow[]> {
+    const params = {
+        dateFrom: dateFrom.format('YYYYMMDD'),
+        dateTo: dateTo.format('YYYYMMDD'),
+    }
+
+    const ingredientMovements: IngredientMovementVM[] = await posterGet('storage.getReportMovement', params)
+    const categories: IngredientCategory[] = await posterGet('menu.getCategoriesIngredients')
+    const ingredients: Ingredient[] = await posterGet('menu.getIngredients')
+
+    await addLastSupplyInfo(params, ingredients)
+    const writeOffs = await getIngredientWriteOffs(params)
+
+    return (ingredientMovements ?? []).map(ingredientMovement => {
+        // TODO: optimize
+        const ingredient = ingredients.find(i => i.ingredient_id === +ingredientMovement.ingredient_id)
+        const category = categories.find(c => +c.category_id === ingredient?.category_id)
+
+        const ingredientWriteOffs = writeOffs.filter(wo => wo.ingredient_id === ingredientMovement.ingredient_id)
+        const writeOff = ingredientWriteOffs.reduce((acc, writeOff) => acc + writeOff.weight, 0)
+        const writeOffCost = ingredientWriteOffs.reduce((acc, writeOff) => acc + +writeOff.cost, 0) / 100
+        const sold = ingredientMovement.write_offs // TODO: doublecheck as this might also include wastes
+        const finalBalance = ingredientMovement.end
+        const reorder = Math.max(0, sold + writeOff - finalBalance).toString()
+
+        return {
+            ingredientName: ingredientMovement.ingredient_name,
+            category: category?.name ?? '-',
+            supplier: ingredient?.supplier ?? '-',
+            initialBalance: ingredientMovement.start.toString(),
+            initialAvgCost: ingredientMovement.cost_start,
+            sold: sold.toString(),
+            soldCost: 0, // TODO
+            writeOff: writeOff.toString() ?? '',
+            writeOffCost,
+            lastSupply: ingredient?.last_supply ?? '',
+            finalBalance: finalBalance.toString(),
+            finalAverageCost: ingredientMovement.cost_end,
+            finalBalanceCost: 0, // TODO: ask client if this is the same as totalCost
+            reorder,
+            toOrder: reorder, 
+            totalCost: finalBalance * ingredientMovement.cost_end,
+        }
+    })
+}
+
+async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, ingredients: Ingredient[]) {
+    const supplies: Supply[] = await posterGet('storage.getSupplies', params)
+
+    await Promise.all(supplies.map(async (supply) => {
+        try {
+            const supplyIngredients: SupplyIngredient[] = await posterGet(
+                'storage.getSupplyIngredients',
+                { supply_id: supply.supply_id }
+            )
+            if (supplyIngredients.length === 0)
+                return
+
+            const lastSupply = supplyIngredients[0]
+            const ingredientId = lastSupply.ingredient_id
+            const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
+            if (!ingredient)
+                return
+
+            ingredient.supplier = supply.supplier_name
+            ingredient.last_supply = lastSupply.supply_ingredient_num.toString()
+        } catch (e: any) {
+            console.error(`Failed to fetch supply ingredients for supply ${supply.supply_id}`)
+        }
+    }))
+}
+
+async function getIngredientWriteOffs(params: { dateFrom: string; dateTo: string }) {
+    const wastes: Waste[] = await posterGet('storage.getWastes', params)
+    const writeOffs: WriteOffIngredient[] = []
+    await Promise.all(wastes.map(async (waste) => {
+        const writeOff: WriteOff = await posterGet('storage.getWaste', { waste_id: waste.waste_id })
+        for (const element of writeOff.elements) {
+            for (const ingredient of element.ingredients) {
+                writeOffs.push(ingredient)
+            }
+        }
+    }))
+    return writeOffs
 }

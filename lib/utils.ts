@@ -18,11 +18,8 @@ export function enforceAuthenticated(inner?: GetServerSideProps): GetServerSideP
     }
 }
 
-export function snakeCaseToPascalCase(input: string): string {
-    return input
-        .split('_')
-        .map(word => word[0].toUpperCase() + word.substring(1))
-        .join(' ')
+export function roundValue(value: number) {
+    return Math.round(value * 100) / 100
 }
 
 /**

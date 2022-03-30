@@ -1,5 +1,6 @@
 import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdown } from '@components'
-import { Ingredient } from '@lib/posterTypes'
+import { StockTableRow } from '@interfaces'
+import { posterGetIngredientMovement } from '@lib/services/poster'
 import { enforceAuthenticated } from '@lib/utils'
 import { posterInstance } from '@services/poster'
 import { IDropdownItem } from '@interfaces'
@@ -8,42 +9,20 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Document } from 'react-iconly'
+import useSWR from 'swr'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 dayjs.extend(weekday)
 
-export const getServerSideProps = enforceAuthenticated(async (context: any) => {
-    try {
-        const { data } = await posterInstance.get('storage.getReportMovement')
-        if (data.error) throw data.error
-        const ingredients = data.response
-        return {
-            props: {
-                ingredients,
-                ...await serverSideTranslations(context.locale, ['stock', 'common', 'timeframe']),
-            }
-        }
-    } catch(e: any) {
-        return { 
-            props:
-            {
-                ingredients: [],
-                error: e.message,
-                ...await serverSideTranslations(context.locale, ['stock', 'common', 'timeframe']),
-            }
-        }
-    }  
-})
+export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['stock', 'common', 'timeframe']),
+    }
+}))
 
-type StockProps = {
-  ingredients: Ingredient[],
-  error: string | null
-}
-
-const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
+const Stock: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(2, 'week').weekday(4)
     const defaultDateTo = dayjs().weekday(0)
-    // TODO: when retrieving needed data, take dateFrom and dateTo into the account
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t } = useTranslation('stock')
@@ -56,15 +35,37 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
         { label: timeframeTranslation('1_month'), value: dayjs().subtract(1, 'month') },
     ]
 
-    const columnSelectorOptions: (keyof Ingredient)[] = useMemo(() => [
-        'ingredient_id',
-        'ingredient_name',
-        'start',
-        'end'
+    const { data: rows, error } = useSWR(
+        ['getIngredients', dateFrom, dateTo],
+        () => posterGetIngredientMovement(dateFrom, dateTo)
+    )
+    const loading = !rows
+
+    const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
+        'ingredientName',
+        'category',
+        'supplier',
+        'initialBalance',
+        'initialAvgCost',
+        'sold',
+        'soldCost',
+        'writeOff',
+        'writeOffCost',
+        'lastSupply',
+        'finalBalance',
+        'finalBalanceCost',
+        'finalAverageCost',
+        'reorder',
+        'toOrder',
+        'totalCost',
     ], [])
 
-    const defaultColumns: (keyof Ingredient)[] = [
-        'ingredient_id'
+    const defaultColumns: (keyof StockTableRow)[] = [
+        'ingredientName',
+        'category',
+        'supplier',
+        'toOrder',
+        'totalCost'
     ]
 
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
@@ -82,12 +83,6 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
     const handleExport = () => {
         // TODO: add export
     }
-
-    const data = useMemo(
-        () => ingredients, 
-        [ingredients]
-    )
-    const loading = !data
 
     return (
         <div className='flex flex-col'>
@@ -126,7 +121,9 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
             </div>
             {error
                 ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
-                : loading ? <Loader /> : <StockTable data={data} selectedColumns={selectedColumns} />
+                : loading
+                    ? <Loader />
+                    : <StockTable selectedColumns={selectedColumns} data={rows} />
             }
         </div>
     )
