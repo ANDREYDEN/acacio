@@ -1,7 +1,7 @@
 import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdown } from '@components'
 import { StockTableRow } from '@interfaces'
 import { posterGetIngredientMovement } from '@lib/services/poster'
-import { enforceAuthenticated } from '@lib/utils'
+import { enforceAuthenticated, roundValue } from '@lib/utils'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -10,6 +10,8 @@ import { Document } from 'react-iconly'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
+import exportToXLSX from '@lib/services/exportService'
+import { Column } from 'exceljs'
 dayjs.extend(weekday)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -79,7 +81,32 @@ const Stock: NextPage = () => {
     }
 
     const handleExport = () => {
-        // TODO: add export
+        const columnWidths: Record<string, number> = {
+            ingredientName: 20,
+            category: 10,
+            supplier: 10,
+            initialBalance: 10,
+            initialAvgCost: 20,
+            sold: 10,
+            soldCost: 10,
+            writeOff: 10,
+            writeOffCost: 15,
+            lastSupply: 15,
+            finalBalance: 10,
+            finalBalanceCost: 15,
+            finalAverageCost: 20,
+            reorder: 10,
+            toOrder: 10,
+            totalCost: 15,
+        }
+
+        const columns: Partial<Column>[] = selectedColumns.map(accessor => ({
+            key: accessor, 
+            header: t(`table_headers.${accessor}`).toString(), 
+            width: columnWidths[accessor]
+        }))
+
+        exportToXLSX(rows ?? [], columns, `Stock ${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`)
     }
 
     return (
