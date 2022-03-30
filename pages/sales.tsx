@@ -78,18 +78,25 @@ const Sales: NextPage = () => {
             dayOfWeek: row.dayOfWeek.locale(router.locale?.split('-')[0] ?? 'en').format('dd'),
         }))
 
-        const columns: Partial<Column>[] = [
-            { key: 'date', header: t('table_headers.date').toString() },
-            { key: 'dayOfWeek', header: t('table_headers.dayOfWeek').toString(), width: 15 },
-            { key: 'customers', header: t('table_headers.customers').toString(), width: 15 },
-            { key: 'averageBill', header: t('table_headers.averageBill').toString(), width: 15 },
-            { key: 'kitchenRevenue', header: t('table_headers.kitchenRevenue').toString(), width: 20 },
-            { key: 'kitchenProfit', header: t('table_headers.kitchenProfit').toString(), width: 20 },
-            { key: 'barRevenue', header: t('table_headers.barRevenue').toString(), width: 20 },
-            { key: 'barProfit', header: t('table_headers.barProfit').toString(), width: 20 },
-            { key: 'totalRevenue', header: t('table_headers.totalRevenue').toString(), width: 20 },
-            { key: 'totalProfit', header: t('table_headers.totalProfit').toString(), width: 15 }
-        ]
+        const columnWidths: Record<string, number> = {
+            date: 10,
+            dayOfWeek: 15,
+            customers: 15,
+            averageBill: 15,
+            kitchenRevenue: 20,
+            kitchenProfit: 20,
+            barRevenue: 20,
+            barProfit: 20,
+            totalRevenue: 20,
+            totalProfit: 15,
+        }
+
+        const columns: Partial<Column>[] = selectedColumns.map(accessor => ({
+            key: accessor, 
+            header: t(`table_headers.${accessor}`).toString(), 
+            width: columnWidths[accessor]
+        }))
+        
         exportToXLSX(exportData, columns, `Sales ${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`)
     }
 
