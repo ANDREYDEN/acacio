@@ -2,6 +2,7 @@ import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdow
 import { Ingredient } from '@lib/posterTypes'
 import { enforceAuthenticated } from '@lib/utils'
 import { posterInstance } from '@services/poster'
+import { IDropdownItem } from '@interfaces'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -48,12 +49,12 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
-    const timeframeOptions: Record<string, dayjs.Dayjs> = {
-        [timeframeTranslation('1_week')]: dayjs().subtract(1, 'week'),
-        [timeframeTranslation('1_and_half_weeks')]: dayjs().subtract(7, 'day'),
-        [timeframeTranslation('2_weeks')]: dayjs().subtract(2, 'week'),
-        [timeframeTranslation('1_month')]: dayjs().subtract(1, 'month'),
-    }
+    const timeframeOptions: IDropdownItem[] = [
+        { label: timeframeTranslation('1_week'), value: dayjs().subtract(1, 'week') },
+        { label: timeframeTranslation('1_and_half_weeks'), value: dayjs().subtract(7, 'day') },
+        { label: timeframeTranslation('2_weeks'), value: dayjs().subtract(2, 'week') },
+        { label: timeframeTranslation('1_month'), value: dayjs().subtract(1, 'month') },
+    ]
 
     const columnSelectorOptions: (keyof Ingredient)[] = useMemo(() => [
         'ingredient_id',
@@ -68,7 +69,7 @@ const Stock: NextPage<StockProps> = ({ ingredients, error }) => {
 
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
 
-    const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [])
+    const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [t])
     const fromLabel = useCallback(
         (label: string) => columnSelectorOptions.find(c => label === toLabel(c)) ?? label,
         [columnSelectorOptions, toLabel]
