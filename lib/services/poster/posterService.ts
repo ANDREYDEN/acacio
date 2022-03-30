@@ -1,9 +1,7 @@
-import { EmployeesMonthlyStatDto, SalesPerDay } from '@interfaces'
-import { IngredientMovementVM } from '@lib/posterTypes'
+import { Deduction, EmployeesMonthlyStatDto, Ingredient, IngredientCategory, IngredientMovementVM, IngredientWriteOff, SalesData, SalesPerDay, StockTableRow, Supply, SupplyIngredient } from '@interfaces'
 import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import { Deduction, SalesData } from 'interfaces/Poster'
 import useSWR from 'swr'
 
 export const posterInstance = axios.create({
@@ -138,14 +136,75 @@ async function getSalesForDay(day: dayjs.Dayjs, type?: string) {
     return sales
 }
 
-export async function posterGetIngredientMovement(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs) {
-    const ingredients = await posterGet(
-        'storage.getReportMovement',
-        {
-            dateFrom: dateFrom.format('YYYYMMDD'),
-            dateTo: dateTo.format('YYYYMMDD'),
-        }
-    )
+export async function posterGetIngredientMovement(
+    dateFrom: dayjs.Dayjs, 
+    dateTo: dayjs.Dayjs
+): Promise<StockTableRow[]> {
+    const params = {
+        dateFrom: dateFrom.format('YYYYMMDD'),
+        dateTo: dateTo.format('YYYYMMDD'),
+    }
 
-    return ingredients as IngredientMovementVM[]
+    const ingredientMovements: IngredientMovementVM[] = await posterGet('storage.getReportMovement', params)
+    const categories: IngredientCategory[] = await posterGet('menu.getCategoriesIngredients')
+    
+    const ingredients: Ingredient[] = await posterGet('menu.getIngredients')
+    const supplies: Supply[] = await posterGet('storage.getSupplies', params)
+
+    await Promise.all(supplies.map(async (supply) => {
+        const supplyIngredients: SupplyIngredient[] = await posterGet(
+            'storage.getSupplyIngredients', 
+            {
+                supply_id: supply.supply_id
+            }
+        )
+        if (supplyIngredients.length === 0) return
+
+        const lastSupply = supplyIngredients[0]
+        const ingredientId = lastSupply.ingredient_id
+        const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
+        if (!ingredient) return
+
+        ingredient.supplier = supply.supplier_name
+        ingredient.last_supply = lastSupply.supply_ingredient_num.toString()
+    }))
+
+    const writeOffs: IngredientWriteOff[] = await posterGet('storage.getIngredientWriteOff', params)
+    for (const writeOff of writeOffs) {
+        const ingredient = ingredients.find(i => i.ingredient_id === +writeOff.ingredient_id)
+        if (!ingredient) continue
+
+        ingredient.write_off += writeOff.weight
+        ingredient.write_off_cost += +writeOff.cost
+    }
+
+    return (ingredientMovements ?? []).map(ingredientMovement => {
+        // TODO: optimize
+        const ingredient = ingredients.find(i => i.ingredient_id === +ingredientMovement.ingredient_id)
+        const category = categories.find(c => +c.category_id === ingredient?.category_id)
+
+        const sold = ingredientMovement.write_offs
+        const writeOff = ingredient?.write_off ?? 0
+        const finalBalance = ingredientMovement.end
+        const reorder = Math.max(0, finalBalance - sold - writeOff).toString()
+
+        return {
+            ingredientName: ingredientMovement.ingredient_name,
+            category: category?.name ?? '-',
+            supplier: ingredient?.supplier ?? '-',
+            initialBalance: ingredientMovement.start.toString(),
+            initialAvgCost: ingredientMovement.cost_start,
+            sold: sold.toString(),
+            soldCost: 0, // TODO
+            writeOff: writeOff?.toString() ?? '',
+            writeOffCost: ingredient?.write_off_cost ?? 0,
+            lastSupply: ingredient?.last_supply ?? '',
+            finalBalance: finalBalance.toString(),
+            finalAverageCost: ingredientMovement.cost_end,
+            finalBalanceCost: 0, // TODO: ask client if this is the same as totalCost
+            reorder,
+            toOrder: reorder, 
+            totalCost: finalBalance * ingredientMovement.cost_end,
+        }
+    })
 }

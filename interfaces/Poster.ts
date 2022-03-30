@@ -6,3 +6,44 @@ export interface Deduction {
 export interface SalesData {
   data: string[]
 }
+
+export interface IngredientMovementVM {
+  ingredient_id: string
+  ingredient_name: string
+  start: number
+  end: number
+  cost_start: number
+  cost_end: number
+  income: number
+  write_offs: number
+}
+
+export interface IngredientCategory {
+  category_id: string
+  name: string
+}
+
+export interface Ingredient {
+  ingredient_id: number
+  category_id: number
+  supplier: string
+  last_supply: string
+  write_off: number
+  write_off_cost: number
+}
+
+export interface Supply {
+  supply_id: string
+  supplier_name: string
+}
+
+export interface SupplyIngredient {
+  ingredient_id: number
+  supply_ingredient_num: number
+}
+
+export interface IngredientWriteOff {
+  ingredient_id: string
+  cost: string
+  weight: number
+}

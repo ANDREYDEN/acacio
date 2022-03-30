@@ -1,6 +1,5 @@
 import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdown } from '@components'
 import { StockTableRow } from '@interfaces'
-import { IngredientMovementVM } from '@lib/posterTypes'
 import { posterGetIngredientMovement } from '@lib/services/poster'
 import { enforceAuthenticated } from '@lib/utils'
 import { NextPage } from 'next'
@@ -19,15 +18,9 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
     }
 }))
 
-type StockProps = {
-  ingredients: IngredientMovementVM[],
-  error: string | null
-}
-
-const Stock: NextPage<StockProps> = () => {
+const Stock: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(2, 'week').weekday(4)
     const defaultDateTo = dayjs().weekday(0)
-    // TODO: when retrieving needed data, take dateFrom and dateTo into the account
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const { t: timeframeTranslation } = useTranslation('timeframe')
@@ -40,11 +33,11 @@ const Stock: NextPage<StockProps> = () => {
         [timeframeTranslation('1_month')]: dayjs().subtract(1, 'month'),
     }
 
-    const { data: ingredients, error } = useSWR(
+    const { data: rows, error } = useSWR(
         ['getIngredients', dateFrom, dateTo], 
         () => posterGetIngredientMovement(dateFrom, dateTo)
     )
-    const loading = !ingredients
+    const loading = !rows
 
     const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
         'ingredientName',
@@ -89,27 +82,27 @@ const Stock: NextPage<StockProps> = () => {
         // TODO: add export
     }
 
-    const data: StockTableRow[] = useMemo(
-        () => (ingredients ?? []).map(ingredient => ({
-            ingredientName: ingredient.ingredient_name,
-            category: '',
-            supplier: '',
-            initialBalance: ingredient.start.toString(),
-            initialAvgCost: ingredient.cost_start,
-            sold: '',
-            soldCost: 0,
-            writeOff: ingredient.write_offs.toString(),
-            writeOffCost: 0,
-            lastSupply: '',
-            finalBalance: ingredient.end.toString(),
-            finalBalanceCost: 0,
-            finalAverageCost: ingredient.cost_end,
-            reorder: '',
-            toOrder: '',
-            totalCost: 0,
-        })), 
-        [ingredients]
-    )
+    // const data: StockTableRow[] = useMemo(
+    //     () => (rows ?? []).map(ingredient => ({
+    //         ingredientName: ingredient.ingredient_name,
+    //         category: '',
+    //         supplier: '',
+    //         initialBalance: ingredient.start.toString(),
+    //         initialAvgCost: ingredient.cost_start,
+    //         sold: '', // possibly calculated
+    //         soldCost: 0, // possibly calculated
+    //         writeOff: ingredient.write_offs.toString(),
+    //         writeOffCost: 0,
+    //         lastSupply: '', // derived from supplies
+    //         finalBalance: ingredient.end.toString(),
+    //         finalAverageCost: ingredient.cost_end,
+    //         finalBalanceCost: 0, // 
+    //         reorder: '',
+    //         toOrder: '', // custom input
+    //         totalCost: 0, // possibly calculated
+    //     })), 
+    //     [rows]
+    // )
 
     return (
         <div className='flex flex-col'>
@@ -150,7 +143,7 @@ const Stock: NextPage<StockProps> = () => {
                 ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
                 : loading 
                     ? <Loader /> 
-                    : <StockTable selectedColumns={selectedColumns} data={data} />
+                    : <StockTable selectedColumns={selectedColumns} data={rows} />
             }
         </div>
     )
