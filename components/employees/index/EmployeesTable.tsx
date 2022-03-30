@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
-import { Table, NumericCell } from '@components'
+import { Table, CurrencyCell } from '@components'
 import { IAction, IEmployeesTableRow } from '@interfaces'
 
 interface IEmployeeTable {
@@ -29,7 +29,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data }: IEmployeeTable) => {
             {
                 Header: <h1>{t('table_headers.salary').toString()}</h1>,
                 accessor: 'salary',
-                Cell: NumericCell
+                Cell: CurrencyCell
             },
             {
                 Header: <h1>{t('table_headers.revenue_percentage').toString()}</h1>,
