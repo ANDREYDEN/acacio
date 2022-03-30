@@ -100,7 +100,7 @@ export async function posterGetSales(dateFrom: dayjs.Dayjs, dateTo: dayjs.Dayjs,
         return (async () => {
             const currentDate = dateFrom.add(i, 'day')
 
-            if (weekDay && weekDay !== currentDate.day()) {
+            if (weekDay !== undefined && weekDay !== currentDate.day()) {
                 return
             }
 
