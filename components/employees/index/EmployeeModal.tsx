@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'next-i18next'
 import { Modal, Button, TextInput, ValidatedDropdown } from '@components'
 import { definitions } from '@types'
-import { IDropdownOption } from '@interfaces'
+import { IValidatedDropdownItem } from '@interfaces'
+import { capitalizeWord } from '@lib/utils'
 
 interface IEmployeeModal {
     onUpsertEmployee: (currentEmployee: Partial<definitions['employees']>) => Promise<void>
@@ -42,10 +43,10 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
         max: { value: 100, message: t('modal.max_revenue').toString() }
     })
 
-    const preparedRolesOptions: IDropdownOption[] = employeeRoles.map(role => {
+    const preparedRolesOptions: IValidatedDropdownItem[] = employeeRoles.map(role => {
         return {
             value: role.id,
-            label: `${role.name[0]?.toUpperCase()}${role.name.slice(1)}`
+            label: capitalizeWord(role.name)
         }
     })
 

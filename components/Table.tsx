@@ -14,7 +14,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
     })
 
     return (
-        <div className='border border-table-grey rounded-lg w-full overflow-scroll max-h-[calc(100vh-200px)]'>
+        <div className='border border-table-grey rounded-lg w-full overflow-scroll max-h-[calc(100vh-225px)]'>
             <table {...getTableProps()} className='w-full'>
                 <thead>
                     <tr>

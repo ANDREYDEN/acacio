@@ -38,15 +38,15 @@ const Multiselect: React.FC<IMultiselect> = ({
             {({ open }) => (
                 <>
                     <Popover.Button>
-                        <div className={`flex items-center justify-center space-x-2 p-2 rounded-lg font-body-bold 
-                                         text-sm border border-table-grey text-dark-grey ${open ? 'bg-secondary-background' : ''}`}>
+                        <div className={`flex items-center justify-center w-48 space-x-2 p-2 rounded-lg font-body-bold 
+                                 text-sm border border-table-grey text-dark-grey ${open ? 'bg-secondary-background' : ''}`}>
                             {icon}
                             <span className={`text-left ${buttonClass}`}>{label}</span>
                             {open ? <ChevronUp primaryColor='grey' /> : <ChevronDown primaryColor='grey' />}
                         </div>
                     </Popover.Button>
                     <Popover.Panel>
-                        <div className='flex flex-col min-w-52 items-start bg-white absolute
+                        <div className='flex flex-col min-w-full items-start bg-white absolute right-0
                                  z-0 mt-4 shadow-filter rounded-lg py-2'>
                             <button
                                 onClick={() => selectAll()}

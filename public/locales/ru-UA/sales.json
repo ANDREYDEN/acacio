@@ -11,5 +11,6 @@
     "barProfit": "Прибыль от бара(₴)",
     "totalRevenue": "Доход всего(₴)",
     "totalProfit": "Прибыль всего(₴)"
-  }
+  },
+  "day_of_week_filter": "День недели"
 }
