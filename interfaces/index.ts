@@ -1,6 +1,6 @@
 export * from './Menu'
 export * from './Schedule'
-export * from './Action'
+export * from './RowActions'
 export * from './Dropdown'
 export * from './Salary'
 export * from './Employees'

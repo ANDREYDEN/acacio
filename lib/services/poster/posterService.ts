@@ -175,9 +175,10 @@ export async function posterGetIngredientMovement(
         const writeOffCost = ingredientWriteOffs.reduce((acc, writeOff) => acc + +writeOff.cost, 0) / 100
         const sold = ingredientMovement.write_offs // TODO: doublecheck as this might also include wastes
         const finalBalance = ingredientMovement.end
-        const reorder = Math.max(0, sold + writeOff - finalBalance).toString()
+        const reorder = Math.max(0, sold + writeOff - finalBalance)
 
         return {
+            ingredientId: ingredientMovement.ingredient_id,
             ingredientName: ingredientMovement.ingredient_name,
             category: category?.name ?? '-',
             supplier: ingredient?.supplier ?? '-',
@@ -191,8 +192,11 @@ export async function posterGetIngredientMovement(
             finalBalance: finalBalance.toString(),
             finalAverageCost: ingredientMovement.cost_end,
             finalBalanceCost: 0, // TODO: ask client if this is the same as totalCost
-            reorder,
-            toOrder: reorder, 
+            reorder: reorder.toString(),
+            toOrder: {
+                initialValue: reorder,
+                onChange: () => {} // gets reassigned later
+            }, 
             totalCost: finalBalance * ingredientMovement.cost_end,
         }
     })

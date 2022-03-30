@@ -1,4 +1,4 @@
-import { IAction } from './Action'
+import { IRowAction } from './RowActions'
 
 export interface IEmployeesTableRow {
     name: string
@@ -6,6 +6,6 @@ export interface IEmployeesTableRow {
     birthDate: string
     salary: number
     revenuePercentage: number
-    editEmployee: IAction
-    deleteEmployee: IAction
+    editEmployee: IRowAction
+    deleteEmployee: IRowAction
 }

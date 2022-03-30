@@ -1,7 +1,7 @@
 import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdown } from '@components'
 import { StockTableRow } from '@interfaces'
 import { posterGetIngredientMovement } from '@lib/services/poster'
-import { enforceAuthenticated, roundValue } from '@lib/utils'
+import { enforceAuthenticated } from '@lib/utils'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -40,6 +40,16 @@ const Stock: NextPage = () => {
         () => posterGetIngredientMovement(dateFrom, dateTo)
     )
     const loading = !rows
+
+    const [orders, setOrders] = useState<Record<string, number>>({}) // TODO: use this to persist orders
+    
+    const tableData: StockTableRow[] = (rows ?? []).map(row => ({
+        ...row,
+        toOrder: {
+            ...row.toOrder,
+            onChange: (newValue: number) => setOrders({ ...orders, [row.ingredientId]: newValue })
+        }
+    }))
 
     const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
         'ingredientName',
@@ -81,6 +91,11 @@ const Stock: NextPage = () => {
     }
 
     const handleExport = () => {
+        const exportData = tableData.map(row => ({
+            ...row,
+            toOrder: orders[row.ingredientId] ?? row.toOrder.initialValue
+        }))
+
         const columnWidths: Record<string, number> = {
             ingredientName: 20,
             category: 10,
@@ -106,7 +121,7 @@ const Stock: NextPage = () => {
             width: columnWidths[accessor]
         }))
 
-        exportToXLSX(rows ?? [], columns, `Stock ${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`)
+        exportToXLSX(exportData, columns, `Stock ${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`)
     }
 
     return (
@@ -148,7 +163,7 @@ const Stock: NextPage = () => {
                 ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
                 : loading 
                     ? <Loader /> 
-                    : <StockTable selectedColumns={selectedColumns} data={rows} />
+                    : <StockTable selectedColumns={selectedColumns} data={tableData} />
             }
         </div>
     )
