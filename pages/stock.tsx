@@ -2,6 +2,8 @@ import { Button, ErrorMessage, Loader, Multiselect, StockTable, TimeframeDropdow
 import { StockTableRow } from '@interfaces'
 import { posterGetIngredientMovement } from '@lib/services/poster'
 import { enforceAuthenticated } from '@lib/utils'
+import { posterInstance } from '@services/poster'
+import { IDropdownItem } from '@interfaces'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -23,18 +25,18 @@ const Stock: NextPage = () => {
     const defaultDateTo = dayjs().weekday(0)
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const { t: timeframeTranslation } = useTranslation('timeframe')
     const { t } = useTranslation('stock')
+    const { t: timeframeTranslation } = useTranslation('timeframe')
 
-    const timeframeOptions: Record<string, dayjs.Dayjs> = {
-        [timeframeTranslation('1_week')]: dayjs().subtract(1, 'week'),
-        [timeframeTranslation('1_and_half_weeks')]: dayjs().subtract(7, 'day'),
-        [timeframeTranslation('2_weeks')]: dayjs().subtract(2, 'week'),
-        [timeframeTranslation('1_month')]: dayjs().subtract(1, 'month'),
-    }
+    const timeframeOptions: IDropdownItem[] = [
+        { label: timeframeTranslation('1_week'), value: dayjs().subtract(1, 'week') },
+        { label: timeframeTranslation('1_and_half_weeks'), value: dayjs().subtract(7, 'day') },
+        { label: timeframeTranslation('2_weeks'), value: dayjs().subtract(2, 'week') },
+        { label: timeframeTranslation('1_month'), value: dayjs().subtract(1, 'month') },
+    ]
 
     const { data: rows, error } = useSWR(
-        ['getIngredients', dateFrom, dateTo], 
+        ['getIngredients', dateFrom, dateTo],
         () => posterGetIngredientMovement(dateFrom, dateTo)
     )
     const loading = !rows
@@ -117,10 +119,10 @@ const Stock: NextPage = () => {
                     itemFormatter={toLabel}
                 />
             </div>
-            {error 
+            {error
                 ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
-                : loading 
-                    ? <Loader /> 
+                : loading
+                    ? <Loader />
                     : <StockTable selectedColumns={selectedColumns} data={rows} />
             }
         </div>

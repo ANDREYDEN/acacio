@@ -1,11 +1,11 @@
 import React from 'react'
 import { useController } from 'react-hook-form'
-import { IDropdownOption } from '@interfaces'
+import { IValidatedDropdownItem } from '@interfaces'
 
 export interface IValidatedDropdown {
     label: string
     name: string
-    data: IDropdownOption[]
+    data: IValidatedDropdownItem[]
     control: any
     defaultOption: string
     dropdownClass?: string

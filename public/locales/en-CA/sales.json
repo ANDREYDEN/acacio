@@ -11,5 +11,6 @@
     "barProfit": "Bar profit(₴)",
     "totalRevenue": "Total revenue(₴)",
     "totalProfit": "Total profit(₴)"
-  }
+  },
+  "day_of_week_filter": "Day of week"
 }
