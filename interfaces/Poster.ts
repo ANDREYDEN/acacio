@@ -1,4 +1,5 @@
-export interface Deduction {
+export interface Waste {
+  waste_id: string
   reason_name: string
   total_sum: string
 }
@@ -40,7 +41,15 @@ export interface SupplyIngredient {
   supply_ingredient_num: number
 }
 
-export interface IngredientWriteOff {
+export interface WriteOff {
+  elements: WriteOffElements[]
+}
+
+interface WriteOffElements {
+  ingredients: WriteOffIngredient[]
+}
+
+export interface WriteOffIngredient {
   ingredient_id: string
   cost: string
   weight: number

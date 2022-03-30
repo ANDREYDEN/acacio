@@ -82,28 +82,6 @@ const Stock: NextPage = () => {
         // TODO: add export
     }
 
-    // const data: StockTableRow[] = useMemo(
-    //     () => (rows ?? []).map(ingredient => ({
-    //         ingredientName: ingredient.ingredient_name,
-    //         category: '',
-    //         supplier: '',
-    //         initialBalance: ingredient.start.toString(),
-    //         initialAvgCost: ingredient.cost_start,
-    //         sold: '', // possibly calculated
-    //         soldCost: 0, // possibly calculated
-    //         writeOff: ingredient.write_offs.toString(),
-    //         writeOffCost: 0,
-    //         lastSupply: '', // derived from supplies
-    //         finalBalance: ingredient.end.toString(),
-    //         finalAverageCost: ingredient.cost_end,
-    //         finalBalanceCost: 0, // 
-    //         reorder: '',
-    //         toOrder: '', // custom input
-    //         totalCost: 0, // possibly calculated
-    //     })), 
-    //     [rows]
-    // )
-
     return (
         <div className='flex flex-col'>
             <div className='w-full flex justify-between mb-6'>
