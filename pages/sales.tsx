@@ -2,18 +2,20 @@ import { Dropdown, ErrorMessage, Loader, Multiselect, SalesTable, TimeframeDropd
 import Button from '@components/Button'
 import { IDropdownItem, SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
+import exportToXLSX from '@lib/services/exportService'
 import { capitalizeWord, enforceAuthenticated } from '@lib/utils'
 import { posterGetSales } from '@services/poster'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
+import localeData from 'dayjs/plugin/localeData'
+import { Column } from 'exceljs'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Calendar, Document } from 'react-iconly'
 import useSWR from 'swr'
-import localeData from 'dayjs/plugin/localeData'
-import { useRouter } from 'next/router'
 dayjs.extend(localeData)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -26,12 +28,12 @@ const Sales: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(7, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
-    const router = useRouter()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<IDropdownItem | undefined>()
-    const { t } = useTranslation('sales')
     const { t: timeframeTranslation } = useTranslation('timeframe')
+    const { t } = useTranslation('sales')
+    const router = useRouter()
 
     const timeframeOptions: IDropdownItem[] = [
         { label: timeframeTranslation('last_day'), value: dayjs().subtract(1, 'day') },
@@ -63,25 +65,7 @@ const Sales: NextPage = () => {
     const defaultColumns: (keyof SalesPerDay)[] = useMemo(() => ['date'], [])
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
 
-    const tableData: SalesPerDay[] = useMemo(() =>
-        (sales ?? []).map((salePerDay) => {
-            const row = {
-                date: salePerDay.date,
-                dayOfWeek: salePerDay.dayOfWeek,
-                customers: salePerDay.customers,
-                averageBill: salePerDay.averageBill,
-                kitchenRevenue: salePerDay.kitchenRevenue,
-                kitchenProfit: salePerDay.kitchenProfit,
-                barRevenue: salePerDay.barRevenue,
-                barProfit: salePerDay.barProfit,
-                totalRevenue: salePerDay.totalRevenue,
-                totalProfit: salePerDay.totalProfit,
-            }
-
-            return row
-        }),
-    [sales]
-    )
+    const tableData: SalesPerDay[] = useMemo(() => sales ?? [], [sales])
 
     const weekDays = dayjs().locale(router.locale?.split('-')[0] ?? 'en').localeData().weekdays()
     const weekDaysDropdownItems: IDropdownItem[] = weekDays.map((day, index) => {
@@ -99,7 +83,32 @@ const Sales: NextPage = () => {
     }
 
     const handleExport = () => {
-        // TODO: implement export
+        const exportData = tableData.map(row => ({ 
+            ...row, 
+            date: row.date.format('DD.MM'),
+            dayOfWeek: row.dayOfWeek.locale(router.locale?.split('-')[0] ?? 'en').format('dd'),
+        }))
+
+        const columnWidths: Record<string, number> = {
+            date: 10,
+            dayOfWeek: 15,
+            customers: 15,
+            averageBill: 15,
+            kitchenRevenue: 20,
+            kitchenProfit: 20,
+            barRevenue: 20,
+            barProfit: 20,
+            totalRevenue: 20,
+            totalProfit: 15,
+        }
+
+        const columns: Partial<Column>[] = selectedColumns.map(accessor => ({
+            key: accessor, 
+            header: t(`table_headers.${accessor}`).toString(), 
+            width: columnWidths[accessor]
+        }))
+        
+        exportToXLSX(exportData, columns, `Sales ${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`)
     }
 
     if (!mounted) {
