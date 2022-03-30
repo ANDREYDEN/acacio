@@ -2,13 +2,16 @@ import { ErrorMessage, Loader, Multiselect, SalesTable, TimeframeDropdown } from
 import Button from '@components/Button'
 import { SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
+import exportToXLSX from '@lib/services/exportService'
 import { enforceAuthenticated } from '@lib/utils'
 import { posterGetSales } from '@services/poster'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
+import { Column } from 'exceljs'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Document } from 'react-iconly'
 import useSWR from 'swr'
@@ -26,8 +29,9 @@ const Sales: NextPage = () => {
     const { mounted } = useMounted()
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const { t } = useTranslation('sales')
     const { t: timeframeTranslation } = useTranslation('timeframe')
+    const { t } = useTranslation('sales')
+    const router = useRouter()
 
     const timeframeOptions: Record<string, dayjs.Dayjs> = {
         [timeframeTranslation('last_day')]: dayjs().subtract(1, 'day'),
@@ -55,25 +59,7 @@ const Sales: NextPage = () => {
     const defaultColumns: (keyof SalesPerDay)[] = useMemo(() => ['date'], [])
     const [selectedColumns, setSelectedColumns] = useState<string[]>(columnSelectorOptions)
 
-    const tableData: SalesPerDay[] = useMemo(() =>
-        (sales ?? []).map((salePerDay) => {
-            const row = {
-                date: salePerDay.date,
-                dayOfWeek: salePerDay.dayOfWeek,
-                customers: salePerDay.customers,
-                averageBill: salePerDay.averageBill,
-                kitchenRevenue: salePerDay.kitchenRevenue,
-                kitchenProfit: salePerDay.kitchenProfit,
-                barRevenue: salePerDay.barRevenue,
-                barProfit: salePerDay.barProfit,
-                totalRevenue: salePerDay.totalRevenue,
-                totalProfit: salePerDay.totalProfit,
-            }
-
-            return row
-        }),
-    [sales]
-    )
+    const tableData: SalesPerDay[] = useMemo(() => sales ?? [], [sales])
 
     const toLabel = useCallback((accessor: string) => t(`table_headers.${accessor}`).toString(), [t])
     const fromLabel = useCallback(
@@ -86,7 +72,25 @@ const Sales: NextPage = () => {
     }
 
     const handleExport = () => {
-        // TODO: implement export
+        const exportData = tableData.map(row => ({ 
+            ...row, 
+            date: row.date.format('DD.MM'),
+            dayOfWeek: row.dayOfWeek.locale(router.locale?.split('-')[0] ?? 'en').format('dd'),
+        }))
+
+        const columns: Partial<Column>[] = [
+            { key: 'date', header: t('table_headers.date').toString() },
+            { key: 'dayOfWeek', header: t('table_headers.dayOfWeek').toString(), width: 15 },
+            { key: 'customers', header: t('table_headers.customers').toString(), width: 15 },
+            { key: 'averageBill', header: t('table_headers.averageBill').toString(), width: 15 },
+            { key: 'kitchenRevenue', header: t('table_headers.kitchenRevenue').toString(), width: 20 },
+            { key: 'kitchenProfit', header: t('table_headers.kitchenProfit').toString(), width: 20 },
+            { key: 'barRevenue', header: t('table_headers.barRevenue').toString(), width: 20 },
+            { key: 'barProfit', header: t('table_headers.barProfit').toString(), width: 20 },
+            { key: 'totalRevenue', header: t('table_headers.totalRevenue').toString(), width: 20 },
+            { key: 'totalProfit', header: t('table_headers.totalProfit').toString(), width: 15 }
+        ]
+        exportToXLSX(exportData, columns, `Sales ${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`)
     }
 
     if (!mounted) {
