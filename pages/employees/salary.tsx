@@ -10,7 +10,7 @@ import { SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { enforceAuthenticated, fullName } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated, fullName } from '@lib/utils'
 import { definitions } from '@types'
 import {
     useSupabaseDeleteEntity,
@@ -164,7 +164,7 @@ const Salary: NextPage = () => {
             <div className='w-full flex justify-between mb-8'>
                 <div>
                     <h3>{t('header')}</h3>
-                    {currentMonth}
+                    {capitalizeWord(currentMonth)}
                 </div>
                 <div className='space-x-8'>
                     <Button 

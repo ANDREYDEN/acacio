@@ -25,7 +25,7 @@ const ValidatedDropdown: React.FC<IValidatedDropdown> = ({
             </label>
             <select
                 id={name}
-                className={`focus:outline-none rounded-lg px-6 py-2 text-primary-text focus:border-dark-grey
+                className={`outline-none rounded-lg px-6 py-2 text-primary-text focus:border-dark-grey
                     ${error ? 'border-2 border-error' : 'border border-grey'}`}
                 {...field}
             >
