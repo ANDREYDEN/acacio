@@ -45,13 +45,15 @@ const Stock: NextPage = () => {
 
     const [orders, setOrders] = useState<Record<string, number>>({}) // TODO: use this to persist orders
     
-    const tableData: StockTableRow[] = (rows ?? []).map(row => ({
-        ...row,
-        toOrder: {
-            ...row.toOrder,
-            onChange: (newValue: number) => setOrders({ ...orders, [row.ingredientId]: newValue })
-        }
-    }))
+    const tableData: StockTableRow[] = (rows ?? [])
+        .map(row => ({
+            ...row,
+            toOrder: {
+                ...row.toOrder,
+                onChange: (newValue: number) => setOrders({ ...orders, [row.ingredientId]: newValue })
+            }
+        }))
+        .filter(row => row.ingredientName.toLowerCase().includes(searchInput.toLowerCase()))
 
     const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
         'ingredientName',
@@ -137,34 +139,36 @@ const Stock: NextPage = () => {
                     onClick={handleExport}
                 />
             </div>
-            <div className='w-full flex justify-between mb-6'>
-                <div className='flex items-center space-x-6'>
-                    <SearchBar searchInput={searchInput} onValueChange={setSearchInput} />
-                    <TimeframeDropdown
-                        setDateFrom={setDateFrom}
-                        setDateTo={setDateTo}
-                        defaultDateFrom={defaultDateFrom}
-                        defaultDateTo={defaultDateTo}
-                        timeframeOptions={timeframeOptions}
-                        defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
-                    />
-                </div>
-                <Multiselect
-                    label={t('display', { ns: 'common' })}
-                    icon={<Document primaryColor='grey' />}
-                    buttonClass='w-32'
-                    items={columnSelectorOptions}
-                    selectedItems={selectedColumns}
-                    disabledItems={defaultColumns}
-                    onSelectionChanged={handleSelectionChanged}
-                    itemFormatter={toLabel}
-                />
-            </div>
             {error
                 ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
-                : loading 
-                    ? <Loader /> 
-                    : <StockTable selectedColumns={selectedColumns} data={tableData} />
+                : loading
+                    ? <Loader />
+                    : <>
+                        <div className='w-full flex justify-between mb-6'>
+                            <div className='flex items-center space-x-6'>
+                                <SearchBar searchInput={searchInput} onValueChange={setSearchInput} />
+                                <TimeframeDropdown
+                                    setDateFrom={setDateFrom}
+                                    setDateTo={setDateTo}
+                                    defaultDateFrom={defaultDateFrom}
+                                    defaultDateTo={defaultDateTo}
+                                    timeframeOptions={timeframeOptions}
+                                    defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
+                                />
+                            </div>
+                            <Multiselect
+                                label={t('display', { ns: 'common' })}
+                                icon={<Document primaryColor='grey' />}
+                                buttonClass='w-32'
+                                items={columnSelectorOptions}
+                                selectedItems={selectedColumns}
+                                disabledItems={defaultColumns}
+                                onSelectionChanged={handleSelectionChanged}
+                                itemFormatter={toLabel}
+                            />
+                        </div>
+                        <StockTable selectedColumns={selectedColumns} data={tableData} />
+                    </>
             }
         </div>
     )
