@@ -1,5 +1,5 @@
 import { CurrencyCell, NumberCell, NumberInputCell, Table } from '@components'
-import { StockTableRow } from '@interfaces'
+import { IRowInput, StockTableRow } from '@interfaces'
 import { roundValue } from '@lib/utils'
 import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
@@ -85,7 +85,7 @@ const StockTable: React.FC<IStockTable> = ({ data, selectedColumns }: IStockTabl
             { 
                 Header: <h1>{t('table_headers.toOrder').toString()}</h1>, 
                 accessor: 'toOrder', 
-                Cell: ({ value }: { value: number}) => <NumberInputCell value={roundValue(value)} onBlur={() => {}} widthStyle='w-16' />
+                Cell: ({ value }: { value: IRowInput}) => <NumberInputCell value={roundValue(value.initialValue)} onBlur={value.onChange} widthStyle='w-16' />
             },
             { 
                 Header: <h1>{t('table_headers.totalCost').toString()}</h1>, 

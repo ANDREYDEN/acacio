@@ -11,6 +11,8 @@ import { Document } from 'react-iconly'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
+import exportToXLSX from '@lib/services/exportService'
+import { Column } from 'exceljs'
 dayjs.extend(weekday)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -40,6 +42,16 @@ const Stock: NextPage = () => {
         () => posterGetIngredientMovement(dateFrom, dateTo)
     )
     const loading = !rows
+
+    const [orders, setOrders] = useState<Record<string, number>>({}) // TODO: use this to persist orders
+    
+    const tableData: StockTableRow[] = (rows ?? []).map(row => ({
+        ...row,
+        toOrder: {
+            ...row.toOrder,
+            onChange: (newValue: number) => setOrders({ ...orders, [row.ingredientId]: newValue })
+        }
+    }))
 
     const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
         'ingredientName',
@@ -81,7 +93,37 @@ const Stock: NextPage = () => {
     }
 
     const handleExport = () => {
-        // TODO: add export
+        const exportData = tableData.map(row => ({
+            ...row,
+            toOrder: orders[row.ingredientId] ?? row.toOrder.initialValue
+        }))
+
+        const columnWidths: Record<string, number> = {
+            ingredientName: 20,
+            category: 10,
+            supplier: 10,
+            initialBalance: 10,
+            initialAvgCost: 20,
+            sold: 10,
+            soldCost: 10,
+            writeOff: 10,
+            writeOffCost: 15,
+            lastSupply: 15,
+            finalBalance: 10,
+            finalBalanceCost: 15,
+            finalAverageCost: 20,
+            reorder: 10,
+            toOrder: 10,
+            totalCost: 15,
+        }
+
+        const columns: Partial<Column>[] = selectedColumns.map(accessor => ({
+            key: accessor, 
+            header: t(`table_headers.${accessor}`).toString(), 
+            width: columnWidths[accessor]
+        }))
+
+        exportToXLSX(exportData, columns, `Stock ${dateFrom.format('DD MMM')} - ${dateTo.format('DD MMM')}`)
     }
 
     return (
@@ -120,9 +162,9 @@ const Stock: NextPage = () => {
             </div>
             {error
                 ? <ErrorMessage message={error} errorMessageClass='max-h-32 mt-6 flex flex-col justify-center' />
-                : loading
-                    ? <Loader />
-                    : <StockTable selectedColumns={selectedColumns} data={rows} />
+                : loading 
+                    ? <Loader /> 
+                    : <StockTable selectedColumns={selectedColumns} data={tableData} />
             }
         </div>
     )
