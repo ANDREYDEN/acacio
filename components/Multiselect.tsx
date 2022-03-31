@@ -39,7 +39,7 @@ const Multiselect: React.FC<IMultiselect> = ({
                 <>
                     <Popover.Button>
                         <div className={`flex items-center justify-center w-48 space-x-2 p-2 rounded-lg font-body-bold 
-                                 text-sm border border-table-grey text-dark-grey ${open ? 'bg-secondary-background' : ''}`}>
+                                 text-sm border border-grey text-dark-grey ${open ? 'bg-secondary-background' : ''}`}>
                             {icon}
                             <span className={`text-left ${buttonClass}`}>{label}</span>
                             {open ? <ChevronUp primaryColor='grey' /> : <ChevronDown primaryColor='grey' />}

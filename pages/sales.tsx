@@ -126,39 +126,40 @@ const Sales: NextPage = () => {
                     onClick={handleExport}
                 />
             </div>
-            <div className='w-full flex justify-between mb-8'>
-                <div className='flex space-x-4'>
-                    <TimeframeDropdown
-                        setDateFrom={setDateFrom}
-                        setDateTo={setDateTo}
-                        defaultDateFrom={defaultDateFrom}
-                        defaultDateTo={defaultDateTo}
-                        timeframeOptions={timeframeOptions}
-                    />
-                    <Dropdown
-                        label={t('day_of_week_filter')}
-                        items={weekDaysDropdownItems}
-                        onItemSelected={item => setSelectedDayOfWeek(item)}
-                        icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : 'grey'} />}
-                        withClearFilter={true}
-                        selectedOption={selectedDayOfWeek?.label}
-                    />
-                </div>
-                <Multiselect
-                    label={t('display', { ns: 'common' })}
-                    icon={<Document primaryColor='grey' />}
-                    buttonClass='w-32'
-                    items={columnSelectorOptions}
-                    selectedItems={selectedColumns}
-                    disabledItems={defaultColumns}
-                    onSelectionChanged={handleSelectionChanged}
-                    itemFormatter={toLabel}
-                />
-            </div>
-
             {error
                 ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />
-                : loading ? <Loader /> : <SalesTable data={tableData} selectedColumns={selectedColumns} />
+                : loading ? <Loader /> : <>
+                    <div className='w-full flex justify-between mb-8'>
+                        <div className='flex space-x-4'>
+                            <TimeframeDropdown
+                                setDateFrom={setDateFrom}
+                                setDateTo={setDateTo}
+                                defaultDateFrom={defaultDateFrom}
+                                defaultDateTo={defaultDateTo}
+                                timeframeOptions={timeframeOptions}
+                            />
+                            <Dropdown
+                                label={t('day_of_week_filter')}
+                                items={weekDaysDropdownItems}
+                                onItemSelected={item => setSelectedDayOfWeek(item)}
+                                icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : 'grey'} />}
+                                withClearFilter={true}
+                                selectedOption={selectedDayOfWeek?.label}
+                            />
+                        </div>
+                        <Multiselect
+                            label={t('display', { ns: 'common' })}
+                            icon={<Document primaryColor='grey' />}
+                            buttonClass='w-32'
+                            items={columnSelectorOptions}
+                            selectedItems={selectedColumns}
+                            disabledItems={defaultColumns}
+                            onSelectionChanged={handleSelectionChanged}
+                            itemFormatter={toLabel}
+                        />
+                    </div>
+                    <SalesTable data={tableData} selectedColumns={selectedColumns} />
+                </>
             }
         </div>
     )
