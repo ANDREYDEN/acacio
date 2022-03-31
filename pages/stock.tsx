@@ -26,7 +26,7 @@ const Stock: NextPage = () => {
     const defaultDateTo = dayjs().weekday(0)
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
-    const [searchInput, setSearchInput] = useState('')
+    const [searchValue, setSearchValue] = useState('')
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -53,7 +53,7 @@ const Stock: NextPage = () => {
                 onChange: (newValue: number) => setOrders({ ...orders, [row.ingredientId]: newValue })
             }
         }))
-        .filter(row => row.ingredientName.toLowerCase().includes(searchInput.toLowerCase()))
+        .filter(row => row.ingredientName.toLowerCase().includes(searchValue.toLowerCase()))
 
     const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
         'ingredientName',
@@ -145,8 +145,8 @@ const Stock: NextPage = () => {
                     ? <Loader />
                     : <>
                         <div className='w-full flex justify-between mb-6'>
-                            <div className='flex items-center space-x-6'>
-                                <SearchBar searchInput={searchInput} onValueChange={setSearchInput} />
+                            <div className='flex space-x-4'>
+                                <SearchBar searchValue={searchValue} onValueChange={setSearchValue} />
                                 <TimeframeDropdown
                                     setDateFrom={setDateFrom}
                                     setDateTo={setDateTo}

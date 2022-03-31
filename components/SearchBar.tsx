@@ -2,11 +2,11 @@ import React from 'react'
 import { Search } from 'react-iconly'
 
 interface ISearchBar {
-    searchInput: string
+    searchValue: string
     onValueChange: (value: string) => void
 }
 
-const SearchBar: React.FC<ISearchBar> = ({ searchInput, onValueChange }: ISearchBar) => {
+const SearchBar: React.FC<ISearchBar> = ({ searchValue, onValueChange }: ISearchBar) => {
 
     return (
         <div className='flex w-60 border border-grey rounded-lg px-4 py-2'>
@@ -16,7 +16,7 @@ const SearchBar: React.FC<ISearchBar> = ({ searchInput, onValueChange }: ISearch
                 type='text'
                 placeholder='Search'
                 className='ml-1 w-[180px] px-1 focus:outline-none rounded-lg text-primary-text placeholder-grey'
-                value={searchInput}
+                value={searchValue}
                 onChange={(e) => onValueChange(e.target.value)}
             />
         </div>
