@@ -4,7 +4,7 @@
     "name": "Имя",
     "role": "Должность",
     "birth_date": "Дата рождения",
-    "salary": "Зарплата(₴)",
+    "salary": "Зарплата(₴/ч)",
     "revenue_percentage": "% от выторга дня"
   },
   "add_employee": "Добавить сотрудника",
@@ -25,9 +25,9 @@
     "first_name_required": "Необходимо имя",
     "role_required": "Необходима дожность",
     "salary_required": "Необходима зарплата",
-    "salary_negative": "Зарплата не может быть ниже 0",
+    "salary_negative": "Зарплата не может быть меньше 0",
     "income_percentage_required": "Процент от выторга дня необходим",
-    "min_revenue": "Процент от выторга дня не может быть ниже 0",
+    "min_revenue": "Процент от выторга дня не может быть меньше 0",
     "max_revenue": "Процент от выторга дня не может быть выше 100"
   },
   "add_confirmation_modal": {

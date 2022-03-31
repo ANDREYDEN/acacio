@@ -19,7 +19,7 @@ const AppRoutes: AppRoutesType = {
         subRoutes: {
             Employees: '',
             Shifts: '/schedule',
-            Salary: '/salary',
+            Wages: '/salary',
         }
     },
     Stock: {
