@@ -1,11 +1,11 @@
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { Column } from 'exceljs'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import dayjs from 'dayjs'
-import { Button, SalaryTable, ErrorMessage, Loader } from '@components'
+import { Button, SalaryTable, ErrorMessage, Loader, BonusCommentModal } from '@components'
 import { SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
@@ -30,44 +30,39 @@ const Salary: NextPage = () => {
     const { mounted } = useMounted()
     const { t } = useTranslation('salary')
     const router = useRouter()
+    const [showBonusCommentModal, setShowBonusCommentModal] = useState(false)
 
     const {
         data: employees, 
         loading: employeesLoading, 
         error: employeesError,
     } = useSupabaseGetEmployees()
-
     const {
         data: bonuses, 
         loading: bonusesLoading, 
         error: bonusesError,
         mutate: revalidateBonuses
     } = useSupabaseGetBonuses()
-
     const {
         upsertEntity: upsertBonus,
         loading: upsertBonusLoading,
         error: upsertBonusError
     } = useSupabaseUpsertEntity('bonuses')
-
     const {
         deleteEntity: deleteBonus,
         loading: deleteBonusLoading,
         error: deleteBonusError
     } = useSupabaseDeleteEntity('bonuses')
-
     const {
         data: shifts, 
         loading: shiftsLoading, 
         error: shiftsError,
     } = useSupabaseGetShifts(dayjs())
-
     const {
         deductionsTotals,
         deductionsTotalsLoading,
         deductionsTotalsError,
     } = usePosterGetDeductionsForEmployees(employees)
-
     const {
         salesIncomeTotals,
         salesIncomeTotalsLoading,
@@ -161,6 +156,9 @@ const Salary: NextPage = () => {
 
     return (
         <div className='flex flex-col items-center'>
+            {showBonusCommentModal && !upsertBonusError &&
+                <BonusCommentModal toggleModal={setShowBonusCommentModal} />
+            }
             <div className='w-full flex justify-between mb-8'>
                 <div>
                     <h3>{t('header')}</h3>
@@ -177,7 +175,7 @@ const Salary: NextPage = () => {
             </div>
             {upsertBonusLoading || deleteBonusLoading && <Loader />}
             {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-            <SalaryTable data={tableData} />
+            <SalaryTable data={tableData} toggleBonusCommentModal={setShowBonusCommentModal} />
         </div>
     )
 }

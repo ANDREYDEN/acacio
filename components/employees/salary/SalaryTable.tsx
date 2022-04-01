@@ -5,10 +5,11 @@ import { BonusInputCell, CurrencyCell, Table } from '@components'
 import { SalaryTableRow } from '@interfaces'
 
 interface ISalaryTable {
-  data: SalaryTableRow[]
+    data: SalaryTableRow[],
+    toggleBonusCommentModal: (toggle: boolean) => void
 }
 
-const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
+const SalaryTable: React.FC<ISalaryTable> = ({ data, toggleBonusCommentModal }: ISalaryTable) => {
     const { t } = useTranslation('salary')
 
     const columns: Column<SalaryTableRow>[] = useMemo(
@@ -47,6 +48,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
                     <BonusInputCell
                         value={bonusDto.initialValue}
                         onBlur={bonusDto.onChange}
+                        toggleModal={toggleBonusCommentModal}
                     />
             },
             { 

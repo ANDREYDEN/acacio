@@ -4,9 +4,10 @@ import { Chat } from 'react-iconly'
 interface IBonusInputCell {
     value: number
     onBlur: (newValue: number) => void
+    toggleModal: (toggle: boolean) => void
 }
 
-const BonusInputCell: React.FC<IBonusInputCell> = ({ value, onBlur }) => {
+const BonusInputCell: React.FC<IBonusInputCell> = ({ value, onBlur, toggleModal }) => {
     const [cellValue, setCellValue] = useState<number>(value)
 
     return (
@@ -20,7 +21,7 @@ const BonusInputCell: React.FC<IBonusInputCell> = ({ value, onBlur }) => {
             />
             <button
                 className='flex-1 flex justify-center items-center h-full border-l border-grey'
-                onClick={() => {}}
+                onClick={() => toggleModal(true)}
             >
                 <Chat filled={true} primaryColor='#649CD3' />
             </button>
