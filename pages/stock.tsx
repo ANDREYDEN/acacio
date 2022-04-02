@@ -37,6 +37,7 @@ const Stock: NextPage = () => {
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const [searchValue, setSearchValue] = useState('')
     const [categoryFilter, setCategoryFilter] = useState<IDropdownItem | undefined>(undefined)
+    const [supplierFilter, setSupplierFilter] = useState<IDropdownItem | undefined>(undefined)
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -69,6 +70,11 @@ const Stock: NextPage = () => {
     const categoryOptions: IDropdownItem[] = categoriesList
         .filter((item, index) => categoriesList.indexOf(item) === index)
         .map(category => ({ label: capitalizeWord(category), value: category }))
+
+    const suppliersList = tableData.map(td => td.supplier).filter(supplier => supplier !== '-')
+    const supplierOptions: IDropdownItem[] = suppliersList
+        .filter((item, index) => suppliersList.indexOf(item) === index)
+        .map(supplier => ({ label: capitalizeWord(supplier), value: supplier }))
 
     const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
         'ingredientName',
@@ -177,6 +183,14 @@ const Stock: NextPage = () => {
                                     icon={<Filter2 primaryColor={categoryFilter ? 'white' : '#B3B3B3'} />}
                                     withClearFilter={true}
                                     selectedOption={categoryFilter?.label}
+                                />
+                                <Dropdown
+                                    label={t('supplier_label')}
+                                    items={supplierOptions}
+                                    onItemSelected={setSupplierFilter}
+                                    icon={<Filter2 primaryColor={supplierFilter ? 'white' : '#B3B3B3'} />}
+                                    withClearFilter={true}
+                                    selectedOption={supplierFilter?.label}
                                 />
                             </div>
                             <Multiselect
