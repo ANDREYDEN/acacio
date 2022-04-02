@@ -46,8 +46,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data, toggleModalForBonus }: ISal
                 accessor: 'bonusDto',
                 Cell: ({ value: bonusDto }) =>
                     <BonusInputCell
-                        value={bonusDto.value.amount ?? 0}
-                        onBlur={bonusDto.onAmountChange}
+                        bonus={bonusDto}
                         toggleModalForBonus={() => toggleModalForBonus(bonusDto)}
                     />
             },

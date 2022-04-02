@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Chat } from 'react-iconly'
+import { IBonusInput } from '@interfaces'
 
 interface IBonusInputCell {
-    value: number
-    onBlur: (newValue: number) => void
+    bonus: IBonusInput
     toggleModalForBonus: () => void
 }
 
-const BonusInputCell: React.FC<IBonusInputCell> = ({ value, onBlur, toggleModalForBonus }) => {
-    const [cellValue, setCellValue] = useState<number>(value)
+const BonusInputCell: React.FC<IBonusInputCell> = ({ bonus, toggleModalForBonus }) => {
+    const [cellValue, setCellValue] = useState<number>(bonus.value?.amount ?? 0)
 
     return (
         <div className='flex h-10 w-24 border border-grey rounded'>
@@ -17,13 +17,14 @@ const BonusInputCell: React.FC<IBonusInputCell> = ({ value, onBlur, toggleModalF
                 type='number'
                 value={cellValue}
                 onChange={(e) => setCellValue(+e.target.value)}
-                onBlur={() => onBlur(cellValue)}
+                onBlur={() => bonus.onAmountChange(cellValue)}
             />
             <button
-                className='flex-1 flex justify-center items-center h-full border-l border-grey'
+                className={`flex-1 flex justify-center items-center h-full border-l border-grey
+                    ${bonus.value.reason ? 'bg-blue' : ''}`}
                 onClick={toggleModalForBonus}
             >
-                <Chat filled={true} primaryColor='#649CD3' />
+                <Chat filled={true} primaryColor={bonus.value.reason ? 'white' : '#649CD3'} />
             </button>
         </div>
     )
