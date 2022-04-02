@@ -6,7 +6,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import dayjs from 'dayjs'
 import { Button, SalaryTable, ErrorMessage, Loader, BonusCommentModal } from '@components'
-import { SalaryTableRow } from '@interfaces'
+import { IBonusInput, SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
@@ -30,7 +30,7 @@ const Salary: NextPage = () => {
     const { mounted } = useMounted()
     const { t } = useTranslation('salary')
     const router = useRouter()
-    const [showBonusCommentModal, setShowBonusCommentModal] = useState(false)
+    const [bonusForBonusModal, setBonusForBonusModal] = useState<IBonusInput>()
 
     const {
         data: employees, 
@@ -108,9 +108,12 @@ const Salary: NextPage = () => {
                 salesIncomeTotal,
                 deductionsTotal,
                 bonusDto: { 
-                    initialValue: bonusAmount, 
-                    onChange: newAmount => modifyBonusAndReload({
+                    value: bonus ?? {},
+                    onAmountChange: newAmount => modifyBonusAndReload({
                         ...bonus, employee_id: employee.id, amount: newAmount
+                    }),
+                    onReasonChange: comment => modifyBonusAndReload({
+                        ...bonus, employee_id: employee.id, amount: bonus?.amount ?? 0, reason: comment
                     })
                 },
                 incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal,
@@ -121,7 +124,7 @@ const Salary: NextPage = () => {
     const handleExport = async () => {
         const exportData = tableData.map(row => ({ 
             ...row, 
-            bonusDto: row.bonusDto.initialValue 
+            bonusDto: row.bonusDto.value.amount
         }))
         const columns: Partial<Column>[] = [
             { key: 'employeeName', header: t('table.employee').toString(), width: 20 },
@@ -156,8 +159,11 @@ const Salary: NextPage = () => {
 
     return (
         <div className='flex flex-col items-center'>
-            {showBonusCommentModal && !upsertBonusError &&
-                <BonusCommentModal toggleModal={setShowBonusCommentModal} />
+            {bonusForBonusModal && !upsertBonusError &&
+                <BonusCommentModal
+                    onCloseModal={() => setBonusForBonusModal(undefined)}
+                    bonus={bonusForBonusModal}
+                />
             }
             <div className='w-full flex justify-between mb-8'>
                 <div>
@@ -175,7 +181,7 @@ const Salary: NextPage = () => {
             </div>
             {upsertBonusLoading || deleteBonusLoading && <Loader />}
             {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-            <SalaryTable data={tableData} toggleBonusCommentModal={setShowBonusCommentModal} />
+            <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal} />
         </div>
     )
 }
