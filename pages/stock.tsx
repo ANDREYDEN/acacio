@@ -1,13 +1,22 @@
-import { Button, ErrorMessage, Loader, Multiselect, SearchBar, StockTable, TimeframeDropdown } from '@components'
+import {
+    Button,
+    Dropdown,
+    ErrorMessage,
+    Loader,
+    Multiselect,
+    SearchBar,
+    StockTable,
+    TimeframeDropdown
+} from '@components'
 import { StockTableRow } from '@interfaces'
 import { posterGetIngredientMovement } from '@lib/services/poster'
-import { enforceAuthenticated } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated } from '@lib/utils'
 import { IDropdownItem } from '@interfaces'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import React, { useCallback, useMemo, useState } from 'react'
-import { Document } from 'react-iconly'
+import { Document, Filter2 } from 'react-iconly'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
@@ -27,6 +36,7 @@ const Stock: NextPage = () => {
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const [searchValue, setSearchValue] = useState('')
+    const [categoryFilter, setCategoryFilter] = useState<IDropdownItem | undefined>(undefined)
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -54,6 +64,11 @@ const Stock: NextPage = () => {
             }
         }))
         .filter(row => row.ingredientName.toLowerCase().includes(searchValue.toLowerCase()))
+
+    const categoriesList = tableData.map(td => td.category).filter(category => category !== '-')
+    const categoryOptions: IDropdownItem[] = categoriesList
+        .filter((item, index) => categoriesList.indexOf(item) === index)
+        .map(category => ({ label: capitalizeWord(category), value: category }))
 
     const columnSelectorOptions: (keyof StockTableRow)[] = useMemo(() => [
         'ingredientName',
@@ -155,10 +170,18 @@ const Stock: NextPage = () => {
                                     timeframeOptions={timeframeOptions}
                                     defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
                                 />
+                                <Dropdown
+                                    label={t('category_label')}
+                                    items={categoryOptions}
+                                    onItemSelected={setCategoryFilter}
+                                    icon={<Filter2 primaryColor={categoryFilter ? 'white' : '#B3B3B3'} />}
+                                    withClearFilter={true}
+                                    selectedOption={categoryFilter?.label}
+                                />
                             </div>
                             <Multiselect
                                 label={t('display', { ns: 'common' })}
-                                icon={<Document primaryColor='grey' />}
+                                icon={<Document primaryColor='#B3B3B3' />}
                                 buttonClass='w-32'
                                 items={columnSelectorOptions}
                                 selectedItems={selectedColumns}

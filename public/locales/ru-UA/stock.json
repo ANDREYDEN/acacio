@@ -17,5 +17,7 @@
     "reorder": "Дозаказ (Авт.)",
     "toOrder": "Дозаказ",
     "totalCost": "Итого(₴)"
-  }
+  },
+  "category_label": "Категория",
+  "supplier_label": "Поставщик"
 }

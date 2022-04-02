@@ -99,7 +99,7 @@ const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
             label={t('label')}
             items={timeframeOptions}
             onItemSelected={onItemSelected}
-            icon={<Calendar primaryColor={selectedTimeframe ? 'white' : 'grey'} />}
+            icon={<Calendar primaryColor={selectedTimeframe ? 'white' : '#B3B3B3'} />}
             withClearFilter={!defaultTimeframe}
             selectedOption={selectedTimeframe}
             customFilter={customFilter}
