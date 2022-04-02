@@ -21,7 +21,7 @@ const Dropdown: React.FC<IDropdown> = ({
     const { t } = useTranslation('common')
 
     const buttonLabel = (selectedOption ? selectedOption : label).toString()
-    const formattedButtonLabel = buttonLabel.length > 13 ? `${buttonLabel.slice(0, 13)}...` : buttonLabel
+    const formattedButtonLabel = buttonLabel.length > 9 ? `${buttonLabel.slice(0, 9)}...` : buttonLabel
 
     const getItemButton = (item: IDropdownItem, close: () => void) => {
         const itemLabel = item.label
@@ -58,9 +58,9 @@ const Dropdown: React.FC<IDropdown> = ({
             {({ open }) => (
                 <>
                     <Popover.Button>
-                        <div className={`flex items-center justify-between w-48 whitespace-nowrap py-2 px-3 rounded-lg font-body-bold text-sm
+                        <div className={`flex items-center justify-between w-40 whitespace-nowrap py-2 px-3 rounded-lg font-body-bold text-sm
                                 ${open && !selectedOption ? 'bg-secondary-background' : ''}
-                                ${selectedOption ? 'bg-blue text-white' : 'border border-grey text-dark-grey'}`}>
+                                ${selectedOption ? 'bg-blue text-white border border-blue' : 'border border-grey text-dark-grey'}`}>
                             <div className='flex items-center space-x-2'>
                                 <span>{icon}</span>
                                 <span>{formattedButtonLabel}</span>
