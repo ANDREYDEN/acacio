@@ -17,7 +17,7 @@ const BonusCommentModal: React.FC<IBonusCommentModal> = ({ onCloseModal, bonus }
         onCloseModal()
     }
 
-    const ModalHeader: ReactElement = <div className='flex flex-col flex-alisa flex flex-flex-flex alisondra-flex flex'>
+    const ModalHeader: ReactElement = <div className='flex flex-col'>
         <h4>{t('bonus_comment.header')}</h4>
         <p className='text-dark-grey mt-2'>{t('bonus_comment.message')}</p>
     </div>
