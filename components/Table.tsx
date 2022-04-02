@@ -1,5 +1,6 @@
 import React from 'react'
-import { Column, useTable } from 'react-table'
+import { ChevronDown, ChevronUp } from 'react-iconly'
+import { Column, useSortBy, useTable } from 'react-table'
 
 interface ITable<T extends Object> {
     columns: Column<T>[]
@@ -10,8 +11,8 @@ interface ITable<T extends Object> {
 const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => {
     const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<T>({
         columns,
-        data
-    })
+        data,
+    }, useSortBy)
 
     return (
         <div className='border border-table-grey rounded-lg w-full overflow-scroll max-h-[calc(100vh-225px)]'>
@@ -19,7 +20,11 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                 <thead>
                     <tr>
                         {headers.map((header, index) => {
-                            const { key: headerKey, ...getHeaderProps } = header.getHeaderProps()
+                            const sortableHeader = header as any
+                            const { 
+                                key: headerKey, 
+                                ...getHeaderProps 
+                            } = header.getHeaderProps(sortableHeader.getSortByToggleProps())
 
                             return (
                                 <th
@@ -29,7 +34,14 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                                         ${index === 0 ? 'pl-6' : ''}
                                         ${index === headers.length - 1 ? 'pr-6' : ''}`}
                                 >
-                                    {header.render('Header')}
+                                    <span className='flex'>
+                                        {header.render('Header')}
+                                        {sortableHeader.isSorted 
+                                            ? sortableHeader.isSortedDesc 
+                                                ? <ChevronDown stroke='bold' size='small' /> 
+                                                : <ChevronUp stroke='bold' size='small' />
+                                            : ''}
+                                    </span>
                                 </th>
                             )
                         })}
