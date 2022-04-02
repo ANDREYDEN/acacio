@@ -65,13 +65,21 @@ const Stock: NextPage = () => {
             }
         }))
         .filter(row => row.ingredientName.toLowerCase().includes(searchValue.toLowerCase()))
+        .filter(row => row.category.toLowerCase().includes(categoryFilter?.label.toLowerCase() ?? ''))
+        .filter(row => row.supplier.toLowerCase().includes(supplierFilter?.label.toLowerCase() ?? ''))
 
-    const categoriesList = tableData.map(td => td.category).filter(category => category !== '-')
+    const categoriesList = useMemo(
+        () => tableData.map(td => td.category).filter(category => category !== '-'),
+        [rows]
+    )
     const categoryOptions: IDropdownItem[] = categoriesList
         .filter((item, index) => categoriesList.indexOf(item) === index)
         .map(category => ({ label: capitalizeWord(category), value: category }))
 
-    const suppliersList = tableData.map(td => td.supplier).filter(supplier => supplier !== '-')
+    const suppliersList = useMemo(
+        () => tableData.map(td => td.supplier).filter(supplier => supplier !== '-'),
+        [rows]
+    )
     const supplierOptions: IDropdownItem[] = suppliersList
         .filter((item, index) => suppliersList.indexOf(item) === index)
         .map(supplier => ({ label: capitalizeWord(supplier), value: supplier }))
