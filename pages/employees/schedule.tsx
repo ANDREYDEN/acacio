@@ -159,7 +159,7 @@ const Shifts: NextPage = () => {
             {deleteShiftError && (<ErrorMessage message={`Error deleting shift: ${deleteShiftError}`} />)}
             {(shiftsLoading || upsertShiftLoading || deleteShiftLoading) && 'Loading...'}
 
-            <div className='w-full flex justify-between mb-8'>
+            <div className='w-full flex justify-between items-center mb-6'>
                 <div>
                     <h3>{t('header')}</h3>
                     <span className='font-bold'>

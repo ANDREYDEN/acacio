@@ -159,7 +159,7 @@ const Stock: NextPage = () => {
 
     return (
         <div className='flex flex-col'>
-            <div className='w-full flex justify-between mb-6'>
+            <div className='w-full flex justify-between items-center mb-6'>
                 <h3>{t('header')}</h3>
                 <Button
                     label={t('export', { ns: 'common' })}

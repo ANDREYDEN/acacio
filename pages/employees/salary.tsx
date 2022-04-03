@@ -165,7 +165,8 @@ const Salary: NextPage = () => {
                     bonus={bonusForBonusModal}
                 />
             }
-            <div className='w-full flex justify-between mb-8'>
+
+            <div className='w-full flex justify-between items-center mb-6'>
                 <div>
                     <h3>{t('header')}</h3>
                     {capitalizeWord(currentMonth)}
@@ -179,6 +180,7 @@ const Salary: NextPage = () => {
                     />
                 </div>
             </div>
+
             {upsertBonusLoading || deleteBonusLoading && <Loader />}
             {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
             <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal} />
