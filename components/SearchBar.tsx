@@ -15,7 +15,7 @@ const SearchBar: React.FC<ISearchBar> = ({ searchValue, onValueChange }: ISearch
                 id='search'
                 type='text'
                 placeholder='Search'
-                className='ml-1 w-[160px] px-1 focus:outline-none rounded-lg text-primary-text placeholder-grey'
+                className='ml-1 w-[160px] px-1 outline-none rounded-lg text-primary-text placeholder-grey'
                 value={searchValue}
                 onChange={(e) => onValueChange(e.target.value)}
             />

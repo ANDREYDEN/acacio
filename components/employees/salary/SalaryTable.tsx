@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
-import { Table, NumberInputCell, CurrencyCell } from '@components'
-import { SalaryTableRow } from '@interfaces'
+import { BonusInputCell, CurrencyCell, Table } from '@components'
+import { IBonusInput, SalaryTableRow } from '@interfaces'
 
 interface ISalaryTable {
-  data: SalaryTableRow[]
+    data: SalaryTableRow[],
+    toggleModalForBonus: (bonus: IBonusInput) => void
 }
 
-const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
+const SalaryTable: React.FC<ISalaryTable> = ({ data, toggleModalForBonus }: ISalaryTable) => {
     const { t } = useTranslation('salary')
 
     const columns: Column<SalaryTableRow>[] = useMemo(
@@ -43,7 +44,11 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
             { 
                 Header: <h1>{t('table.bonus')}</h1>,
                 accessor: 'bonusDto',
-                Cell: ({ value: bonusDto }) => <NumberInputCell value={bonusDto.initialValue} onBlur={bonusDto.onChange} widthStyle='w-20'/>
+                Cell: ({ value: bonusDto }) =>
+                    <BonusInputCell
+                        bonus={bonusDto}
+                        toggleModalForBonus={() => toggleModalForBonus(bonusDto)}
+                    />
             },
             { 
                 Header: <h1>{t('table.incomeTotal')}</h1>,
@@ -51,7 +56,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
                 Cell: CurrencyCell
             },
         ],
-        [t]
+        [t, toggleModalForBonus]
     )
 
     return <Table columns={columns} data={data} tableSpacing='px-2' />
