@@ -18,7 +18,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
         <div className='border border-table-grey rounded-lg w-full overflow-scroll max-h-[calc(100vh-225px)]'>
             <table {...getTableProps()} className='w-full'>
                 <thead>
-                    <tr>
+                    <tr className='sticky top-0 border-b border-table-grey bg-white'>
                         {headers.map((header, index) => {
                             const sortableHeader = header as any
                             const { 
@@ -30,7 +30,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                                 <th
                                     key={headerKey}
                                     {...getHeaderProps}
-                                    className={`py-6 text-left border-b border-table-grey ${tableSpacing}
+                                    className={`py-6 text-left ${tableSpacing}
                                         ${index === 0 ? 'pl-6' : ''}
                                         ${index === headers.length - 1 ? 'pr-6' : ''}`}
                                 >
