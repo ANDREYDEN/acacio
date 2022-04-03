@@ -9,13 +9,13 @@ interface ISearchBar {
 const SearchBar: React.FC<ISearchBar> = ({ searchValue, onValueChange }: ISearchBar) => {
 
     return (
-        <div className='flex w-60 border border-grey rounded-lg px-4 py-2'>
+        <div className='flex w-56 border border-grey rounded-lg px-4 py-2'>
             <Search primaryColor='#B2B2B2' />
             <input
                 id='search'
                 type='text'
                 placeholder='Search'
-                className='ml-1 w-[180px] px-1 outline-none rounded-lg text-primary-text placeholder-grey'
+                className='ml-1 w-[160px] px-1 outline-none rounded-lg text-primary-text placeholder-grey'
                 value={searchValue}
                 onChange={(e) => onValueChange(e.target.value)}
             />

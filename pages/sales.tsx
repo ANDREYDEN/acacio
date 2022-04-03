@@ -142,7 +142,7 @@ const Sales: NextPage = () => {
                                 label={t('day_of_week_filter')}
                                 items={weekDaysDropdownItems}
                                 onItemSelected={item => setSelectedDayOfWeek(item)}
-                                icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : 'grey'} />}
+                                icon={<Calendar primaryColor={selectedDayOfWeek ? 'white' : '#B3B3B3'} />}
                                 withClearFilter={true}
                                 selectedOption={selectedDayOfWeek?.label}
                             />
