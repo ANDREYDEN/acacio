@@ -34,8 +34,8 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
                                         ${index === 0 ? 'pl-6' : ''}
                                         ${index === headers.length - 1 ? 'pr-6' : ''}`}
                                 >
-                                    <span className='flex'>
-                                        {header.render('Header')}
+                                    <span className='flex items-center'>
+                                        <span className='mr-1'>{header.render('Header')}</span>
                                         {sortableHeader.isSorted 
                                             ? sortableHeader.isSortedDesc 
                                                 ? <ChevronDown stroke='bold' size='small' /> 
