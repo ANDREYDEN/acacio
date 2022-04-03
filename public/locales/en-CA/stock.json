@@ -17,5 +17,7 @@
     "reorder": "Re-order",
     "toOrder": "To order",
     "totalCost": "Total Cost"
-  }
+  },
+  "category_label": "Category",
+  "supplier_label": "Supplier"
 }
