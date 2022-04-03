@@ -2,12 +2,17 @@
   "header": "Wages",
   "table": {
     "employee": "Employee",
-    "hourlyWage": "Hourly Wage(₴/h)",
-    "hoursTotal": "Total Hours",
-    "salaryTotal": "Total Salary(₴)",
-    "salesIncomeTotal": "Sales Income(₴)",
+    "hourlyWage": "Hourly wage(₴/h)",
+    "hoursTotal": "Total hours",
+    "salaryTotal": "Total wage(₴)",
+    "salesIncomeTotal": "Sales income(₴)",
     "deductionsTotal": "Deductions(₴)",
     "bonus": "Bonus(₴)",
-    "incomeTotal": "Total Income(₴)"
+    "incomeTotal": "Total income(₴)"
+  },
+  "bonus_comment": {
+    "header": "Bonus comment",
+    "message": "Why did this employee get the bonus?",
+    "comment": "Comment"
   }
 }

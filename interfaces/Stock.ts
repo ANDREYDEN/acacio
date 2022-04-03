@@ -1,4 +1,7 @@
+import { IRowInput } from './RowActions'
+
 export type StockTableRow = {
+  ingredientId: string
   ingredientName: string
   category: string
   supplier: string
@@ -13,6 +16,6 @@ export type StockTableRow = {
   finalBalanceCost: number
   finalAverageCost: number
   reorder: string
-  toOrder: string
+  toOrder: IRowInput
   totalCost: number
 }

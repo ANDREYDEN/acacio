@@ -3,7 +3,16 @@ import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { Column } from 'exceljs'
-import { Button, ConfirmationModal, DeletionModal, ErrorMessage, Loader, EmployeeModal, EmployeesTable } from '@components'
+import {
+    Button,
+    ConfirmationModal,
+    DeletionModal,
+    ErrorMessage,
+    Loader,
+    EmployeeModal,
+    EmployeesTable,
+    SearchBar
+} from '@components'
 import { definitions } from '@types'
 import exportToXLSX from '@lib/services/exportService'
 import { enforceAuthenticated, fullName } from '@lib/utils'
@@ -29,6 +38,7 @@ const Employees: NextPage = () => {
     const [employeeIdToEdit, setEmployeeIdToEdit] = useState<number | undefined>(undefined)
     const [employeeIdToDelete, setEmployeeIdToDelete] = useState<number | undefined>(undefined)
     const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState(false)
+    const [searchValue, setSearchValue] = useState('')
     const { t } = useTranslation('employees')
 
     const {
@@ -54,38 +64,36 @@ const Employees: NextPage = () => {
     } = useSupabaseDeleteEntity('employees')
 
     const tableData: IEmployeesTableRow[] = useMemo(() =>
-        employees.map((employee) => {
-            const row = {
-                name: fullName(employee),
-                roleName: employeeRoles.find(role => employee.role_id === role.id)?.name ?? 'No Role',
-                birthDate: employee.birth_date ?? '',
-                salary: employee.salary,
-                revenuePercentage: employee.income_percentage,
-                editEmployee: {
-                    label: t('edit', { ns: 'common' }),
-                    action: () => {
-                        setEmployeeIdToEdit(employee.id)
-                        setShowEmployeeModal(true)
+        employees
+            .map((employee) => {
+                const row = {
+                    name: fullName(employee),
+                    roleName: employeeRoles.find(role => employee.role_id === role.id)?.name ?? 'No Role',
+                    birthDate: employee.birth_date ?? '',
+                    salary: employee.salary,
+                    revenuePercentage: employee.income_percentage,
+                    editEmployee: {
+                        label: t('edit', { ns: 'common' }),
+                        action: () => {
+                            setEmployeeIdToEdit(employee.id)
+                            setShowEmployeeModal(true)
+                        }
+                    },
+                    deleteEmployee: {
+                        label: t('delete', { ns: 'common' }),
+                        action: () => { setEmployeeIdToDelete(employee.id) },
+                        textColor: 'error'
                     }
-                },
-                deleteEmployee: {
-                    label: t('delete', { ns: 'common' }),
-                    action: () => { setEmployeeIdToDelete(employee.id) },
-                    textColor: 'error'
                 }
-            }
 
-            return row
-        }),
-    [employeeRoles, employees, t]
+                return row
+            })
+            .filter(employee => employee.name.toLowerCase().includes(searchValue.toLowerCase())),
+    [employeeRoles, employees, searchValue, t]
     )
 
-    if (!mounted || employeesLoading || employeeRolesLoading || upsertEmployeeLoading || deleteEmployeeLoading) {
+    if (!mounted) {
         return <Loader />
-    }
-
-    if (employeesError || employeeRolesError || upsertEmployeeError || deleteEmployeeError) {
-        return <ErrorMessage message={employeesError || employeeRolesError || upsertEmployeeError || deleteEmployeeError} />
     }
 
     const updateEmployees = async (newEmployee: Partial<definitions['employees']>) => {
@@ -166,12 +174,14 @@ const Employees: NextPage = () => {
                     message={t('deletion_modal.confirmation_message')}
                 />
             }
-            <div className='w-full flex justify-between mb-8'>
+
+            <div className='w-full flex justify-between mb-6'>
                 <h3>{t('header')}</h3>
-                <div className='space-x-8'>
-                    <Button 
-                        label={t('export', { ns: 'common' })} 
-                        variant='secondary' 
+                <div className='flex space-x-4'>
+                    <SearchBar searchValue={searchValue} onValueChange={setSearchValue} />
+                    <Button
+                        label={t('export', { ns: 'common' })}
+                        variant='secondary'
                         buttonClass='w-56'
                         onClick={handleExport}
                     />
@@ -183,7 +193,12 @@ const Employees: NextPage = () => {
                 </div>
             </div>
 
-            <EmployeesTable data={tableData} />
+            {employeesError || employeeRolesError || upsertEmployeeError || deleteEmployeeError
+                ? <ErrorMessage message={employeesError || employeeRolesError || upsertEmployeeError || deleteEmployeeError} />
+                :  employeesLoading || employeeRolesLoading || upsertEmployeeLoading || deleteEmployeeLoading
+                    ? <Loader />
+                    : <EmployeesTable data={tableData} />
+            }
         </div>
     )
 }

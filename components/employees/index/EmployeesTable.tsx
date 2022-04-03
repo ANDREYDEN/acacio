@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
 import { Table, CurrencyCell } from '@components'
-import { IAction, IEmployeesTableRow } from '@interfaces'
+import { IRowAction, IEmployeesTableRow } from '@interfaces'
 
 interface IEmployeeTable {
     data: IEmployeesTableRow[]
@@ -39,7 +39,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data }: IEmployeeTable) => {
             {
                 Header: '',
                 accessor: 'editEmployee',
-                Cell: ({ value: editEmployee }: { value: IAction }) => (
+                Cell: ({ value: editEmployee }: { value: IRowAction }) => (
                     <button
                         className={`text-${editEmployee.textColor ?? 'black'} underline`}
                         type='button'
@@ -52,7 +52,7 @@ const EmployeesTable: React.FC<IEmployeeTable> = ({ data }: IEmployeeTable) => {
             {
                 Header: '',
                 accessor: 'deleteEmployee',
-                Cell: ({ value: deleteEmployee }: { value: IAction }) => (
+                Cell: ({ value: deleteEmployee }: { value: IRowAction }) => (
                     <button
                         className={`text-${deleteEmployee.textColor ?? 'black'} underline`}
                         type='button'
