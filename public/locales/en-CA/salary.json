@@ -9,5 +9,10 @@
     "deductionsTotal": "Deductions(₴)",
     "bonus": "Bonus(₴)",
     "incomeTotal": "Total income(₴)"
+  },
+  "bonus_comment": {
+    "header": "Bonus comment",
+    "message": "Why did this employee get the bonus?",
+    "comment": "Comment"
   }
 }
