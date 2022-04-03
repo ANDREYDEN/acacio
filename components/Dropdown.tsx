@@ -71,7 +71,7 @@ const Dropdown: React.FC<IDropdown> = ({
                     <Popover.Panel>
                         {({ close }) => (
                             <div className='flex flex-col items-start min-w-full bg-white rounded-lg
-                                absolute z-0 mt-4 shadow-filter py-2 max-h-96 overflow-y-scroll'>
+                                absolute z-10 mt-4 shadow-filter py-2 max-h-96 overflow-y-scroll'>
                                 {withClearFilter &&
                                     <button
                                         onClick={() => {
