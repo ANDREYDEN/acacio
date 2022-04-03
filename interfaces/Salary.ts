@@ -1,4 +1,4 @@
-import { IRowInput } from './RowActions'
+import { IBonusInput } from './RowActions'
 
 // employee_id -> statistic
 export type EmployeesMonthlyStatDto = Record<number, number>
@@ -10,6 +10,6 @@ export interface SalaryTableRow {
     salaryTotal: number
     salesIncomeTotal: number
     deductionsTotal: number
-    bonusDto: IRowInput
+    bonusDto: IBonusInput
     incomeTotal: number
 }
