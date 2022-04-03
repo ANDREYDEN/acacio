@@ -139,21 +139,24 @@ const Salary: NextPage = () => {
         await exportToXLSX(exportData, columns, `Salary ${dayjs().format('MMM YYYY')}`)
     }
     
-    const loading = 
+    if (!mounted) return <Loader />
+
+    const error =
+        employeesError ||
+        shiftsError ||
+        bonusesError ||
+        deductionsTotalsError ||
+        salesIncomeTotalsError
+    if (error) return <ErrorMessage message={`Error fetching information: ${error}`} />
+
+    const loading =
         employeesLoading || 
         shiftsLoading || 
         bonusesLoading || 
         deductionsTotalsLoading || 
-        salesIncomeTotalsLoading
-    if (!mounted || loading) return <Loader />
-    
-    const error = 
-        employeesError ||
-        shiftsError ||
-        bonusesError || 
-        deductionsTotalsError || 
-        salesIncomeTotalsError
-    if (error) return <ErrorMessage message={error} />
+        salesIncomeTotalsLoading ||
+        upsertBonusLoading ||
+        deleteBonusLoading
 
     const currentMonth = dayjs().locale(router.locale?.split('-')[0] ?? 'en').format('MMMM, YYYY')
 
@@ -181,9 +184,11 @@ const Salary: NextPage = () => {
                 </div>
             </div>
 
-            {upsertBonusLoading || deleteBonusLoading && <Loader />}
             {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-            <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal} />
+            {loading
+                ? <Loader/>
+                : <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal}/>
+            }
         </div>
     )
 }

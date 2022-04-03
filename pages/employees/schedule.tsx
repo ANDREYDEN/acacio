@@ -151,13 +151,15 @@ const Shifts: NextPage = () => {
         return <Loader />
     }
 
+    const loadingError = shiftsError || employeesError
+    const updatingError = upsertShiftError || deleteShiftError
+    if (loadingError) return <ErrorMessage message={loadingError} />
+
+    const loading = shiftsLoading || upsertShiftLoading || deleteShiftLoading
+
     return (
         <div className='flex flex-col'>
-            {shiftsError && (<ErrorMessage message={`Error fetching shifts: ${shiftsError}`} />)}
-            {employeesError && (<ErrorMessage message={`Error fetching employees: ${employeesError}`} />)}
-            {upsertShiftError && (<ErrorMessage message={`Error adding shift: ${upsertShiftError}`} />)}
-            {deleteShiftError && (<ErrorMessage message={`Error deleting shift: ${deleteShiftError}`} />)}
-            {(shiftsLoading || upsertShiftLoading || deleteShiftLoading) && 'Loading...'}
+            {updatingError && (<ErrorMessage message={`Error updating shifts: ${updatingError}`} />)}
 
             <div className='w-full flex justify-between items-center mb-6'>
                 <div>
@@ -186,10 +188,7 @@ const Shifts: NextPage = () => {
                 </div>
             </div>
 
-            <ScheduleTable
-                dateColumns={monthDays}
-                data={tableData}
-            />
+            {loading ? <Loader /> : <ScheduleTable dateColumns={monthDays} data={tableData} />}
         </div>
     )
 }
