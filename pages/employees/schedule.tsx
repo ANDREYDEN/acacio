@@ -147,15 +147,13 @@ const Shifts: NextPage = () => {
         await exportToXLSX(exportData, columns, `Schedule ${month.format('MMM YYYY')}`)
     }
 
-    if (!mounted || employeesLoading) {
+    if (!mounted || employeesLoading || shiftsLoading) {
         return <Loader />
     }
 
     const loadingError = shiftsError || employeesError
     const updatingError = upsertShiftError || deleteShiftError
     if (loadingError) return <ErrorMessage message={loadingError} />
-
-    const loading = shiftsLoading || upsertShiftLoading || deleteShiftLoading
 
     return (
         <div className='flex flex-col'>
@@ -191,7 +189,6 @@ const Shifts: NextPage = () => {
             </div>
 
             {updatingError && <ErrorMessage message={`Error updating shifts: ${updatingError}`} errorMessageClass='mb-8' />}
-            {loading && <span className='mb-8'><Loader /></span>}
 
             <ScheduleTable dateColumns={monthDays} data={tableData} />
         </div>
