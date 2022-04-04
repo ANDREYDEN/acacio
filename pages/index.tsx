@@ -47,7 +47,7 @@ const Login: NextPage = () => {
                 </div>
                 <h2>{t('welcome')}</h2>
                 <p className='mb-10 text-dark-grey'>{t('please_sign')}</p>
-                {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
+                {error && <ErrorMessage message={error} errorMessageClass='mb-8' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />
                 <Link href={'/send-password-reset'} passHref>
                     <span className='underline text-center hover:cursor-pointer'>{t('forgot_password')}</span>

@@ -93,7 +93,7 @@ const Settings: NextPage = () => {
                 {loading && <Loader />}
 
                 <form className='w-96' onSubmit={handleSubmit(handleForm)}>
-                    {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
+                    {error && <ErrorMessage message={error} errorMessageClass='mb-8' />}
                     <TextInput
                         type='password'
                         name='newPassword'
