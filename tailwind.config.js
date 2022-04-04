@@ -9,7 +9,8 @@ module.exports = {
         },
         extend: {
             fontFamily: {
-                'body': ['Manrope', 'sans-serif'],
+                'body': ['Manrope Regular', 'sans-serif'],
+                'body-bold': ['Manrope Bold', 'sans-serif'],
                 'header': ['Gilroy', 'sans-serif']
             },
             backgroundImage: {
@@ -34,6 +35,9 @@ module.exports = {
             },
             spacing: {
                 '116': '28rem',
+            },
+            boxShadow: {
+                'filter': '0 3px 20px #CCC'
             }
         },
     },

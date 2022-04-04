@@ -18,11 +18,8 @@ export function enforceAuthenticated(inner?: GetServerSideProps): GetServerSideP
     }
 }
 
-export function snakeCaseToPascalCase(input: string): string {
-    return input
-        .split('_')
-        .map(word => word[0].toUpperCase() + word.substring(1))
-        .join(' ')
+export function roundValue(value: number) {
+    return Math.round(value * 100) / 100
 }
 
 /**
@@ -38,8 +35,12 @@ export function getMonthDays(month: dayjs.Dayjs): dayjs.Dayjs[] {
     return dateRange
 }
 
-export function fullName(employee: definitions['employees']) {
+export function fullName(employee: definitions['employees']): string {
     if (!employee.last_name) return employee.first_name
 
     return `${employee.first_name} ${employee.last_name}`
+}
+
+export function capitalizeWord(word: string): string {
+    return `${word[0]?.toUpperCase()}${word.slice(1)}`
 }

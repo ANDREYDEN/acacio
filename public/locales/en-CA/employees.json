@@ -4,27 +4,27 @@
     "name": "Name",
     "role": "Role",
     "birth_date": "Birth date",
-    "salary": "Salary",
+    "salary": "Wage(₴/hr)",
     "revenue_percentage": "Revenue %"
   },
   "add_employee": "Add employee",
   "edit_employee": "Edit employee",
   "modal": {
-    "add_message": "Add new employee to the system, in order to track his/her salary and work shifts",
+    "add_message": "Add new employee to the system, in order to track his/her wage and work shifts",
     "edit_message": "Edit information to keep the system up-to-date",
     "first_name": "First Name",
     "last_name": "Last Name",
     "role": "Role",
     "birth_date": "Birth date",
-    "salary": "Salary",
+    "salary": "Wage",
     "income_percentage": "Income Percentage",
     "first_name_placeholder": "Enter employee’s first name",
     "last_name_placeholder": "Enter employee’s last name",
     "role_placeholder": "Select role",
-    "salary_placeholder": "0$/hr",
+    "salary_placeholder": "0₴/hr",
     "first_name_required": "First name is required",
     "role_required": "Role is required",
-    "salary_required": "Salary is required",
+    "salary_required": "Wage is required",
     "salary_negative": "Cannot be negative",
     "income_percentage_required": "Revenue percentage is required",
     "min_revenue": "Cannot be less than 0",
@@ -32,7 +32,7 @@
   },
   "add_confirmation_modal": {
     "header": "Employee was added",
-    "message": "New employee is successfully added to the system, now you can track his/her salary and work shifts."
+    "message": "New employee is successfully added to the system, now you can track his/her wage and work shifts."
   },
   "deletion_modal": {
     "header": "Delete employee",

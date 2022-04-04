@@ -1,28 +1,25 @@
-import dayjs from 'dayjs'
-import { NextPage } from 'next'
 import React, { useCallback, useMemo, useState } from 'react'
-import ScheduleTable from '@components/employees/schedule/ScheduleTable'
-import Loader from '@components/Loader'
+import { NextPage } from 'next'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ru'
+import { useTranslation } from 'next-i18next'
+import { Column } from 'exceljs'
+import { ChevronLeft, ChevronRight } from 'react-iconly'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
 import { ScheduleTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
+import { fullName, getMonthDays } from '@lib/utils'
+import { definitions } from '@types'
+import exportToXLSX from '@services/exportService'
+import { ScheduleTable, Loader, ErrorMessage, Button } from '@components'
+import { enforceAuthenticated } from '@lib/utils'
 import {
     useSupabaseDeleteEntity,
     useSupabaseGetEmployees,
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
-import { fullName, getMonthDays } from '@lib/utils'
-import { definitions } from '@types'
-import ErrorMessage from '@components/ErrorMessage'
-import { useTranslation } from 'next-i18next'
-import Button from '@components/Button'
-import { Column } from 'exceljs'
-import exportToXLSX from '@services/exportService'
-import { ChevronLeft, ChevronRight } from 'react-iconly'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
-import 'dayjs/locale/ru'
-import { enforceAuthenticated } from '@lib/utils'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -150,19 +147,17 @@ const Shifts: NextPage = () => {
         await exportToXLSX(exportData, columns, `Schedule ${month.format('MMM YYYY')}`)
     }
 
-    if (!mounted || employeesLoading) {
+    if (!mounted || employeesLoading || shiftsLoading) {
         return <Loader />
     }
 
-    return (
-        <div className='flex flex-col items-center py-2 lg:mr-20 mr-10 mb-8'>
-            {shiftsError && (<ErrorMessage message={`Error fetching shifts: ${shiftsError}`} />)}
-            {employeesError && (<ErrorMessage message={`Error fetching employees: ${employeesError}`} />)}
-            {upsertShiftError && (<ErrorMessage message={`Error adding shift: ${upsertShiftError}`} />)}
-            {deleteShiftError && (<ErrorMessage message={`Error deleting shift: ${deleteShiftError}`} />)}
-            {(shiftsLoading || upsertShiftLoading || deleteShiftLoading) && 'Loading...'}
+    const loadingError = shiftsError || employeesError
+    const updatingError = upsertShiftError || deleteShiftError
+    if (loadingError) return <ErrorMessage message={loadingError} />
 
-            <div className='w-full flex justify-between mb-8'>
+    return (
+        <div className='flex flex-col'>
+            <div className='w-full flex justify-between items-center mb-6'>
                 <div>
                     <h3>{t('header')}</h3>
                     <span className='font-bold'>
@@ -175,11 +170,15 @@ const Shifts: NextPage = () => {
                     <button
                         className='w-14 h-11 border border-r-0 border-grey rounded-bl-md rounded-tl-md'
                         onClick={() => setMonth(month.subtract(1, 'month'))}
-                    >{<ChevronLeft style={{ marginLeft: 15 }} />}</button>
+                    >
+                        {<ChevronLeft style={{ marginLeft: 15 }} />}
+                    </button>
                     <button
                         className='w-14 h-11 border border-grey rounded-br-md rounded-tr-md'
                         onClick={() => setMonth(month.add(1, 'month'))}
-                    >{<ChevronRight style={{ marginLeft: 15 }} />}</button>
+                    >
+                        {<ChevronRight style={{ marginLeft: 15 }} />}
+                    </button>
                     <Button
                         label={t('export', { ns: 'common' })}
                         variant='secondary'
@@ -189,10 +188,9 @@ const Shifts: NextPage = () => {
                 </div>
             </div>
 
-            <ScheduleTable
-                dateColumns={monthDays}
-                data={tableData}
-            />
+            {updatingError && <ErrorMessage message={`Error updating shifts: ${updatingError}`} errorMessageClass='mb-8' />}
+
+            <ScheduleTable dateColumns={monthDays} data={tableData} />
         </div>
     )
 }

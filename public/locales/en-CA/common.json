@@ -5,5 +5,8 @@
   "log_out": "Log Out",
   "done": "Done",
   "save": "Save",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "display": "Display",
+  "clear": "Clear",
+  "clear_filter": "Clear filter"
 }

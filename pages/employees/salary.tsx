@@ -1,59 +1,68 @@
-import Button from '@components/Button'
-import SalaryTable from '@components/employees/salary/SalaryTable'
-import ErrorMessage from '@components/ErrorMessage'
-import Loader from '@components/Loader'
-import { SalaryTableRow } from '@interfaces'
+import React, { useCallback, useMemo, useState } from 'react'
+import { Column } from 'exceljs'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import dayjs from 'dayjs'
+import { Button, SalaryTable, ErrorMessage, Loader, BonusCommentModal } from '@components'
+import { IBonusInput, SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { useSupabaseDeleteEntity, useSupabaseGetBonuses, useSupabaseGetEmployees, useSupabaseGetShifts, useSupabaseUpsertEntity } from '@lib/services/supabase'
-import { fullName } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated, fullName } from '@lib/utils'
 import { definitions } from '@types'
-import dayjs from 'dayjs'
-import { Column } from 'exceljs'
-import { NextPage } from 'next'
-import { useCallback, useMemo } from 'react'
+import {
+    useSupabaseDeleteEntity,
+    useSupabaseGetBonuses,
+    useSupabaseGetEmployees,
+    useSupabaseGetShifts,
+    useSupabaseUpsertEntity
+} from '@lib/services/supabase'
+
+export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
+    props: {
+        ...await serverSideTranslations(context.locale, ['salary', 'common']),
+    },
+}))
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
+    const { t } = useTranslation('salary')
+    const router = useRouter()
+    const [bonusForBonusModal, setBonusForBonusModal] = useState<IBonusInput>()
 
     const {
         data: employees, 
         loading: employeesLoading, 
         error: employeesError,
     } = useSupabaseGetEmployees()
-
     const {
         data: bonuses, 
         loading: bonusesLoading, 
         error: bonusesError,
         mutate: revalidateBonuses
     } = useSupabaseGetBonuses()
-
     const {
         upsertEntity: upsertBonus,
         loading: upsertBonusLoading,
         error: upsertBonusError
     } = useSupabaseUpsertEntity('bonuses')
-
     const {
         deleteEntity: deleteBonus,
         loading: deleteBonusLoading,
         error: deleteBonusError
     } = useSupabaseDeleteEntity('bonuses')
-
     const {
         data: shifts, 
         loading: shiftsLoading, 
         error: shiftsError,
     } = useSupabaseGetShifts(dayjs())
-
     const {
         deductionsTotals,
         deductionsTotalsLoading,
         deductionsTotalsError,
     } = usePosterGetDeductionsForEmployees(employees)
-
     const {
         salesIncomeTotals,
         salesIncomeTotalsLoading,
@@ -99,9 +108,12 @@ const Salary: NextPage = () => {
                 salesIncomeTotal,
                 deductionsTotal,
                 bonusDto: { 
-                    initialValue: bonusAmount, 
-                    onChange: newAmount => modifyBonusAndReload({
+                    value: bonus ?? {},
+                    onAmountChange: newAmount => modifyBonusAndReload({
                         ...bonus, employee_id: employee.id, amount: newAmount
+                    }),
+                    onReasonChange: comment => modifyBonusAndReload({
+                        ...bonus, employee_id: employee.id, amount: bonus?.amount ?? 0, reason: comment
                     })
                 },
                 incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal,
@@ -112,57 +124,73 @@ const Salary: NextPage = () => {
     const handleExport = async () => {
         const exportData = tableData.map(row => ({ 
             ...row, 
-            bonusDto: row.bonusDto.initialValue 
+            bonusDto: row.bonusDto.value.amount
         }))
         const columns: Partial<Column>[] = [
-            { key: 'employeeName', header: 'Name', width: 20 },
-            { key: 'hourlySalary', header: 'Hourly Wage', width: 15 },
-            { key: 'hoursTotal', header: 'Total Hours', width: 15 },
-            { key: 'salaryTotal', header: 'Total Salary', width: 15 },
-            { key: 'salesIncomeTotal', header: 'Sales Income', width: 15 },
-            { key: 'deductionsTotal', header: 'Deductions', width: 15 },
-            { key: 'bonusDto', header: 'Bonus', },
-            { key: 'incomeTotal', header: 'Income Total', width: 15 }
+            { key: 'employeeName', header: t('table.employee').toString(), width: 20 },
+            { key: 'hourlySalary', header: t('table.hourlyWage').toString(), width: 15 },
+            { key: 'hoursTotal', header: t('table.hoursTotal').toString(), width: 15 },
+            { key: 'salaryTotal', header: t('table.salaryTotal').toString(), width: 15 },
+            { key: 'salesIncomeTotal', header: t('table.salesIncomeTotal').toString(), width: 20 },
+            { key: 'deductionsTotal', header: t('table.deductionsTotal').toString(), width: 15 },
+            { key: 'bonusDto', header: t('table.bonus').toString(), },
+            { key: 'incomeTotal', header: t('table.incomeTotal').toString(), width: 15 }
         ]
         await exportToXLSX(exportData, columns, `Salary ${dayjs().format('MMM YYYY')}`)
     }
     
-    const loading = 
+    if (!mounted) return <Loader />
+
+    const error =
+        employeesError ||
+        shiftsError ||
+        bonusesError ||
+        deductionsTotalsError ||
+        salesIncomeTotalsError
+    if (error) return <ErrorMessage message={`Error fetching information: ${error}`} />
+
+    const loading =
         employeesLoading || 
         shiftsLoading || 
         bonusesLoading || 
         deductionsTotalsLoading || 
-        salesIncomeTotalsLoading
-    if (!mounted || loading) return <Loader />
-    
-    const error = 
-        employeesError ||
-        shiftsError ||
-        bonusesError || 
-        deductionsTotalsError || 
-        salesIncomeTotalsError
-    if (error) return <ErrorMessage message={error} />
+        salesIncomeTotalsLoading ||
+        upsertBonusLoading ||
+        deleteBonusLoading
 
-    return <div className='flex flex-col items-center py-2 lg:mr-20 mr-10 mb-8'>
-        <div className='w-full flex justify-between mb-8'>
-            <div>
-                <h3>Salary</h3>
-                {dayjs().format('MMMM, YYYY')}
-            </div>
-            <div className='space-x-8'>
-                <Button 
-                    // label={t('export', { ns: 'common' })} 
-                    label='Export'
-                    variant='secondary' 
-                    buttonClass='w-56'
-                    onClick={handleExport}
+    const currentMonth = dayjs().locale(router.locale?.split('-')[0] ?? 'en').format('MMMM, YYYY')
+
+    return (
+        <div className='flex flex-col items-center'>
+            {bonusForBonusModal && !upsertBonusError &&
+                <BonusCommentModal
+                    onCloseModal={() => setBonusForBonusModal(undefined)}
+                    bonus={bonusForBonusModal}
                 />
+            }
+
+            <div className='w-full flex justify-between items-center mb-6'>
+                <div>
+                    <h3>{t('header')}</h3>
+                    {capitalizeWord(currentMonth)}
+                </div>
+                <div className='space-x-8'>
+                    <Button 
+                        label={t('export', { ns: 'common' })} 
+                        variant='secondary' 
+                        buttonClass='w-56'
+                        onClick={handleExport}
+                    />
+                </div>
             </div>
+
+            {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
+            {loading
+                ? <Loader/>
+                : <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal}/>
+            }
         </div>
-        {upsertBonusLoading || deleteBonusLoading && <Loader />}
-        {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-        <SalaryTable data={tableData} />
-    </div>
+    )
 }
 
 export default Salary

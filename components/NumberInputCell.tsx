@@ -10,7 +10,7 @@ const NumberInputCell: React.FC<INumberInputCell> = ({ value, onBlur, widthStyle
     const [cellValue, setCellValue] = useState<number>(value)
 
     return <input 
-        className={`${widthStyle} h-10 text-center border border-table-grey rounded`}
+        className={`${widthStyle} h-10 text-center border border-grey rounded`}
         type='number'
         value={cellValue} 
         onChange={(e) => setCellValue(+e.target.value)}

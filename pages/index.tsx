@@ -1,15 +1,13 @@
-import { supabase } from '@client'
-import ErrorMessage from '@components/ErrorMessage'
-import Loader from '@components/Loader'
-import LoginForm from '@components/LoginForm'
-import { useMounted } from '@lib/hooks'
+import React, { useState } from 'react'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import { supabase } from '@client'
+import { ErrorMessage, Loader, LoginForm } from '@components'
+import { useMounted } from '@lib/hooks'
 
 export const getServerSideProps = async (context: any) => ({
     props: {
@@ -29,7 +27,7 @@ const Login: NextPage = () => {
             setLoading(true)
             const { error } = await supabase.auth.signIn({ email, password })
             if (error) throw new Error(error.message)
-            router.replace('/employees')
+            router.replace('/sales')
         } catch (error: any) {
             setError(error.error_description || error.message)
         } finally {
@@ -49,7 +47,7 @@ const Login: NextPage = () => {
                 </div>
                 <h2>{t('welcome')}</h2>
                 <p className='mb-10 text-dark-grey'>{t('please_sign')}</p>
-                {error && <ErrorMessage message={error} errorMessageClass='mb-8 w-full' />}
+                {error && <ErrorMessage message={error} errorMessageClass='mb-8' />}
                 <LoginForm handleLogin={handleLogin} loading={loading} />
                 <Link href={'/send-password-reset'} passHref>
                     <span className='underline text-center hover:cursor-pointer'>{t('forgot_password')}</span>

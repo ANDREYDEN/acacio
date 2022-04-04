@@ -8,7 +8,7 @@ import { supabase } from '@client'
 
 const AppRoutes: AppRoutesType = {
     Sales: {
-        route: '/reports',
+        route: '/sales',
         icon: <Home />,
         iconFilled: <Home filled={true} />
     },
@@ -19,11 +19,11 @@ const AppRoutes: AppRoutesType = {
         subRoutes: {
             Employees: '',
             Shifts: '/schedule',
-            Salary: '/salary',
+            Wages: '/salary',
         }
     },
     Stock: {
-        route: '/ingredients-movement',
+        route: '/stock',
         icon: <TickSquare />,
         iconFilled: <TickSquare filled={true} />
     },
@@ -53,30 +53,26 @@ const Menu: React.FC = ({ children }) => {
     }
 
     return (
-        <>
-            <div className='flex'>
-                <nav className='grid place-items-center min-h-screen w-64 bg-light-green lg:mr-12 mr-8'>
-                    <div className='absolute top-16'>
-                        <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
-                    </div>
-                    <ul className='text-primary-blue font-header font-extrabold'>
-                        {Object.keys(AppRoutes).map((pageName, index) => {
-                            const currentItem = AppRoutes[pageName]
-                            return (
-                                <div key={index} className='mb-8'>
-                                    <MenuItem currentItem={currentItem} currentRoute={currentRoute} pageName={pageName} />
-                                </div>
-                            )
-                        })}
-                    </ul>
-                </nav>
-                <span className='mt-36 flex-1'>{ children }</span>
-            </div>
-            <button className='absolute top-16 right-20 flex' onClick={handleLogOut}>
-                <Logout />
-                <h5 className='ml-4'>Log Out</h5>
-            </button>
-        </>
+        <div className='grid grid-cols-[14rem_1fr]'>
+            <nav className='grid place-items-center sticky top-0 h-screen w-56 bg-light-green p-4'>
+                <Image src='/img/acacio.svg' alt='Logo' width={156} height={31} />
+                <ul className='text-primary-blue font-header font-extrabold py-6'>
+                    {Object.keys(AppRoutes).map((pageName, index) => {
+                        const currentItem = AppRoutes[pageName]
+                        return (
+                            <div key={index} className='mb-8'>
+                                <MenuItem currentItem={currentItem} currentRoute={currentRoute} pageName={pageName} />
+                            </div>
+                        )
+                    })}
+                </ul>
+                <button className='flex' onClick={handleLogOut}>
+                    <Logout style={{ color: '#010446' }} />
+                    <h5 className='ml-4 text-primary-blue'>Log Out</h5>
+                </button>
+            </nav>
+            <div className='pt-12 px-12 pb-8 overflow-hidden'>{ children }</div>
+        </div>
     )
 }
 
