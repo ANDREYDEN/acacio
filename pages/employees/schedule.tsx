@@ -159,8 +159,6 @@ const Shifts: NextPage = () => {
 
     return (
         <div className='flex flex-col'>
-            {updatingError && (<ErrorMessage message={`Error updating shifts: ${updatingError}`} />)}
-
             <div className='w-full flex justify-between items-center mb-6'>
                 <div>
                     <h3>{t('header')}</h3>
@@ -174,11 +172,15 @@ const Shifts: NextPage = () => {
                     <button
                         className='w-14 h-11 border border-r-0 border-grey rounded-bl-md rounded-tl-md'
                         onClick={() => setMonth(month.subtract(1, 'month'))}
-                    >{<ChevronLeft style={{ marginLeft: 15 }} />}</button>
+                    >
+                        {<ChevronLeft style={{ marginLeft: 15 }} />}
+                    </button>
                     <button
                         className='w-14 h-11 border border-grey rounded-br-md rounded-tr-md'
                         onClick={() => setMonth(month.add(1, 'month'))}
-                    >{<ChevronRight style={{ marginLeft: 15 }} />}</button>
+                    >
+                        {<ChevronRight style={{ marginLeft: 15 }} />}
+                    </button>
                     <Button
                         label={t('export', { ns: 'common' })}
                         variant='secondary'
@@ -188,7 +190,10 @@ const Shifts: NextPage = () => {
                 </div>
             </div>
 
-            {loading ? <Loader /> : <ScheduleTable dateColumns={monthDays} data={tableData} />}
+            {updatingError && <ErrorMessage message={`Error updating shifts: ${updatingError}`} errorMessageClass='mb-8' />}
+            {loading && <span className='mb-8'><Loader /></span>}
+
+            <ScheduleTable dateColumns={monthDays} data={tableData} />
         </div>
     )
 }

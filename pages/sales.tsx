@@ -128,7 +128,7 @@ const Sales: NextPage = () => {
             </div>
 
             {error
-                ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8 w-full' />
+                ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8' />
                 : loading ? <Loader /> : <>
                     <div className='w-full flex justify-between mb-6'>
                         <div className='flex space-x-4'>
