@@ -18,7 +18,7 @@ const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => 
         <div className='border border-table-grey rounded-lg w-full overflow-scroll max-h-[calc(100vh-220px)]'>
             <table {...getTableProps()} className='w-full'>
                 <thead>
-                    <tr className='sticky top-0 border-b border-table-grey bg-white'>
+                    <tr className='sticky z-0 top-0 border-b border-table-grey bg-white'>
                         {headers.map((header, index) => {
                             const sortableHeader = header as any
                             const { 
