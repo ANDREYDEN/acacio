@@ -1,6 +1,6 @@
 export interface Waste {
   waste_id: string
-  reason_name: string
+  reason_name?: string
   total_sum: string
 }
 
