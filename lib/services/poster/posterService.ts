@@ -47,8 +47,8 @@ export function usePosterGetDeductionsForEmployees(employees: definitions['emplo
 
     const deductionsTotals: EmployeesMonthlyStatDto = wastes.reduce((acc: EmployeesMonthlyStatDto, deduction) => {
         const employee = employees.find(employee => 
-            deduction.reason_name.toLowerCase().includes(employee.first_name.toLowerCase()) || 
-            deduction.reason_name.toLowerCase().includes(employee.last_name?.toLowerCase() ?? ''))
+            deduction.reason_name?.toLowerCase().includes(employee.first_name.toLowerCase()) || 
+            deduction.reason_name?.toLowerCase().includes(employee.last_name?.toLowerCase() ?? ''))
         if (!employee) return acc
         
         return {
@@ -180,7 +180,7 @@ export async function posterGetIngredientMovement(
         const writeOffCost = ingredientWriteOffs.reduce((acc, writeOff) => acc + +writeOff.cost, 0) / 100
         const sold = ingredientMovement.write_offs // TODO: doublecheck as this might also include wastes
         const finalBalance = ingredientMovement.end
-        const reorder = Math.max(0, sold + writeOff - finalBalance)
+        const reorder = Math.max(0, sold - finalBalance)
 
         return {
             ingredientId: ingredientMovement.ingredient_id,
