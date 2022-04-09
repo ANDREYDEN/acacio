@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 import { Column } from 'react-table'
-import { capitalizeWord } from '@lib/utils'
+import { formatWeekday } from '@lib/utils'
 
 interface ISalesTable {
     data: SalesPerDay[]
@@ -27,10 +27,7 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
                 Header: <h1>{t('table_headers.dayOfWeek').toString()}</h1>,
                 accessor: 'dayOfWeek',
                 Cell: ({ value: dayOfWeek }: { value: dayjs.Dayjs }) => {
-                    const dayOfWeekInNeededLanguage = dayOfWeek.locale(router.locale?.split('-')[0] ?? 'en').format('dd')
-                    const formattedDay = capitalizeWord(dayOfWeekInNeededLanguage)
-
-                    return <span>{formattedDay}</span>
+                    return <span>{formatWeekday(dayOfWeek, router.locale)}</span>
                 }
             },
             {

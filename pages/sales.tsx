@@ -3,7 +3,7 @@ import Button from '@components/Button'
 import { IDropdownItem, SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
-import { capitalizeWord, enforceAuthenticated } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated, formatWeekday } from '@lib/utils'
 import { posterGetSales } from '@services/poster'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
@@ -86,7 +86,7 @@ const Sales: NextPage = () => {
         const exportData = tableData.map(row => ({ 
             ...row, 
             date: row.date.format('DD.MM'),
-            dayOfWeek: row.dayOfWeek.locale(router.locale?.split('-')[0] ?? 'en').format('dd'),
+            dayOfWeek: formatWeekday(row.dayOfWeek, router.locale),
         }))
 
         const columnWidths: Record<string, number> = {
