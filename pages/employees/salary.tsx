@@ -45,12 +45,10 @@ const Salary: NextPage = () => {
     } = useSupabaseGetBonuses()
     const {
         upsertEntity: upsertBonus,
-        loading: upsertBonusLoading,
         error: upsertBonusError
     } = useSupabaseUpsertEntity('bonuses')
     const {
         deleteEntity: deleteBonus,
-        loading: deleteBonusLoading,
         error: deleteBonusError
     } = useSupabaseDeleteEntity('bonuses')
     const {
@@ -79,7 +77,6 @@ const Salary: NextPage = () => {
                 await revalidateBonuses(bonuses.filter(b => b.id !== bonus.id))
                 await deleteBonus(bonus.id)
             } else {
-                await revalidateBonuses(bonuses.map(b => b.id === bonus.id ? bonus : b))
                 await upsertBonus(bonus)
             }
         } else {
@@ -154,9 +151,7 @@ const Salary: NextPage = () => {
         shiftsLoading || 
         bonusesLoading || 
         deductionsTotalsLoading || 
-        salesIncomeTotalsLoading ||
-        upsertBonusLoading ||
-        deleteBonusLoading
+        salesIncomeTotalsLoading
 
     const currentMonth = dayjs().locale(router.locale?.split('-')[0] ?? 'en').format('MMMM, YYYY')
 
