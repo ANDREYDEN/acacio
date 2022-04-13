@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Calendar } from 'react-iconly'
 import { Button, Dropdown, TextInput } from '@components/index'
 import dayjs from 'dayjs'
@@ -13,13 +13,14 @@ interface ITimeframeDropdown {
     defaultDateFrom: dayjs.Dayjs
     defaultDateTo: dayjs.Dayjs
     timeframeOptions: IDropdownItem[]
+    selectedTimeframe: string
+    setSelectedTimeframe: (timeframe: string) => void
     defaultTimeframe?: string
 }
 
 const TimeframeDropdown: React.FC<ITimeframeDropdown> = ({
-    setDateFrom, setDateTo, defaultDateFrom, defaultDateTo, timeframeOptions, defaultTimeframe = ''
+    setDateFrom, setDateTo, defaultDateFrom, defaultDateTo, timeframeOptions, selectedTimeframe, setSelectedTimeframe, defaultTimeframe = ''
 }) => {
-    const [selectedTimeframe, setSelectedTimeframe] = useState(defaultTimeframe)
     const { t } = useTranslation('timeframe')
 
     const defaultValues = {
