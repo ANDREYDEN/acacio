@@ -45,12 +45,10 @@ const Salary: NextPage = () => {
     } = useSupabaseGetBonuses()
     const {
         upsertEntity: upsertBonus,
-        loading: upsertBonusLoading,
         error: upsertBonusError
     } = useSupabaseUpsertEntity('bonuses')
     const {
         deleteEntity: deleteBonus,
-        loading: deleteBonusLoading,
         error: deleteBonusError
     } = useSupabaseDeleteEntity('bonuses')
     const {
@@ -74,23 +72,31 @@ const Salary: NextPage = () => {
     }, [bonuses])
 
     const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) => {
-        if (bonus.id) {
-            if (bonus.amount === 0) {
-                await revalidateBonuses(bonuses.filter(b => b.id !== bonus.id))
-                await deleteBonus(bonus.id)
-            } else {
-                await revalidateBonuses(bonuses.map(b => b.id === bonus.id ? bonus : b))
+        // add
+        if (!bonus.id) {
+            return await revalidateBonuses(async () => {
                 await upsertBonus(bonus)
-            }
-        } else {
-            await revalidateBonuses([...bonuses, bonus])
-            await upsertBonus(bonus)
+                return [...bonuses, bonus]
+            })
         }
-        await revalidateBonuses()
+
+        // delete
+        if (bonus.amount === 0) {
+            return await revalidateBonuses(async () => {
+                await deleteBonus(bonus.id!)
+                return bonuses.filter(b => b.id !== bonus.id)
+            })
+        }
+         
+        // update
+        return await revalidateBonuses(async () => {
+            await upsertBonus(bonus)
+            return bonuses.map(b => b.id === bonus.id ? bonus : b)
+        })
     }, [bonuses, deleteBonus, revalidateBonuses, upsertBonus])
 
-    const tableData: SalaryTableRow[] = useMemo(() => {
-        return employees.map(employee => {
+    const tableData: SalaryTableRow[] = useMemo(() =>
+        employees.map(employee => {
             const hoursTotal = shifts.reduce(
                 (acc, shift) => acc + (shift.employee_id === employee.id ? shift.duration : 0),
                 0
@@ -118,8 +124,8 @@ const Salary: NextPage = () => {
                 },
                 incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal,
             }
-        })
-    }, [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, modifyBonusAndReload])
+        }),
+    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, modifyBonusAndReload])
 
     const handleExport = async () => {
         const exportData = tableData.map(row => ({ 
@@ -154,9 +160,7 @@ const Salary: NextPage = () => {
         shiftsLoading || 
         bonusesLoading || 
         deductionsTotalsLoading || 
-        salesIncomeTotalsLoading ||
-        upsertBonusLoading ||
-        deleteBonusLoading
+        salesIncomeTotalsLoading
 
     const currentMonth = dayjs().locale(router.locale?.split('-')[0] ?? 'en').format('MMMM, YYYY')
 

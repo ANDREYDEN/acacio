@@ -11,7 +11,7 @@ import { useMounted } from '@lib/hooks'
 
 export const getServerSideProps = async (context: any) => ({
     props: {
-        ...await serverSideTranslations(context.locale, ['login']),
+        ...await serverSideTranslations(context.locale, ['login', 'common']),
     },
 })
 
