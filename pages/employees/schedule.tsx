@@ -1,25 +1,23 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { NextPage } from 'next'
-import dayjs from 'dayjs'
-import 'dayjs/locale/ru'
-import { useTranslation } from 'next-i18next'
-import { Column } from 'exceljs'
-import { ChevronLeft, ChevronRight } from 'react-iconly'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
+import { Button, ErrorMessage, Loader, ScheduleTable } from '@components'
 import { ScheduleTableRow } from '@interfaces'
-import { useMounted } from '@lib/hooks'
-import { fullName, getMonthDays } from '@lib/utils'
-import { definitions } from '@types'
+import { enforceAuthenticated, fullName, getMonthDays } from '@lib/utils'
 import exportToXLSX from '@services/exportService'
-import { ScheduleTable, Loader, ErrorMessage, Button } from '@components'
-import { enforceAuthenticated } from '@lib/utils'
 import {
     useSupabaseDeleteEntity,
     useSupabaseGetEmployees,
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
+import { definitions } from '@types'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ru'
+import { Column } from 'exceljs'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import React, { useCallback, useMemo, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'react-iconly'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -28,7 +26,6 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
 }))
 
 const Shifts: NextPage = () => {
-    const { mounted } = useMounted()
     const { t } = useTranslation('schedule')
     const router = useRouter()
 
@@ -40,7 +37,7 @@ const Shifts: NextPage = () => {
         loading: shiftsLoading, 
         error: shiftsError,
         mutate: revalidateShifts
-    } = useSupabaseGetShifts(month)
+    } = useSupabaseGetShifts(month)    
     const { 
         data: employees, 
         loading: employeesLoading, 
@@ -48,12 +45,10 @@ const Shifts: NextPage = () => {
     } = useSupabaseGetEmployees()
     const { 
         upsertEntity: upsertShift, 
-        loading: upsertShiftLoading, 
         error: upsertShiftError 
     } = useSupabaseUpsertEntity('shifts')
     const { 
         deleteEntity: deleteShift, 
-        loading: deleteShiftLoading, 
         error: deleteShiftError 
     } = useSupabaseDeleteEntity('shifts')
 
@@ -71,35 +66,30 @@ const Shifts: NextPage = () => {
         return shifts.find((otherShift) => employee_id === otherShift.employee_id && dayjs(date).isSame(dayjs(otherShift.date), 'date'))
     }, [shifts])
 
-    /**
-   * Inserts/Updates/Deletes the provided shift
-   * - if a `shift` already exists
-   *   - if the `duration` is 0 - DELETE
-   *   - otherwise - UPDATE
-   * - otherwise INSERT
-   * @param shift the shift to manipualte
-   */
     const modifyShiftAndReload = useCallback(async (shift: Partial<definitions['shifts']>) => {
-        const existingShift = matchingShift(shift.date, shift.employee_id)
-    
-        if (existingShift) {
-            if (existingShift.duration === shift.duration) return
-
-            shift.id = existingShift.id
-            if (shift.duration === 0) {
-                await revalidateShifts(shifts.filter((s) => s.id !== shift.id))
-                await deleteShift(shift.id)
-            } else {
-                await revalidateShifts(shifts.map((s) => s.id === shift.id ? shift : s))
-                await upsertShift(shift)    
-            }
-        } else {
+        // add
+        if (!shift.id) {
             delete shift['id']
-            await revalidateShifts([...shifts, shift])
-            await upsertShift(shift)
+            return await revalidateShifts(async () => {
+                await upsertShift(shift)
+                return [...shifts, shift]
+            })
         }
-        await revalidateShifts()
-    }, [deleteShift, matchingShift, revalidateShifts, shifts, upsertShift])
+
+        // delete
+        if (shift.duration === 0) {
+            return await revalidateShifts(async () => {
+                await deleteShift(shift.id!)
+                return shifts.filter((s) => s.id !== shift.id)
+            })
+        }
+
+        // update
+        return await revalidateShifts(async () => {
+            await upsertShift(shift)  
+            return shifts.map((s) => s.id === shift.id ? shift : s)
+        })
+    }, [deleteShift, revalidateShifts, shifts, upsertShift])
 
     const monthDays = getMonthDays(month)
   
@@ -112,7 +102,7 @@ const Shifts: NextPage = () => {
                     [date.unix().toString()]: {
                         duration: shift?.duration ?? 0,
                         onChange: (cellValue: number) => modifyShiftAndReload({
-                            id: 0,
+                            id: shift?.id ?? undefined,
                             employee_id: employee.id,
                             duration: cellValue,
                             date: date.startOf('date').toString()
@@ -147,9 +137,7 @@ const Shifts: NextPage = () => {
         await exportToXLSX(exportData, columns, `Schedule ${month.format('MMM YYYY')}`)
     }
 
-    if (!mounted || employeesLoading || shiftsLoading) {
-        return <Loader />
-    }
+    const loading = employeesLoading || shiftsLoading
 
     const loadingError = shiftsError || employeesError
     const updatingError = upsertShiftError || deleteShiftError
@@ -190,7 +178,10 @@ const Shifts: NextPage = () => {
 
             {updatingError && <ErrorMessage message={`Error updating shifts: ${updatingError}`} errorMessageClass='mb-8' />}
 
-            <ScheduleTable dateColumns={monthDays} data={tableData} />
+            {loading 
+                ? <Loader />
+                : <ScheduleTable dateColumns={monthDays} data={tableData} />
+            }
         </div>
     )
 }
