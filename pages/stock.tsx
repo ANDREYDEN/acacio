@@ -175,7 +175,7 @@ const Stock: NextPage = () => {
                     ? <Loader />
                     : <>
                         <div className='w-full flex justify-between mb-6'>
-                            <div className='flex space-x-4'>
+                            <div className='flex flex-wrap mr-4 gap-4'>
                                 <SearchBar searchValue={searchValue} onValueChange={setSearchValue} />
                                 <TimeframeDropdown
                                     setDateFrom={setDateFrom}

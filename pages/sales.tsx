@@ -132,7 +132,7 @@ const Sales: NextPage = () => {
                 ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8' />
                 : loading ? <Loader /> : <>
                     <div className='w-full flex justify-between mb-6'>
-                        <div className='flex space-x-4'>
+                        <div className='flex flex-wrap mr-4 gap-4'>
                             <TimeframeDropdown
                                 setDateFrom={setDateFrom}
                                 setDateTo={setDateTo}
