@@ -7,7 +7,6 @@ interface ISearchBar {
 }
 
 const SearchBar: React.FC<ISearchBar> = ({ searchValue, onValueChange }: ISearchBar) => {
-
     return (
         <div className='flex w-56 border border-grey rounded-lg px-4 py-2'>
             <Search primaryColor='#B2B2B2' />

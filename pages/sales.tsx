@@ -3,7 +3,7 @@ import Button from '@components/Button'
 import { IDropdownItem, SalesPerDay } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
-import { capitalizeWord, enforceAuthenticated, formatWeekday } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated } from '@lib/utils'
 import { posterGetSales } from '@services/poster'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
@@ -28,6 +28,7 @@ const Sales: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(7, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
+    const [selectedTimeframe, setSelectedTimeframe] = useState('')
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<IDropdownItem | undefined>()
@@ -86,7 +87,7 @@ const Sales: NextPage = () => {
         const exportData = tableData.map(row => ({ 
             ...row, 
             date: row.date.format('DD.MM'),
-            dayOfWeek: formatWeekday(row.dayOfWeek, router.locale),
+            dayOfWeek: row.dayOfWeek.locale(router.locale?.split('-')[0] ?? 'en').format('dd'),
         }))
 
         const columnWidths: Record<string, number> = {
@@ -131,13 +132,15 @@ const Sales: NextPage = () => {
                 ? <ErrorMessage message={`Error fetching sales: ${error}`} errorMessageClass='mb-8' />
                 : loading ? <Loader /> : <>
                     <div className='w-full flex justify-between mb-6'>
-                        <div className='flex space-x-4'>
+                        <div className='flex flex-wrap mr-4 gap-4'>
                             <TimeframeDropdown
                                 setDateFrom={setDateFrom}
                                 setDateTo={setDateTo}
                                 defaultDateFrom={defaultDateFrom}
                                 defaultDateTo={defaultDateTo}
                                 timeframeOptions={timeframeOptions}
+                                selectedTimeframe={selectedTimeframe}
+                                setSelectedTimeframe={setSelectedTimeframe}
                             />
                             <Dropdown
                                 label={t('day_of_week_filter')}
