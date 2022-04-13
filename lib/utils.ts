@@ -44,9 +44,3 @@ export function fullName(employee: definitions['employees']): string {
 export function capitalizeWord(word: string): string {
     return `${word[0]?.toUpperCase()}${word.slice(1)}`
 }
-
-export function formatWeekday(dayOfWeek: dayjs.Dayjs, locale?: string): string {
-    const bareLocale = locale?.split('-')[0] ?? 'en'
-    const dayOfWeekInNeededLanguage = dayOfWeek.locale(bareLocale).format(bareLocale === 'en' ? 'ddd' : 'dd')
-    return capitalizeWord(dayOfWeekInNeededLanguage)
-}

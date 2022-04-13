@@ -58,7 +58,7 @@ const Dropdown: React.FC<IDropdown> = ({
             {({ open }) => (
                 <>
                     <Popover.Button>
-                        <div className={`flex items-center justify-between w-40 whitespace-nowrap py-2 px-3 rounded-lg font-body-bold text-sm
+                        <div className={`flex items-center justify-between w-44 whitespace-nowrap py-2 px-3 rounded-lg font-body-bold text-sm
                                 ${open && !selectedOption ? 'bg-secondary-background' : ''}
                                 ${selectedOption ? 'bg-blue text-white border border-blue' : 'border border-grey text-dark-grey'}`}>
                             <div className='flex items-center space-x-2'>
