@@ -34,9 +34,8 @@ const ScheduleTable: React.FC<IScheduleTable> = ({ dateColumns, data }: ISchedul
                     <h1>{date.format('DD')}</h1>
                 </div>,
                 accessor: date.unix().toString(),
-                Cell: ({ value } : { value: ShiftDto }) => {
-                    return <NumberInputCell value={value.duration} onBlur={value.onChange}/>
-                }
+                Cell: ({ value } : { value: ShiftDto }) =>
+                    <NumberInputCell value={value.duration} onBlur={value.onChange}/>
             }))
         ],
         [dateColumns, t]

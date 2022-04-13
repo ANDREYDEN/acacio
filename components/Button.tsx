@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'next-i18next'
 
 type ButtonVariant = 'primary' | 'secondary'
 
@@ -11,6 +12,8 @@ interface IPrimaryButton {
 }
 
 const Button: React.FC<IPrimaryButton> = ({ label, variant = 'primary', onClick, loading, buttonClass }: IPrimaryButton) => {
+    const { t } = useTranslation('common')
+
     return (
         <button
             onClick={onClick}
@@ -19,7 +22,7 @@ const Button: React.FC<IPrimaryButton> = ({ label, variant = 'primary', onClick,
                 ${variant === 'primary' ? 'bg-primary-blue text-white' : ''}
                 ${variant === 'secondary' ? 'bg-white text-primary-blue' : ''}`}
         >
-            <span>{loading ? 'Loading...' : label}</span>
+            <span>{loading ? t('loading') : label}</span>
         </button>
     )
 }

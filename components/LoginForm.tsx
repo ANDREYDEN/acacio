@@ -15,7 +15,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
         password: ''
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('email', { required: t('form.email_updated').toString() })
+    register('email', { required: t('form.email_required').toString() })
     register('password', { required: t('form.password_required').toString() })
 
     const handleForm = async (data: any) => {
