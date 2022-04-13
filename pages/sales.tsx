@@ -28,6 +28,7 @@ const Sales: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(7, 'day')
     const defaultDateTo = dayjs()
     const { mounted } = useMounted()
+    const [selectedTimeframe, setSelectedTimeframe] = useState('')
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const [selectedDayOfWeek, setSelectedDayOfWeek] = useState<IDropdownItem | undefined>()
@@ -138,6 +139,8 @@ const Sales: NextPage = () => {
                                 defaultDateFrom={defaultDateFrom}
                                 defaultDateTo={defaultDateTo}
                                 timeframeOptions={timeframeOptions}
+                                selectedTimeframe={selectedTimeframe}
+                                setSelectedTimeframe={setSelectedTimeframe}
                             />
                             <Dropdown
                                 label={t('day_of_week_filter')}

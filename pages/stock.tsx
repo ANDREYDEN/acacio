@@ -33,6 +33,7 @@ export const getServerSideProps = enforceAuthenticated(async (context: any) => (
 const Stock: NextPage = () => {
     const defaultDateFrom = dayjs().subtract(2, 'week').weekday(4)
     const defaultDateTo = dayjs().weekday(0)
+    const [selectedTimeframe, setSelectedTimeframe] = useState('')
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const [searchValue, setSearchValue] = useState('')
@@ -183,6 +184,8 @@ const Stock: NextPage = () => {
                                     defaultDateTo={defaultDateTo}
                                     timeframeOptions={timeframeOptions}
                                     defaultTimeframe={timeframeTranslation('1_and_half_weeks')}
+                                    selectedTimeframe={selectedTimeframe}
+                                    setSelectedTimeframe={setSelectedTimeframe}
                                 />
                                 <Dropdown
                                     label={t('category_label')}
