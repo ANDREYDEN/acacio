@@ -144,6 +144,10 @@ const Shifts: NextPage = () => {
     const updatingError = upsertShiftError || deleteShiftError
     if (loadingError) return <ErrorMessage message={loadingError} />
 
+    const loadingError = shiftsError || employeesError
+    const updatingError = upsertShiftError || deleteShiftError
+    if (loadingError) return <ErrorMessage message={loadingError} />
+
     return (
         <div className='flex flex-col'>
             <div className='w-full flex justify-between items-center mb-6'>
