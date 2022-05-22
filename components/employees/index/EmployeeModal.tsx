@@ -39,6 +39,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
     })
     register('income_percentage', {
         required: t('modal.income_percentage_required').toString(),
+        pattern: { value: /^[0-9]+(\.[0-9]*)?$/, message: t('modal.income_percentage_pattern') },
         min: { value: 0, message: t('modal.min_revenue').toString() },
         max: { value: 100, message: t('modal.max_revenue').toString() }
     })
@@ -59,7 +60,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
             role_id: data.role_id,
             birth_date: data.birth_date === '' ? null : data.birth_date,
             salary: data.salary,
-            income_percentage: data.income_percentage
+            income_percentage: +data.income_percentage
         }
         if (employee) currentEmployee.id = employee.id
 
@@ -127,7 +128,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
                 trigger={trigger}
             />
             <TextInput
-                type='number'
+                type='text'
                 name='income_percentage'
                 label={t('modal.income_percentage')}
                 placeholder='0%'
