@@ -17,7 +17,8 @@ import {
     useSupabaseGetBonuses,
     useSupabaseGetEmployees,
     useSupabaseGetShifts,
-    useSupabaseUpsertEntity
+    useSupabaseUpsertEntity,
+    useSupabaseGetPrepaidExpenses
 } from '@lib/services/supabase'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -38,19 +39,27 @@ const Salary: NextPage = () => {
         error: employeesError,
     } = useSupabaseGetEmployees()
     const {
-        data: bonuses, 
-        loading: bonusesLoading, 
+        data: bonuses,
+        loading: bonusesLoading,
         error: bonusesError,
         mutate: revalidateBonuses
     } = useSupabaseGetBonuses()
+    const { upsertEntity: upsertBonus, error: upsertBonusError } = useSupabaseUpsertEntity('bonuses')
+    const { deleteEntity: deleteBonus, error: deleteBonusError } = useSupabaseDeleteEntity('bonuses')
     const {
-        upsertEntity: upsertBonus,
-        error: upsertBonusError
-    } = useSupabaseUpsertEntity('bonuses')
+        data: prepaidExpenses,
+        loading: prepaidExpensesLoading,
+        error: prepaidExpensesError,
+        mutate: revalidatePrepaidExpenses
+    } = useSupabaseGetPrepaidExpenses()
     const {
-        deleteEntity: deleteBonus,
-        error: deleteBonusError
-    } = useSupabaseDeleteEntity('bonuses')
+        upsertEntity: upsertPrepaidExpense,
+        error: upsertPrepaidExpenseError
+    } = useSupabaseUpsertEntity('prepaid_expenses')
+    const {
+        deleteEntity: deletePrepaidExpense,
+        error: deletePrepaidExpenseError
+    } = useSupabaseDeleteEntity('prepaid_expenses')
     const {
         data: shifts, 
         loading: shiftsLoading, 
@@ -70,6 +79,9 @@ const Salary: NextPage = () => {
     const matchingBonus = useCallback((employeeId) => {
         return bonuses.find(bonus => bonus.employee_id === employeeId)
     }, [bonuses])
+    const matchingPrepaidExpense = useCallback((employeeId) => {
+        return prepaidExpenses.find(prepaidExpense => prepaidExpense.employee_id === employeeId)
+    }, [prepaidExpenses])
 
     const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) => {
         // add
@@ -105,7 +117,10 @@ const Salary: NextPage = () => {
             const salesIncomeTotal = salesIncomeTotals[employee.id] ?? 0
             const deductionsTotal = deductionsTotals[employee.id] ?? 0
             const bonus = matchingBonus(employee.id)
-            const bonusAmount = bonus?.amount ?? 0
+            const bonusAmount = matchingBonus(employee.id)?.amount ?? 0
+            const prepaidExpense = matchingPrepaidExpense(employee.id)
+            const prepaidExpenseAmount = prepaidExpense?.amount ?? 0
+
             return {
                 employeeName: fullName(employee),
                 hourlySalary: employee.salary,
@@ -113,7 +128,13 @@ const Salary: NextPage = () => {
                 salaryTotal,
                 salesIncomeTotal,
                 deductionsTotal,
-                bonusDto: { 
+                prepaidExpenseDto: {
+                    value: prepaidExpense ?? {},
+                    onAmountChange: newAmount => modifyBonusAndReload({
+                        ...bonus, employee_id: employee.id, amount: newAmount
+                    }),
+                },
+                bonusDto: {
                     value: bonus ?? {},
                     onAmountChange: newAmount => modifyBonusAndReload({
                         ...bonus, employee_id: employee.id, amount: newAmount
@@ -122,7 +143,7 @@ const Salary: NextPage = () => {
                         ...bonus, employee_id: employee.id, amount: bonus?.amount ?? 0, reason: comment
                     })
                 },
-                incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal,
+                incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal - prepaidExpenseAmount,
             }
         }),
     [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, modifyBonusAndReload])
