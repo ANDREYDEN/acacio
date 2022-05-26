@@ -18,6 +18,7 @@ const BonusInputCell: React.FC<IBonusInputCell> = ({ bonus, toggleModalForBonus 
                 value={cellValue}
                 onChange={(e) => setCellValue(+e.target.value)}
                 onBlur={() => bonus.onAmountChange(cellValue)}
+                onFocus={(e) => e.target.select()}
             />
             <button
                 className={`flex-1 flex justify-center items-center h-full border-l border-grey
