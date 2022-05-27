@@ -44,8 +44,14 @@ const Salary: NextPage = () => {
         error: bonusesError,
         mutate: revalidateBonuses
     } = useSupabaseGetBonuses()
-    const { upsertEntity: upsertBonus, error: upsertBonusError } = useSupabaseUpsertEntity('bonuses')
-    const { deleteEntity: deleteBonus, error: deleteBonusError } = useSupabaseDeleteEntity('bonuses')
+    const {
+        upsertEntity: upsertBonus,
+        error: upsertBonusError
+    } = useSupabaseUpsertEntity('bonuses')
+    const {
+        deleteEntity: deleteBonus,
+        error: deleteBonusError
+    } = useSupabaseDeleteEntity('bonuses')
     const {
         data: prepaidExpenses,
         loading: prepaidExpensesLoading,
@@ -99,13 +105,36 @@ const Salary: NextPage = () => {
                 return bonuses.filter(b => b.id !== bonus.id)
             })
         }
-         
+
         // update
         return await revalidateBonuses(async () => {
             await upsertBonus(bonus)
             return bonuses.map(b => b.id === bonus.id ? bonus : b)
         })
     }, [bonuses, deleteBonus, revalidateBonuses, upsertBonus])
+    const modifyPrepaidExpenseAndReload = useCallback(async (prepaidExpense: Partial<definitions['prepaid_expenses']>) => {
+        // add
+        if (!prepaidExpense.id) {
+            return await revalidatePrepaidExpenses(async () => {
+                await upsertPrepaidExpense(prepaidExpense)
+                return [...prepaidExpenses, prepaidExpense]
+            })
+        }
+
+        // delete
+        if (prepaidExpense.amount === 0) {
+            return await revalidatePrepaidExpenses(async () => {
+                await deletePrepaidExpense(prepaidExpense.id!)
+                return prepaidExpenses.filter(b => b.id !== prepaidExpense.id)
+            })
+        }
+
+        // update
+        return await revalidatePrepaidExpenses(async () => {
+            await upsertBonus(prepaidExpense)
+            return prepaidExpenses.map(b => b.id === prepaidExpense.id ? prepaidExpense : b)
+        })
+    }, [prepaidExpenses, deletePrepaidExpense, revalidatePrepaidExpenses, upsertPrepaidExpense, upsertBonus])
 
     const tableData: SalaryTableRow[] = useMemo(() =>
         employees.map(employee => {
@@ -130,7 +159,7 @@ const Salary: NextPage = () => {
                 deductionsTotal,
                 prepaidExpenseDto: {
                     value: prepaidExpense ?? {},
-                    onAmountChange: newAmount => modifyBonusAndReload({
+                    onAmountChange: newAmount => modifyPrepaidExpenseAndReload({
                         ...bonus, employee_id: employee.id, amount: newAmount
                     }),
                 },
@@ -146,7 +175,8 @@ const Salary: NextPage = () => {
                 incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal - prepaidExpenseAmount,
             }
         }),
-    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, modifyBonusAndReload])
+    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus,
+        matchingPrepaidExpense, modifyPrepaidExpenseAndReload, modifyBonusAndReload])
 
     const handleExport = async () => {
         const exportData = tableData.map(row => ({ 
@@ -172,15 +202,17 @@ const Salary: NextPage = () => {
         employeesError ||
         shiftsError ||
         bonusesError ||
+        prepaidExpensesError ||
         deductionsTotalsError ||
         salesIncomeTotalsError
     if (error) return <ErrorMessage message={`Error fetching information: ${error}`} />
 
     const loading =
-        employeesLoading || 
-        shiftsLoading || 
-        bonusesLoading || 
-        deductionsTotalsLoading || 
+        employeesLoading ||
+        shiftsLoading ||
+        bonusesLoading ||
+        prepaidExpensesLoading ||
+        deductionsTotalsLoading ||
         salesIncomeTotalsLoading
 
     const currentMonth = dayjs().locale(router.locale?.split('-')[0] ?? 'en').format('MMMM, YYYY')
@@ -209,7 +241,10 @@ const Salary: NextPage = () => {
                 </div>
             </div>
 
-            {upsertBonusError || deleteBonusError && <ErrorMessage message={upsertBonusError || deleteBonusError} />}
+            {upsertBonusError || deleteBonusError &&
+                <ErrorMessage message={upsertBonusError || deleteBonusError} />}
+            {upsertPrepaidExpenseError || deletePrepaidExpenseError &&
+                <ErrorMessage message={upsertPrepaidExpenseError || deletePrepaidExpenseError} />}
             {loading
                 ? <Loader/>
                 : <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal}/>
