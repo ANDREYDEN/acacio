@@ -131,10 +131,10 @@ const Salary: NextPage = () => {
 
         // update
         return await revalidatePrepaidExpenses(async () => {
-            await upsertBonus(prepaidExpense)
+            await upsertPrepaidExpense(prepaidExpense)
             return prepaidExpenses.map(b => b.id === prepaidExpense.id ? prepaidExpense : b)
         })
-    }, [prepaidExpenses, deletePrepaidExpense, revalidatePrepaidExpenses, upsertPrepaidExpense, upsertBonus])
+    }, [prepaidExpenses, deletePrepaidExpense, revalidatePrepaidExpenses, upsertPrepaidExpense])
 
     const tableData: SalaryTableRow[] = useMemo(() =>
         employees.map(employee => {
@@ -160,7 +160,7 @@ const Salary: NextPage = () => {
                 prepaidExpenseDto: {
                     value: prepaidExpense ?? {},
                     onAmountChange: newAmount => modifyPrepaidExpenseAndReload({
-                        ...bonus, employee_id: employee.id, amount: newAmount
+                        ...prepaidExpense, employee_id: employee.id, amount: newAmount
                     }),
                 },
                 bonusDto: {
@@ -175,8 +175,7 @@ const Salary: NextPage = () => {
                 incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal - prepaidExpenseAmount,
             }
         }),
-    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus,
-        matchingPrepaidExpense, modifyPrepaidExpenseAndReload, modifyBonusAndReload])
+    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, matchingPrepaidExpense, modifyPrepaidExpenseAndReload, prepaidExpenses, modifyBonusAndReload])
 
     const handleExport = async () => {
         const exportData = tableData.map(row => ({ 
