@@ -81,7 +81,8 @@ const Salary: NextPage = () => {
         salesIncomeTotalsLoading,
         salesIncomeTotalsError,
     } = usePosterGetSalesIncomeForEmployees(employees, shifts)
-    
+
+    // TODO: refactor repetition
     const matchingBonus = useCallback((employeeId) => {
         return bonuses.find(bonus => bonus.employee_id === employeeId)
     }, [bonuses])
