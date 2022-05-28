@@ -175,7 +175,7 @@ const Salary: NextPage = () => {
                 incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal - prepaidExpenseAmount,
             }
         }),
-    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, matchingPrepaidExpense, modifyPrepaidExpenseAndReload, prepaidExpenses, modifyBonusAndReload])
+    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, matchingPrepaidExpense, modifyPrepaidExpenseAndReload, modifyBonusAndReload])
 
     const handleExport = async () => {
         const exportData = tableData.map(row => ({ 
