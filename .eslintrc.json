@@ -4,7 +4,7 @@
     "quotes": ["error", "single", { "avoidEscape": true }],
     "semi": ["error", "never"],
     "object-curly-spacing": ["error", "always"],
-    "no-unused-vars": 0,
+    "no-unused-vars": ["warn"],
     "indent": ["error", 4]
   }
 }
