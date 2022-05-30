@@ -18,9 +18,9 @@ export interface paths {
         query: {
           id?: parameters['rowFilter.bonuses.id'];
           created_at?: parameters['rowFilter.bonuses.created_at'];
+          employee_id?: parameters['rowFilter.bonuses.employee_id'];
           amount?: parameters['rowFilter.bonuses.amount'];
           reason?: parameters['rowFilter.bonuses.reason'];
-          employee_id?: parameters['rowFilter.bonuses.employee_id'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -73,9 +73,9 @@ export interface paths {
         query: {
           id?: parameters['rowFilter.bonuses.id'];
           created_at?: parameters['rowFilter.bonuses.created_at'];
+          employee_id?: parameters['rowFilter.bonuses.employee_id'];
           amount?: parameters['rowFilter.bonuses.amount'];
           reason?: parameters['rowFilter.bonuses.reason'];
-          employee_id?: parameters['rowFilter.bonuses.employee_id'];
         };
         header: {
           /** Preference */
@@ -92,9 +92,9 @@ export interface paths {
         query: {
           id?: parameters['rowFilter.bonuses.id'];
           created_at?: parameters['rowFilter.bonuses.created_at'];
+          employee_id?: parameters['rowFilter.bonuses.employee_id'];
           amount?: parameters['rowFilter.bonuses.amount'];
           reason?: parameters['rowFilter.bonuses.reason'];
-          employee_id?: parameters['rowFilter.bonuses.employee_id'];
         };
         body: {
           /** bonuses */
@@ -116,8 +116,8 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.employee_roles.id'];
-          created_at?: parameters['rowFilter.employee_roles.created_at'];
           name?: parameters['rowFilter.employee_roles.name'];
+          created_at?: parameters['rowFilter.employee_roles.created_at'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -169,8 +169,8 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.employee_roles.id'];
-          created_at?: parameters['rowFilter.employee_roles.created_at'];
           name?: parameters['rowFilter.employee_roles.name'];
+          created_at?: parameters['rowFilter.employee_roles.created_at'];
         };
         header: {
           /** Preference */
@@ -186,8 +186,8 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.employee_roles.id'];
-          created_at?: parameters['rowFilter.employee_roles.created_at'];
           name?: parameters['rowFilter.employee_roles.name'];
+          created_at?: parameters['rowFilter.employee_roles.created_at'];
         };
         body: {
           /** employee_roles */
@@ -212,10 +212,10 @@ export interface paths {
           created_at?: parameters['rowFilter.employees.created_at'];
           first_name?: parameters['rowFilter.employees.first_name'];
           last_name?: parameters['rowFilter.employees.last_name'];
+          role_id?: parameters['rowFilter.employees.role_id'];
           birth_date?: parameters['rowFilter.employees.birth_date'];
           salary?: parameters['rowFilter.employees.salary'];
           income_percentage?: parameters['rowFilter.employees.income_percentage'];
-          role_id?: parameters['rowFilter.employees.role_id'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -270,10 +270,10 @@ export interface paths {
           created_at?: parameters['rowFilter.employees.created_at'];
           first_name?: parameters['rowFilter.employees.first_name'];
           last_name?: parameters['rowFilter.employees.last_name'];
+          role_id?: parameters['rowFilter.employees.role_id'];
           birth_date?: parameters['rowFilter.employees.birth_date'];
           salary?: parameters['rowFilter.employees.salary'];
           income_percentage?: parameters['rowFilter.employees.income_percentage'];
-          role_id?: parameters['rowFilter.employees.role_id'];
         };
         header: {
           /** Preference */
@@ -292,14 +292,110 @@ export interface paths {
           created_at?: parameters['rowFilter.employees.created_at'];
           first_name?: parameters['rowFilter.employees.first_name'];
           last_name?: parameters['rowFilter.employees.last_name'];
+          role_id?: parameters['rowFilter.employees.role_id'];
           birth_date?: parameters['rowFilter.employees.birth_date'];
           salary?: parameters['rowFilter.employees.salary'];
           income_percentage?: parameters['rowFilter.employees.income_percentage'];
-          role_id?: parameters['rowFilter.employees.role_id'];
         };
         body: {
           /** employees */
           employees?: definitions['employees'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  '/prepaid_expenses': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.prepaid_expenses.id'];
+          created_at?: parameters['rowFilter.prepaid_expenses.created_at'];
+          amount?: parameters['rowFilter.prepaid_expenses.amount'];
+          employee_id?: parameters['rowFilter.prepaid_expenses.employee_id'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['prepaid_expenses'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** prepaid_expenses */
+          prepaid_expenses?: definitions['prepaid_expenses'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.prepaid_expenses.id'];
+          created_at?: parameters['rowFilter.prepaid_expenses.created_at'];
+          amount?: parameters['rowFilter.prepaid_expenses.amount'];
+          employee_id?: parameters['rowFilter.prepaid_expenses.employee_id'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.prepaid_expenses.id'];
+          created_at?: parameters['rowFilter.prepaid_expenses.created_at'];
+          amount?: parameters['rowFilter.prepaid_expenses.amount'];
+          employee_id?: parameters['rowFilter.prepaid_expenses.employee_id'];
+        };
+        body: {
+          /** prepaid_expenses */
+          prepaid_expenses?: definitions['prepaid_expenses'];
         };
         header: {
           /** Preference */
@@ -317,10 +413,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.shifts.id'];
-          employee_id?: parameters['rowFilter.shifts.employee_id'];
-          date?: parameters['rowFilter.shifts.date'];
-          duration?: parameters['rowFilter.shifts.duration'];
           created_at?: parameters['rowFilter.shifts.created_at'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          date?: parameters['rowFilter.shifts.date'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -372,10 +468,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.shifts.id'];
-          employee_id?: parameters['rowFilter.shifts.employee_id'];
-          date?: parameters['rowFilter.shifts.date'];
-          duration?: parameters['rowFilter.shifts.duration'];
           created_at?: parameters['rowFilter.shifts.created_at'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          date?: parameters['rowFilter.shifts.date'];
         };
         header: {
           /** Preference */
@@ -391,10 +487,10 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters['rowFilter.shifts.id'];
-          employee_id?: parameters['rowFilter.shifts.employee_id'];
-          date?: parameters['rowFilter.shifts.date'];
-          duration?: parameters['rowFilter.shifts.duration'];
           created_at?: parameters['rowFilter.shifts.created_at'];
+          employee_id?: parameters['rowFilter.shifts.employee_id'];
+          duration?: parameters['rowFilter.shifts.duration'];
+          date?: parameters['rowFilter.shifts.date'];
         };
         body: {
           /** shifts */
@@ -414,6 +510,7 @@ export interface paths {
 }
 
 export interface definitions {
+  /** @description Extra money bonuses assigned to employees */
   bonuses: {
     /**
      * Format: bigint
@@ -426,17 +523,18 @@ export interface definitions {
      * @default now()
      */
     created_at?: string;
-    /** Format: bigint */
-    amount: number;
-    /** Format: text */
-    reason?: string;
     /**
      * Format: bigint
      * @description Note:
      * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
      */
     employee_id: number;
+    /** Format: bigint */
+    amount: number;
+    /** Format: text */
+    reason?: string;
   };
+  /** @description Role descriptions for employees */
   employee_roles: {
     /**
      * Format: bigint
@@ -444,14 +542,15 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: number;
+    /** Format: text */
+    name: string;
     /**
      * Format: timestamp with time zone
      * @default now()
      */
     created_at?: string;
-    /** Format: text */
-    name: string;
   };
+  /** @description Describes bar employees */
   employees: {
     /**
      * Format: bigint
@@ -468,20 +567,41 @@ export interface definitions {
     first_name: string;
     /** Format: text */
     last_name?: string;
-    /** Format: date */
-    birth_date?: string;
-    /** Format: bigint */
-    salary: number;
-    /** Format: numeric */
-    income_percentage: number;
     /**
      * Format: bigint
      * @description Note:
      * This is a Foreign Key to `employee_roles.id`.<fk table='employee_roles' column='id'/>
      */
     role_id: number;
+    /** Format: date */
+    birth_date?: string;
+    /** Format: bigint */
+    salary: number;
+    /** Format: numeric */
+    income_percentage: number;
   };
-  /** @description The work shifts for each employee */
+  prepaid_expenses: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: bigint */
+    amount?: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
+     */
+    employee_id?: number;
+  };
+  /** @description Work shifts for employees */
   shifts: {
     /**
      * Format: bigint
@@ -490,20 +610,20 @@ export interface definitions {
      */
     id: number;
     /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /**
      * Format: bigint
      * @description Note:
      * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
      */
     employee_id: number;
-    /** Format: timestamp without time zone */
-    date: string;
     /** Format: smallint */
     duration: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at?: string;
+    /** Format: date */
+    date: string;
   };
 }
 
@@ -547,19 +667,19 @@ export interface parameters {
   /** Format: timestamp with time zone */
   'rowFilter.bonuses.created_at': string;
   /** Format: bigint */
+  'rowFilter.bonuses.employee_id': string;
+  /** Format: bigint */
   'rowFilter.bonuses.amount': string;
   /** Format: text */
   'rowFilter.bonuses.reason': string;
-  /** Format: bigint */
-  'rowFilter.bonuses.employee_id': string;
   /** @description employee_roles */
   'body.employee_roles': definitions['employee_roles'];
   /** Format: bigint */
   'rowFilter.employee_roles.id': string;
-  /** Format: timestamp with time zone */
-  'rowFilter.employee_roles.created_at': string;
   /** Format: text */
   'rowFilter.employee_roles.name': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.employee_roles.created_at': string;
   /** @description employees */
   'body.employees': definitions['employees'];
   /** Format: bigint */
@@ -570,26 +690,36 @@ export interface parameters {
   'rowFilter.employees.first_name': string;
   /** Format: text */
   'rowFilter.employees.last_name': string;
+  /** Format: bigint */
+  'rowFilter.employees.role_id': string;
   /** Format: date */
   'rowFilter.employees.birth_date': string;
   /** Format: bigint */
   'rowFilter.employees.salary': string;
   /** Format: numeric */
   'rowFilter.employees.income_percentage': string;
+  /** @description prepaid_expenses */
+  'body.prepaid_expenses': definitions['prepaid_expenses'];
   /** Format: bigint */
-  'rowFilter.employees.role_id': string;
+  'rowFilter.prepaid_expenses.id': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.prepaid_expenses.created_at': string;
+  /** Format: bigint */
+  'rowFilter.prepaid_expenses.amount': string;
+  /** Format: bigint */
+  'rowFilter.prepaid_expenses.employee_id': string;
   /** @description shifts */
   'body.shifts': definitions['shifts'];
   /** Format: bigint */
   'rowFilter.shifts.id': string;
-  /** Format: bigint */
-  'rowFilter.shifts.employee_id': string;
-  /** Format: timestamp without time zone */
-  'rowFilter.shifts.date': string;
-  /** Format: smallint */
-  'rowFilter.shifts.duration': string;
   /** Format: timestamp with time zone */
   'rowFilter.shifts.created_at': string;
+  /** Format: bigint */
+  'rowFilter.shifts.employee_id': string;
+  /** Format: smallint */
+  'rowFilter.shifts.duration': string;
+  /** Format: date */
+  'rowFilter.shifts.date': string;
 }
 
 export interface operations {}
