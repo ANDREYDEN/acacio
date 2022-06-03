@@ -21,12 +21,42 @@ import {
     useSupabaseGetPrepaidExpenses,
     useSupabaseGetRetentions
 } from '@lib/services/supabase'
+import { KeyedMutator } from 'swr'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
         ...await serverSideTranslations(context.locale, ['salary', 'common']),
     },
 }))
+
+type UpdatableEntity = Partial<{
+    id: number
+}>
+
+async function modifyEntityAndReload(entity: UpdatableEntity, entities: UpdatableEntity[], revalidateEntities: KeyedMutator<any>,
+    upsertEntity: KeyedMutator<any>, deleteEntities: KeyedMutator<any>, toBeDeleted: boolean) {
+    // add
+    if (!entity.id) {
+        return await revalidateEntities(async () => {
+            await upsertEntity(entity)
+            return [...entities, entity]
+        })
+    }
+
+    // delete
+    if (toBeDeleted) {
+        return await revalidateEntities(async () => {
+            await deleteEntities(entity.id!)
+            return entities.filter(e => e.id !== entity.id)
+        })
+    }
+
+    // update
+    return await revalidateEntities(async () => {
+        await upsertEntity(entity)
+        return entities.map(e => e.id === entity.id ? entity : e)
+    })
+}
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
@@ -97,7 +127,6 @@ const Salary: NextPage = () => {
         salesIncomeTotalsError,
     } = usePosterGetSalesIncomeForEmployees(employees, shifts)
 
-    // TODO: refactor repetition
     const matchingBonus = useCallback((employeeId) => {
         return bonuses.find(bonus => bonus.employee_id === employeeId)
     }, [bonuses])
@@ -108,75 +137,18 @@ const Salary: NextPage = () => {
         return retentions.find(retention => retention.employee_id === employeeId)
     }, [retentions])
 
-    const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) => {
-        // add
-        if (!bonus.id) {
-            return await revalidateBonuses(async () => {
-                await upsertBonus(bonus)
-                return [...bonuses, bonus]
-            })
-        }
-
-        // delete
-        if (bonus.amount === 0) {
-            return await revalidateBonuses(async () => {
-                await deleteBonus(bonus.id!)
-                return bonuses.filter(b => b.id !== bonus.id)
-            })
-        }
-
-        // update
-        return await revalidateBonuses(async () => {
-            await upsertBonus(bonus)
-            return bonuses.map(b => b.id === bonus.id ? bonus : b)
-        })
-    }, [bonuses, deleteBonus, revalidateBonuses, upsertBonus])
-    const modifyPrepaidExpenseAndReload = useCallback(async (prepaidExpense: Partial<definitions['prepaid_expenses']>) => {
-        // add
-        if (!prepaidExpense.id) {
-            return await revalidatePrepaidExpenses(async () => {
-                await upsertPrepaidExpense(prepaidExpense)
-                return [...prepaidExpenses, prepaidExpense]
-            })
-        }
-
-        // delete
-        if (prepaidExpense.amount === 0) {
-            return await revalidatePrepaidExpenses(async () => {
-                await deletePrepaidExpense(prepaidExpense.id!)
-                return prepaidExpenses.filter(pe => pe.id !== prepaidExpense.id)
-            })
-        }
-
-        // update
-        return await revalidatePrepaidExpenses(async () => {
-            await upsertPrepaidExpense(prepaidExpense)
-            return prepaidExpenses.map(pe => pe.id === prepaidExpense.id ? prepaidExpense : pe)
-        })
-    }, [prepaidExpenses, deletePrepaidExpense, revalidatePrepaidExpenses, upsertPrepaidExpense])
-    const modifyRetentionAndReload = useCallback(async (retention: Partial<definitions['retentions']>) => {
-        // add
-        if (!retention.id) {
-            return await revalidateRetentions(async () => {
-                await upsertRetention(retention)
-                return [...retentions, retention]
-            })
-        }
-
-        // delete
-        if (retention.amount === 0) {
-            return await revalidateRetentions(async () => {
-                await deleteRetention(retention.id!)
-                return retentions.filter(r => r.id !== retention.id)
-            })
-        }
-
-        // update
-        return await revalidateRetentions(async () => {
-            await upsertRetention(retention)
-            return retentions.map(r => r.id === retention.id ? retention : r)
-        })
-    }, [revalidateRetentions, upsertRetention, retentions, deleteRetention])
+    const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) =>
+        await modifyEntityAndReload(bonus, bonuses, revalidateBonuses, upsertBonus, deleteBonus, bonus.amount === 0),
+    [bonuses, deleteBonus, revalidateBonuses, upsertBonus]
+    )
+    const modifyPrepaidExpenseAndReload = useCallback(async (prepaidExpense: Partial<definitions['prepaid_expenses']>) =>
+        await modifyEntityAndReload(prepaidExpense, prepaidExpenses, revalidatePrepaidExpenses, upsertPrepaidExpense, deletePrepaidExpense, prepaidExpense.amount === 0),
+    [deletePrepaidExpense, prepaidExpenses, revalidatePrepaidExpenses, upsertPrepaidExpense]
+    )
+    const modifyRetentionAndReload = useCallback(async (retention: Partial<definitions['retentions']>) =>
+        await modifyEntityAndReload(retention, retentions, revalidateRetentions, upsertRetention, deleteRetention, retention.amount === 0),
+    [deleteRetention, retentions, revalidateRetentions, upsertRetention]
+    )
 
     const tableData: SalaryTableRow[] = useMemo(() =>
         employees.map(employee => {
