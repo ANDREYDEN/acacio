@@ -10,7 +10,7 @@ import { IBonusInput, SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { capitalizeWord, enforceAuthenticated, fullName } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated, fullName, modifyEntityAndReload } from '@lib/utils'
 import { definitions } from '@types'
 import {
     useSupabaseDeleteEntity,
@@ -21,42 +21,12 @@ import {
     useSupabaseGetPrepaidExpenses,
     useSupabaseGetRetentions
 } from '@lib/services/supabase'
-import { KeyedMutator } from 'swr'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
         ...await serverSideTranslations(context.locale, ['salary', 'common']),
     },
 }))
-
-type UpdatableEntity = Partial<{
-    id: number
-}>
-
-async function modifyEntityAndReload(entity: UpdatableEntity, entities: UpdatableEntity[], revalidateEntities: KeyedMutator<any>,
-    upsertEntity: KeyedMutator<any>, deleteEntities: KeyedMutator<any>, toBeDeleted: boolean) {
-    // add
-    if (!entity.id) {
-        return await revalidateEntities(async () => {
-            await upsertEntity(entity)
-            return [...entities, entity]
-        })
-    }
-
-    // delete
-    if (toBeDeleted) {
-        return await revalidateEntities(async () => {
-            await deleteEntities(entity.id!)
-            return entities.filter(e => e.id !== entity.id)
-        })
-    }
-
-    // update
-    return await revalidateEntities(async () => {
-        await upsertEntity(entity)
-        return entities.map(e => e.id === entity.id ? entity : e)
-    })
-}
 
 const Salary: NextPage = () => {
     const { mounted } = useMounted()
@@ -137,16 +107,16 @@ const Salary: NextPage = () => {
         return retentions.find(retention => retention.employee_id === employeeId)
     }, [retentions])
 
-    const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) =>
-        await modifyEntityAndReload(bonus, bonuses, revalidateBonuses, upsertBonus, deleteBonus, bonus.amount === 0),
+    const modifyBonusAndReload = useCallback((bonus: Partial<definitions['bonuses']>) =>
+        modifyEntityAndReload(bonus, bonuses, revalidateBonuses, upsertBonus, deleteBonus, bonus.amount === 0),
     [bonuses, deleteBonus, revalidateBonuses, upsertBonus]
     )
-    const modifyPrepaidExpenseAndReload = useCallback(async (prepaidExpense: Partial<definitions['prepaid_expenses']>) =>
-        await modifyEntityAndReload(prepaidExpense, prepaidExpenses, revalidatePrepaidExpenses, upsertPrepaidExpense, deletePrepaidExpense, prepaidExpense.amount === 0),
+    const modifyPrepaidExpenseAndReload = useCallback((prepaidExpense: Partial<definitions['prepaid_expenses']>) =>
+        modifyEntityAndReload(prepaidExpense, prepaidExpenses, revalidatePrepaidExpenses, upsertPrepaidExpense, deletePrepaidExpense, prepaidExpense.amount === 0),
     [deletePrepaidExpense, prepaidExpenses, revalidatePrepaidExpenses, upsertPrepaidExpense]
     )
-    const modifyRetentionAndReload = useCallback(async (retention: Partial<definitions['retentions']>) =>
-        await modifyEntityAndReload(retention, retentions, revalidateRetentions, upsertRetention, deleteRetention, retention.amount === 0),
+    const modifyRetentionAndReload = useCallback((retention: Partial<definitions['retentions']>) =>
+        modifyEntityAndReload(retention, retentions, revalidateRetentions, upsertRetention, deleteRetention, retention.amount === 0),
     [deleteRetention, retentions, revalidateRetentions, upsertRetention]
     )
 
