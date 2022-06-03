@@ -408,6 +408,102 @@ export interface paths {
       };
     };
   };
+  '/retentions': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.retentions.id'];
+          created_at?: parameters['rowFilter.retentions.created_at'];
+          amount?: parameters['rowFilter.retentions.amount'];
+          employee_id?: parameters['rowFilter.retentions.employee_id'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['retentions'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** retentions */
+          retentions?: definitions['retentions'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.retentions.id'];
+          created_at?: parameters['rowFilter.retentions.created_at'];
+          amount?: parameters['rowFilter.retentions.amount'];
+          employee_id?: parameters['rowFilter.retentions.employee_id'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.retentions.id'];
+          created_at?: parameters['rowFilter.retentions.created_at'];
+          amount?: parameters['rowFilter.retentions.amount'];
+          employee_id?: parameters['rowFilter.retentions.employee_id'];
+        };
+        body: {
+          /** retentions */
+          retentions?: definitions['retentions'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   '/shifts': {
     get: {
       parameters: {
@@ -601,6 +697,28 @@ export interface definitions {
      */
     employee_id?: number;
   };
+  /** @description Retentions for employees from inventorization */
+  retentions: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: bigint */
+    amount?: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
+     */
+    employee_id?: number;
+  };
   /** @description Work shifts for employees */
   shifts: {
     /**
@@ -708,6 +826,16 @@ export interface parameters {
   'rowFilter.prepaid_expenses.amount': string;
   /** Format: bigint */
   'rowFilter.prepaid_expenses.employee_id': string;
+  /** @description retentions */
+  'body.retentions': definitions['retentions'];
+  /** Format: bigint */
+  'rowFilter.retentions.id': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.retentions.created_at': string;
+  /** Format: bigint */
+  'rowFilter.retentions.amount': string;
+  /** Format: bigint */
+  'rowFilter.retentions.employee_id': string;
   /** @description shifts */
   'body.shifts': definitions['shifts'];
   /** Format: bigint */
