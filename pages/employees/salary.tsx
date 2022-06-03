@@ -190,15 +190,12 @@ const Salary: NextPage = () => {
     
     if (!mounted) return <Loader />
 
-    const error =
-        employeesError ||
-        shiftsError ||
-        bonusesError ||
-        prepaidExpensesError ||
-        retentionsError ||
-        deductionsTotalsError ||
-        salesIncomeTotalsError
+    const error = employeesError || shiftsError || bonusesError || prepaidExpensesError ||
+                    retentionsError || deductionsTotalsError || salesIncomeTotalsError
     if (error) return <ErrorMessage message={`Error fetching information: ${error}`} />
+
+    const updateError = upsertBonusError || deleteBonusError || upsertPrepaidExpenseError ||
+                        deletePrepaidExpenseError || upsertRetentionError || deleteRetentionError
 
     const loading =
         employeesLoading ||
@@ -235,12 +232,7 @@ const Salary: NextPage = () => {
                 </div>
             </div>
 
-            {upsertBonusError || deleteBonusError &&
-                <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-            {upsertPrepaidExpenseError || deletePrepaidExpenseError &&
-                <ErrorMessage message={upsertPrepaidExpenseError || deletePrepaidExpenseError} />}
-            {upsertRetentionError || deleteRetentionError &&
-                <ErrorMessage message={upsertRetentionError || deleteRetentionError} />}
+            {updateError && <ErrorMessage message={updateError} />}
             {loading
                 ? <Loader/>
                 : <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal}/>
