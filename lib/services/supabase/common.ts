@@ -2,10 +2,22 @@ import axios from 'axios'
 import { useState } from 'react'
 import { supabase } from '@client'
 import { definitions } from '@types'
+import useSWR from 'swr'
 
 export async function apiGet(url: string) {
     const { data } = await axios.get(url)
     return data
+}
+
+function convertToKebabCase(entityType: string): string {
+    return entityType.replace('_', '-')
+}
+
+export const useSupabaseGetEntity = <T>(entityType: keyof definitions) => {
+    const { data, error, mutate } = useSWR(`/api/${convertToKebabCase(entityType)}`, apiGet)
+
+    const definedData = data ? data as T[] : []
+    return { data: definedData, loading: !data, error: error?.toString(), mutate }
 }
 
 export const useSupabaseUpsertEntity = (entityType: keyof definitions) => {
