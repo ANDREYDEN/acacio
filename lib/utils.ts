@@ -73,3 +73,7 @@ export async function modifyEntityAndReload(
         return entities.map(e => e.id === entity.id ? entity : e)
     })
 }
+
+export function convertToKebabCase(entityType: string): string {
+    return entityType.replace('_', '-')
+}

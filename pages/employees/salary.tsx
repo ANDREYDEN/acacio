@@ -12,15 +12,7 @@ import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
 import { capitalizeWord, enforceAuthenticated, fullName, modifyEntityAndReload } from '@lib/utils'
 import { definitions } from '@types'
-import {
-    useSupabaseDeleteEntity,
-    useSupabaseGetBonuses,
-    useSupabaseGetEmployees,
-    useSupabaseGetShifts,
-    useSupabaseUpsertEntity,
-    useSupabaseGetPrepaidExpenses,
-    useSupabaseGetRetentions
-} from '@lib/services/supabase'
+import { useSupabaseDeleteEntity, useSupabaseGetShifts, useSupabaseUpsertEntity, useSupabaseGetEntity } from '@lib/services/supabase'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -38,13 +30,13 @@ const Salary: NextPage = () => {
         data: employees, 
         loading: employeesLoading, 
         error: employeesError,
-    } = useSupabaseGetEmployees()
+    } = useSupabaseGetEntity<definitions['employees']>('employees')
     const {
         data: bonuses,
         loading: bonusesLoading,
         error: bonusesError,
         mutate: revalidateBonuses
-    } = useSupabaseGetBonuses()
+    } = useSupabaseGetEntity<definitions['bonuses']>('bonuses')
     const {
         upsertEntity: upsertBonus,
         error: upsertBonusError
@@ -58,7 +50,7 @@ const Salary: NextPage = () => {
         loading: prepaidExpensesLoading,
         error: prepaidExpensesError,
         mutate: revalidatePrepaidExpenses
-    } = useSupabaseGetPrepaidExpenses()
+    } = useSupabaseGetEntity<definitions['prepaid_expenses']>('prepaid_expenses')
     const {
         upsertEntity: upsertPrepaidExpense,
         error: upsertPrepaidExpenseError
@@ -72,7 +64,7 @@ const Salary: NextPage = () => {
         loading: retentionsLoading,
         error: retentionsError,
         mutate: revalidateRetentions
-    } = useSupabaseGetRetentions()
+    } = useSupabaseGetEntity<definitions['retentions']>('retentions')
     const {
         upsertEntity: upsertRetention,
         error: upsertRetentionError

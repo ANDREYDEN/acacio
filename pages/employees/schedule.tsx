@@ -15,7 +15,7 @@ import { ScheduleTable, Loader, ErrorMessage, Button } from '@components'
 import { enforceAuthenticated } from '@lib/utils'
 import {
     useSupabaseDeleteEntity,
-    useSupabaseGetEmployees,
+    useSupabaseGetEntity,
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
@@ -43,7 +43,7 @@ const Shifts: NextPage = () => {
         data: employees, 
         loading: employeesLoading, 
         error: employeesError
-    } = useSupabaseGetEmployees()
+    } = useSupabaseGetEntity<definitions['employees']>('employees')
     const { 
         upsertEntity: upsertShift, 
         error: upsertShiftError 
