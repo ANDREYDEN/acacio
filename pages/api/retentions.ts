@@ -3,6 +3,7 @@ import { supabase } from '@client'
 import { definitions } from '@types'
 import dayjs from 'dayjs'
 
+// TODO: refactor repetition
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
