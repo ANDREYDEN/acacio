@@ -10,16 +10,9 @@ import { IBonusInput, SalaryTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
 import exportToXLSX from '@lib/services/exportService'
 import { usePosterGetDeductionsForEmployees, usePosterGetSalesIncomeForEmployees } from '@lib/services/poster'
-import { capitalizeWord, enforceAuthenticated, fullName } from '@lib/utils'
+import { capitalizeWord, enforceAuthenticated, fullName, modifyEntityAndReload } from '@lib/utils'
 import { definitions } from '@types'
-import {
-    useSupabaseDeleteEntity,
-    useSupabaseGetBonuses,
-    useSupabaseGetEmployees,
-    useSupabaseGetShifts,
-    useSupabaseUpsertEntity,
-    useSupabaseGetPrepaidExpenses
-} from '@lib/services/supabase'
+import { useSupabaseDeleteEntity, useSupabaseGetShifts, useSupabaseUpsertEntity, useSupabaseGetEntity } from '@lib/services/supabase'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -37,13 +30,13 @@ const Salary: NextPage = () => {
         data: employees, 
         loading: employeesLoading, 
         error: employeesError,
-    } = useSupabaseGetEmployees()
+    } = useSupabaseGetEntity<definitions['employees']>('employees')
     const {
         data: bonuses,
         loading: bonusesLoading,
         error: bonusesError,
         mutate: revalidateBonuses
-    } = useSupabaseGetBonuses()
+    } = useSupabaseGetEntity<definitions['bonuses']>('bonuses')
     const {
         upsertEntity: upsertBonus,
         error: upsertBonusError
@@ -57,7 +50,7 @@ const Salary: NextPage = () => {
         loading: prepaidExpensesLoading,
         error: prepaidExpensesError,
         mutate: revalidatePrepaidExpenses
-    } = useSupabaseGetPrepaidExpenses()
+    } = useSupabaseGetEntity<definitions['prepaid_expenses']>('prepaid_expenses')
     const {
         upsertEntity: upsertPrepaidExpense,
         error: upsertPrepaidExpenseError
@@ -66,6 +59,20 @@ const Salary: NextPage = () => {
         deleteEntity: deletePrepaidExpense,
         error: deletePrepaidExpenseError
     } = useSupabaseDeleteEntity('prepaid_expenses')
+    const {
+        data: retentions,
+        loading: retentionsLoading,
+        error: retentionsError,
+        mutate: revalidateRetentions
+    } = useSupabaseGetEntity<definitions['retentions']>('retentions')
+    const {
+        upsertEntity: upsertRetention,
+        error: upsertRetentionError
+    } = useSupabaseUpsertEntity('retentions')
+    const {
+        deleteEntity: deleteRetention,
+        error: deleteRetentionError
+    } = useSupabaseDeleteEntity('retentions')
     const {
         data: shifts, 
         loading: shiftsLoading, 
@@ -82,60 +89,28 @@ const Salary: NextPage = () => {
         salesIncomeTotalsError,
     } = usePosterGetSalesIncomeForEmployees(employees, shifts)
 
-    // TODO: refactor repetition
     const matchingBonus = useCallback((employeeId) => {
         return bonuses.find(bonus => bonus.employee_id === employeeId)
     }, [bonuses])
     const matchingPrepaidExpense = useCallback((employeeId) => {
         return prepaidExpenses.find(prepaidExpense => prepaidExpense.employee_id === employeeId)
     }, [prepaidExpenses])
+    const matchingRetention = useCallback((employeeId) => {
+        return retentions.find(retention => retention.employee_id === employeeId)
+    }, [retentions])
 
-    const modifyBonusAndReload = useCallback(async (bonus: Partial<definitions['bonuses']>) => {
-        // add
-        if (!bonus.id) {
-            return await revalidateBonuses(async () => {
-                await upsertBonus(bonus)
-                return [...bonuses, bonus]
-            })
-        }
-
-        // delete
-        if (bonus.amount === 0) {
-            return await revalidateBonuses(async () => {
-                await deleteBonus(bonus.id!)
-                return bonuses.filter(b => b.id !== bonus.id)
-            })
-        }
-
-        // update
-        return await revalidateBonuses(async () => {
-            await upsertBonus(bonus)
-            return bonuses.map(b => b.id === bonus.id ? bonus : b)
-        })
-    }, [bonuses, deleteBonus, revalidateBonuses, upsertBonus])
-    const modifyPrepaidExpenseAndReload = useCallback(async (prepaidExpense: Partial<definitions['prepaid_expenses']>) => {
-        // add
-        if (!prepaidExpense.id) {
-            return await revalidatePrepaidExpenses(async () => {
-                await upsertPrepaidExpense(prepaidExpense)
-                return [...prepaidExpenses, prepaidExpense]
-            })
-        }
-
-        // delete
-        if (prepaidExpense.amount === 0) {
-            return await revalidatePrepaidExpenses(async () => {
-                await deletePrepaidExpense(prepaidExpense.id!)
-                return prepaidExpenses.filter(b => b.id !== prepaidExpense.id)
-            })
-        }
-
-        // update
-        return await revalidatePrepaidExpenses(async () => {
-            await upsertPrepaidExpense(prepaidExpense)
-            return prepaidExpenses.map(b => b.id === prepaidExpense.id ? prepaidExpense : b)
-        })
-    }, [prepaidExpenses, deletePrepaidExpense, revalidatePrepaidExpenses, upsertPrepaidExpense])
+    const modifyBonusAndReload = useCallback((bonus: Partial<definitions['bonuses']>) =>
+        modifyEntityAndReload(bonus, bonuses, revalidateBonuses, upsertBonus, deleteBonus, bonus.amount === 0),
+    [bonuses, deleteBonus, revalidateBonuses, upsertBonus]
+    )
+    const modifyPrepaidExpenseAndReload = useCallback((prepaidExpense: Partial<definitions['prepaid_expenses']>) =>
+        modifyEntityAndReload(prepaidExpense, prepaidExpenses, revalidatePrepaidExpenses, upsertPrepaidExpense, deletePrepaidExpense, prepaidExpense.amount === 0),
+    [deletePrepaidExpense, prepaidExpenses, revalidatePrepaidExpenses, upsertPrepaidExpense]
+    )
+    const modifyRetentionAndReload = useCallback((retention: Partial<definitions['retentions']>) =>
+        modifyEntityAndReload(retention, retentions, revalidateRetentions, upsertRetention, deleteRetention, retention.amount === 0),
+    [deleteRetention, retentions, revalidateRetentions, upsertRetention]
+    )
 
     const tableData: SalaryTableRow[] = useMemo(() =>
         employees.map(employee => {
@@ -150,6 +125,8 @@ const Salary: NextPage = () => {
             const bonusAmount = matchingBonus(employee.id)?.amount ?? 0
             const prepaidExpense = matchingPrepaidExpense(employee.id)
             const prepaidExpenseAmount = prepaidExpense?.amount ?? 0
+            const retention = matchingRetention(employee.id)
+            const retentionAmount = retention?.amount ?? 0
 
             return {
                 employeeName: fullName(employee),
@@ -164,6 +141,12 @@ const Salary: NextPage = () => {
                         ...prepaidExpense, employee_id: employee.id, amount: newAmount
                     }),
                 },
+                retentionDto: {
+                    value: retention ?? {},
+                    onAmountChange: newAmount => modifyRetentionAndReload({
+                        ...retention, employee_id: employee.id, amount: newAmount
+                    }),
+                },
                 bonusDto: {
                     value: bonus ?? {},
                     onAmountChange: newAmount => modifyBonusAndReload({
@@ -173,10 +156,11 @@ const Salary: NextPage = () => {
                         ...bonus, employee_id: employee.id, amount: bonus?.amount ?? 0, reason: comment
                     })
                 },
-                incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal - prepaidExpenseAmount,
+                incomeTotal: salaryTotal + salesIncomeTotal + bonusAmount - deductionsTotal - prepaidExpenseAmount - retentionAmount,
             }
         }),
-    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, matchingPrepaidExpense, modifyPrepaidExpenseAndReload, modifyBonusAndReload])
+    [employees, shifts, salesIncomeTotals, deductionsTotals, matchingBonus, matchingPrepaidExpense,
+        matchingRetention, modifyPrepaidExpenseAndReload, modifyRetentionAndReload, modifyBonusAndReload])
 
     const handleExport = async () => {
         const exportData = tableData.map(row => ({ 
@@ -198,20 +182,19 @@ const Salary: NextPage = () => {
     
     if (!mounted) return <Loader />
 
-    const error =
-        employeesError ||
-        shiftsError ||
-        bonusesError ||
-        prepaidExpensesError ||
-        deductionsTotalsError ||
-        salesIncomeTotalsError
+    const error = employeesError || shiftsError || bonusesError || prepaidExpensesError ||
+                    retentionsError || deductionsTotalsError || salesIncomeTotalsError
     if (error) return <ErrorMessage message={`Error fetching information: ${error}`} />
+
+    const updateError = upsertBonusError || deleteBonusError || upsertPrepaidExpenseError ||
+                        deletePrepaidExpenseError || upsertRetentionError || deleteRetentionError
 
     const loading =
         employeesLoading ||
         shiftsLoading ||
         bonusesLoading ||
         prepaidExpensesLoading ||
+        retentionsLoading ||
         deductionsTotalsLoading ||
         salesIncomeTotalsLoading
 
@@ -241,10 +224,7 @@ const Salary: NextPage = () => {
                 </div>
             </div>
 
-            {upsertBonusError || deleteBonusError &&
-                <ErrorMessage message={upsertBonusError || deleteBonusError} />}
-            {upsertPrepaidExpenseError || deletePrepaidExpenseError &&
-                <ErrorMessage message={upsertPrepaidExpenseError || deletePrepaidExpenseError} />}
+            {updateError && <ErrorMessage message={updateError} />}
             {loading
                 ? <Loader/>
                 : <SalaryTable data={tableData} toggleModalForBonus={setBonusForBonusModal}/>

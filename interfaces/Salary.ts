@@ -9,6 +9,11 @@ export interface IPrepaidExpense {
     onAmountChange: (newValue: number) => void
 }
 
+export interface IRetention {
+    value: Partial<definitions['retentions']>
+    onAmountChange: (newValue: number) => void
+}
+
 export interface SalaryTableRow {
     employeeName: string
     hourlySalary: number
@@ -17,6 +22,7 @@ export interface SalaryTableRow {
     salesIncomeTotal: number
     deductionsTotal: number
     prepaidExpenseDto: IPrepaidExpense
+    retentionDto: IRetention
     bonusDto: IBonusInput
     incomeTotal: number
 }
