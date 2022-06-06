@@ -1,24 +1,26 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { NextPage } from 'next'
-import dayjs from 'dayjs'
-import 'dayjs/locale/ru'
-import { useTranslation } from 'next-i18next'
-import { Column } from 'exceljs'
-import { ChevronLeft, ChevronRight } from 'react-iconly'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
+import { Button, ErrorMessage, Loader, ScheduleTable } from '@components'
 import { ScheduleTableRow } from '@interfaces'
-import { fullName, getMonthDays, modifyEntityAndReload } from '@lib/utils'
-import { definitions } from '@types'
+import { enforceAuthenticated, fullName, getMonthDays, modifyEntityAndReload } from '@lib/utils'
 import exportToXLSX from '@services/exportService'
-import { ScheduleTable, Loader, ErrorMessage, Button } from '@components'
-import { enforceAuthenticated } from '@lib/utils'
 import {
     useSupabaseDeleteEntity,
     useSupabaseGetEntity,
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
+import { definitions } from '@types'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ru'
+import * as utc from 'dayjs/plugin/utc'
+import { Column } from 'exceljs'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import React, { useCallback, useMemo, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'react-iconly'
+
+dayjs.extend(utc.default)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -30,8 +32,11 @@ const Shifts: NextPage = () => {
     const { t } = useTranslation('schedule')
     const router = useRouter()
 
+    const currentLocale = router.locale?.split('-')[0] ?? 'en'
+    dayjs().locale(currentLocale)
+    
     // a dayjs object that represents the current month and year
-    const [month, setMonth] = useState(dayjs().locale(router.locale?.split('-')[0] ?? 'en'))
+    const [month, setMonth] = useState(dayjs.utc().startOf('month'))
 
     const { 
         data: shifts, 
@@ -86,7 +91,7 @@ const Shifts: NextPage = () => {
                             id: shift?.id ?? undefined,
                             employee_id: employee.id,
                             duration: cellValue,
-                            date: date.startOf('date').toString()
+                            date: date.toString()
                         })
                     }
                 }
