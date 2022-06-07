@@ -1,64 +1,85 @@
-import Table from '@components/Table'
-import NumberInputCell from '@components/NumberInputCell'
-import { SalaryTableRow } from '@interfaces'
-import { useTranslation } from 'next-i18next'
 import React, { useMemo } from 'react'
+import { useTranslation } from 'next-i18next'
 import { Column } from 'react-table'
+import { BonusInputCell, CurrencyCell, NumberInputCell, Table } from '@components'
+import { IBonusInput, IPrepaidExpense, IRetention, SalaryTableRow } from '@interfaces'
 
 interface ISalaryTable {
-  data: SalaryTableRow[]
+    data: SalaryTableRow[],
+    toggleModalForBonus: (bonus: IBonusInput) => void
 }
 
-const SalaryTable: React.FC<ISalaryTable> = ({ data }: ISalaryTable) => {
-    // TODO: internationalize this page
-    const { t } = useTranslation('schedule')
+const SalaryTable: React.FC<ISalaryTable> = ({ data, toggleModalForBonus }: ISalaryTable) => {
+    const { t } = useTranslation('salary')
 
     const columns: Column<SalaryTableRow>[] = useMemo(
         () => [
             { 
-                Header: <h6>Employee</h6>,
+                Header: <h1>{t('table.employee')}</h1>,
                 accessor: 'employeeName'
             },
             { 
-                Header: <h6>Hourly Wage</h6>,
+                Header: <h1>{t('table.hourlyWage')}</h1>,
                 accessor: 'hourlySalary',
-                Cell: ({ value }) => <>{value} UAH/hr</>
             },
             { 
-                Header: <h6>Total Hours</h6>,
+                Header: <h1>{t('table.hoursTotal')}</h1>,
                 accessor: 'hoursTotal',
-                Cell: ({ value }) => <>{value} hrs</>
             },
             { 
-                Header: <h6>Total Salary</h6>,
+                Header: <h1>{t('table.salaryTotal')}</h1>,
                 accessor: 'salaryTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: CurrencyCell
             },
             { 
-                Header: <h6>Sales Income</h6>,
+                Header: <h1>{t('table.salesIncomeTotal')}</h1>,
                 accessor: 'salesIncomeTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: CurrencyCell
             },
             { 
-                Header: <h6>Deductions</h6>,
+                Header: <h1>{t('table.deductionsTotal')}</h1>,
                 accessor: 'deductionsTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: CurrencyCell
             },
             { 
-                Header: <h6>Bonus</h6>,
+                Header: <h1>{t('table.prepaidExpense')}</h1>,
+                accessor: 'prepaidExpenseDto',
+                Cell: ({ value }: { value: IPrepaidExpense }) =>
+                    <NumberInputCell
+                        value={value.value.amount ?? 0}
+                        onBlur={value.onAmountChange}
+                        widthStyle='w-16'
+                    />
+            },
+            {
+                Header: <h1>{t('table.retention')}</h1>,
+                accessor: 'retentionDto',
+                Cell: ({ value }: { value: IRetention }) =>
+                    <NumberInputCell
+                        value={value.value.amount ?? 0}
+                        onBlur={value.onAmountChange}
+                        widthStyle='w-16'
+                    />
+            },
+            {
+                Header: <h1>{t('table.bonus')}</h1>,
                 accessor: 'bonusDto',
-                Cell: ({ value: bonusDto }) => <NumberInputCell value={bonusDto.initialValue} onBlur={bonusDto.onChange} widthStyle='w-20'/>
+                Cell: ({ value: bonusDto }) =>
+                    <BonusInputCell
+                        bonus={bonusDto}
+                        toggleModalForBonus={() => toggleModalForBonus(bonusDto)}
+                    />
             },
             { 
-                Header: <h6>Total Income</h6>,
+                Header: <h1>{t('table.incomeTotal')}</h1>,
                 accessor: 'incomeTotal',
-                Cell: ({ value }) => <>{value} UAH</>
+                Cell: CurrencyCell
             },
         ],
-        []
+        [t, toggleModalForBonus]
     )
 
-    return <Table columns={columns} data={data} tableSpacing='px-1' />
+    return <Table columns={columns} data={data} tableSpacing='px-2' />
 }
 
 export default SalaryTable

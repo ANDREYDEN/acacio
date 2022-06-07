@@ -2,6 +2,7 @@ import { supabase } from '@client'
 import { definitions } from '@types'
 import dayjs from 'dayjs'
 import { GetServerSideProps } from 'next'
+import { KeyedMutator } from 'swr'
 
 export function enforceAuthenticated(inner?: GetServerSideProps): GetServerSideProps {
     return async context => {
@@ -18,11 +19,8 @@ export function enforceAuthenticated(inner?: GetServerSideProps): GetServerSideP
     }
 }
 
-export function snakeCaseToPascalCase(input: string): string {
-    return input
-        .split('_')
-        .map(word => word[0].toUpperCase() + word.substring(1))
-        .join(' ')
+export function roundValue(value: number) {
+    return Math.round(value * 100) / 100
 }
 
 /**
@@ -38,8 +36,44 @@ export function getMonthDays(month: dayjs.Dayjs): dayjs.Dayjs[] {
     return dateRange
 }
 
-export function fullName(employee: definitions['employees']) {
+export function fullName(employee: definitions['employees']): string {
     if (!employee.last_name) return employee.first_name
 
     return `${employee.first_name} ${employee.last_name}`
+}
+
+export function capitalizeWord(word: string): string {
+    return `${word[0]?.toUpperCase()}${word.slice(1)}`
+}
+
+type UpdatableEntity = Partial<{ id: number }>
+
+export async function modifyEntityAndReload(
+    entity: UpdatableEntity, entities: UpdatableEntity[], revalidateEntities: KeyedMutator<any>,
+    upsertEntity: KeyedMutator<any>, deleteEntities: KeyedMutator<any>, toBeDeleted: boolean) {
+    // add
+    if (!entity.id) {
+        return await revalidateEntities(async () => {
+            await upsertEntity(entity)
+            return [...entities, entity]
+        })
+    }
+
+    // delete
+    if (toBeDeleted) {
+        return await revalidateEntities(async () => {
+            await deleteEntities(entity.id!)
+            return entities.filter(e => e.id !== entity.id)
+        })
+    }
+
+    // update
+    return await revalidateEntities(async () => {
+        await upsertEntity(entity)
+        return entities.map(e => e.id === entity.id ? entity : e)
+    })
+}
+
+export function convertToKebabCase(entityType: string): string {
+    return entityType.replace('_', '-')
 }

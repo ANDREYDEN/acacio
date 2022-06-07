@@ -6,12 +6,16 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const { route } = req.query
+    const { route, dateFrom, dateTo, type, waste_id, supply_id } = req.query
+
     try {
         const { data } = await posterInstance.get(route as string, {
             params: {
-                dateFrom: dayjs().startOf('month').format('YYYYMMDD'),
-                dateTo: dayjs().endOf('month').format('YYYYMMDD')
+                dateFrom: dateFrom ?? dayjs().startOf('month').format('YYYYMMDD'),
+                dateTo: dateTo ?? dayjs().endOf('month').format('YYYYMMDD'),
+                type,
+                waste_id,
+                supply_id
             }
         })
         if (data.error) throw data.error

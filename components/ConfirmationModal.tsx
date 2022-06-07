@@ -1,8 +1,7 @@
-import Button from '@components/Button'
-import Image from 'next/image'
-import Modal from '@components/Modal'
 import React from 'react'
 import { useTranslation } from 'next-i18next'
+import Image from 'next/image'
+import { Button, Modal } from '@components'
 
 interface IConfirmationModal {
     header: string

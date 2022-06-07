@@ -4,7 +4,7 @@
     "name": "Имя",
     "role": "Должность",
     "birth_date": "Дата рождения",
-    "salary": "Зарплата",
+    "salary": "Зарплата(₴/ч)",
     "revenue_percentage": "% от выторга дня"
   },
   "add_employee": "Добавить сотрудника",
@@ -21,14 +21,15 @@
     "first_name_placeholder": "Введите имя сотрудника",
     "last_name_placeholder": "Введите фамилию сотрудника",
     "role_placeholder": "Выберите должность",
-    "salary_placeholder": "0 грн",
+    "salary_placeholder": "0₴/ч",
     "first_name_required": "Необходимо имя",
     "role_required": "Необходима дожность",
     "salary_required": "Необходима зарплата",
-    "salary_negative": "Зарплата не может быть ниже 0",
+    "salary_negative": "Зарплата не может быть меньше 0",
     "income_percentage_required": "Процент от выторга дня необходим",
-    "min_revenue": "Процент от выторга дня не может быть ниже 0",
-    "max_revenue": "Процент от выторга дня не может быть выше 100"
+    "min_revenue": "Процент от выторга дня не может быть меньше 0",
+    "max_revenue": "Процент от выторга дня не может быть выше 100",
+    "income_percentage_pattern": "Неправильный формат"
   },
   "add_confirmation_modal": {
     "header": "Сотрудник был добавлен",

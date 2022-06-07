@@ -1,12 +1,10 @@
 import React, { ReactElement, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import Modal from '@components/Modal'
-import Button from '@components/Button'
-import { definitions } from '@types'
-import TextInput from '@components/TextInput'
-import ValidatedDropdown from '@components/ValidatedDropdown'
-import { IDropdownOption } from '@interfaces'
 import { useTranslation } from 'next-i18next'
+import { Modal, Button, TextInput, ValidatedDropdown } from '@components'
+import { definitions } from '@types'
+import { IValidatedDropdownItem } from '@interfaces'
+import { capitalizeWord } from '@lib/utils'
 
 interface IEmployeeModal {
     onUpsertEmployee: (currentEmployee: Partial<definitions['employees']>) => Promise<void>
@@ -41,14 +39,15 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
     })
     register('income_percentage', {
         required: t('modal.income_percentage_required').toString(),
+        pattern: { value: /^[0-9]+(\.[0-9]*)?$/, message: t('modal.income_percentage_pattern') },
         min: { value: 0, message: t('modal.min_revenue').toString() },
         max: { value: 100, message: t('modal.max_revenue').toString() }
     })
 
-    const preparedRolesOptions: IDropdownOption[] = employeeRoles.map(role => {
+    const preparedRolesOptions: IValidatedDropdownItem[] = employeeRoles.map(role => {
         return {
             value: role.id,
-            label: `${role.name[0]?.toUpperCase()}${role.name.slice(1)}`
+            label: capitalizeWord(role.name)
         }
     })
 
@@ -61,7 +60,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
             role_id: data.role_id,
             birth_date: data.birth_date === '' ? null : data.birth_date,
             salary: data.salary,
-            income_percentage: data.income_percentage
+            income_percentage: +data.income_percentage
         }
         if (employee) currentEmployee.id = employee.id
 
@@ -129,7 +128,7 @@ const EmployeeModal: React.FC<IEmployeeModal> = ({
                 trigger={trigger}
             />
             <TextInput
-                type='number'
+                type='text'
                 name='income_percentage'
                 label={t('modal.income_percentage')}
                 placeholder='0%'

@@ -1,8 +1,7 @@
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import TextInput from './TextInput'
-import Button from './Button'
 import { useTranslation } from 'next-i18next'
+import { useForm } from 'react-hook-form'
+import { Button,TextInput } from '@components'
 
 interface ILoginForm {
     handleLogin: (email: string, password: string) => Promise<void>
@@ -16,7 +15,7 @@ const LoginForm: React.FC<ILoginForm> = ({ handleLogin, loading }: ILoginForm) =
         password: ''
     }
     const { register, handleSubmit, trigger, control } = useForm({ defaultValues })
-    register('email', { required: t('form.email_updated').toString() })
+    register('email', { required: t('form.email_required').toString() })
     register('password', { required: t('form.password_required').toString() })
 
     const handleForm = async (data: any) => {
