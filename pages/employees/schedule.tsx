@@ -1,24 +1,26 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { NextPage } from 'next'
-import dayjs from 'dayjs'
-import 'dayjs/locale/ru'
-import { useTranslation } from 'next-i18next'
-import { Column } from 'exceljs'
-import { ChevronLeft, ChevronRight } from 'react-iconly'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
+import { Button, ErrorMessage, Loader, ScheduleTable } from '@components'
 import { ScheduleTableRow } from '@interfaces'
-import { fullName, getMonthDays } from '@lib/utils'
-import { definitions } from '@types'
+import { enforceAuthenticated, fullName, getMonthDays, modifyEntityAndReload } from '@lib/utils'
 import exportToXLSX from '@services/exportService'
-import { ScheduleTable, Loader, ErrorMessage, Button } from '@components'
-import { enforceAuthenticated } from '@lib/utils'
 import {
     useSupabaseDeleteEntity,
-    useSupabaseGetEmployees,
+    useSupabaseGetEntity,
     useSupabaseGetShifts,
     useSupabaseUpsertEntity
 } from '@services/supabase'
+import { definitions } from '@types'
+import dayjs from 'dayjs'
+import 'dayjs/locale/ru'
+import * as utc from 'dayjs/plugin/utc'
+import { Column } from 'exceljs'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import React, { useCallback, useMemo, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'react-iconly'
+
+dayjs.extend(utc.default)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -30,8 +32,11 @@ const Shifts: NextPage = () => {
     const { t } = useTranslation('schedule')
     const router = useRouter()
 
+    const currentLocale = router.locale?.split('-')[0] ?? 'en'
+    dayjs().locale(currentLocale)
+    
     // a dayjs object that represents the current month and year
-    const [month, setMonth] = useState(dayjs().locale(router.locale?.split('-')[0] ?? 'en'))
+    const [month, setMonth] = useState(dayjs.utc().startOf('month'))
 
     const { 
         data: shifts, 
@@ -43,7 +48,7 @@ const Shifts: NextPage = () => {
         data: employees, 
         loading: employeesLoading, 
         error: employeesError
-    } = useSupabaseGetEmployees()
+    } = useSupabaseGetEntity<definitions['employees']>('employees')
     const { 
         upsertEntity: upsertShift, 
         error: upsertShiftError 
@@ -67,30 +72,10 @@ const Shifts: NextPage = () => {
         return shifts.find((otherShift) => employee_id === otherShift.employee_id && dayjs(date).isSame(dayjs(otherShift.date), 'date'))
     }, [shifts])
 
-    const modifyShiftAndReload = useCallback(async (shift: Partial<definitions['shifts']>) => {
-        // add
-        if (!shift.id) {
-            delete shift['id']
-            return await revalidateShifts(async () => {
-                await upsertShift(shift)
-                return [...shifts, shift]
-            })
-        }
-
-        // delete
-        if (shift.duration === 0) {
-            return await revalidateShifts(async () => {
-                await deleteShift(shift.id!)
-                return shifts.filter((s) => s.id !== shift.id)
-            })
-        }
-
-        // update
-        return await revalidateShifts(async () => {
-            await upsertShift(shift)  
-            return shifts.map((s) => s.id === shift.id ? shift : s)
-        })
-    }, [deleteShift, revalidateShifts, shifts, upsertShift])
+    const modifyShiftAndReload = useCallback((shift: Partial<definitions['shifts']>) =>
+        modifyEntityAndReload(shift, shifts, revalidateShifts, upsertShift, deleteShift, shift.duration === 0),
+    [deleteShift, revalidateShifts, shifts, upsertShift]
+    )
 
     const monthDays = getMonthDays(month)
   
@@ -106,7 +91,7 @@ const Shifts: NextPage = () => {
                             id: shift?.id ?? undefined,
                             employee_id: employee.id,
                             duration: cellValue,
-                            date: date.startOf('date').toString()
+                            date: date.toString()
                         })
                     }
                 }

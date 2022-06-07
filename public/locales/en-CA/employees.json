@@ -28,7 +28,8 @@
     "salary_negative": "Cannot be negative",
     "income_percentage_required": "Revenue percentage is required",
     "min_revenue": "Cannot be less than 0",
-    "max_revenue": "Cannot be more than 100"
+    "max_revenue": "Cannot be more than 100",
+    "income_percentage_pattern": "Invalid format"
   },
   "add_confirmation_modal": {
     "header": "Employee was added",

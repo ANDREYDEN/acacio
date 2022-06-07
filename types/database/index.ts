@@ -312,6 +312,198 @@ export interface paths {
       };
     };
   };
+  '/prepaid_expenses': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.prepaid_expenses.id'];
+          created_at?: parameters['rowFilter.prepaid_expenses.created_at'];
+          amount?: parameters['rowFilter.prepaid_expenses.amount'];
+          employee_id?: parameters['rowFilter.prepaid_expenses.employee_id'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['prepaid_expenses'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** prepaid_expenses */
+          prepaid_expenses?: definitions['prepaid_expenses'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.prepaid_expenses.id'];
+          created_at?: parameters['rowFilter.prepaid_expenses.created_at'];
+          amount?: parameters['rowFilter.prepaid_expenses.amount'];
+          employee_id?: parameters['rowFilter.prepaid_expenses.employee_id'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.prepaid_expenses.id'];
+          created_at?: parameters['rowFilter.prepaid_expenses.created_at'];
+          amount?: parameters['rowFilter.prepaid_expenses.amount'];
+          employee_id?: parameters['rowFilter.prepaid_expenses.employee_id'];
+        };
+        body: {
+          /** prepaid_expenses */
+          prepaid_expenses?: definitions['prepaid_expenses'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  '/retentions': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.retentions.id'];
+          created_at?: parameters['rowFilter.retentions.created_at'];
+          amount?: parameters['rowFilter.retentions.amount'];
+          employee_id?: parameters['rowFilter.retentions.employee_id'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['retentions'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** retentions */
+          retentions?: definitions['retentions'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.retentions.id'];
+          created_at?: parameters['rowFilter.retentions.created_at'];
+          amount?: parameters['rowFilter.retentions.amount'];
+          employee_id?: parameters['rowFilter.retentions.employee_id'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.retentions.id'];
+          created_at?: parameters['rowFilter.retentions.created_at'];
+          amount?: parameters['rowFilter.retentions.amount'];
+          employee_id?: parameters['rowFilter.retentions.employee_id'];
+        };
+        body: {
+          /** retentions */
+          retentions?: definitions['retentions'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   '/shifts': {
     get: {
       parameters: {
@@ -433,7 +625,7 @@ export interface definitions {
      * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
      */
     employee_id: number;
-    /** Format: double precision */
+    /** Format: bigint */
     amount: number;
     /** Format: text */
     reason?: string;
@@ -479,10 +671,53 @@ export interface definitions {
     role_id: number;
     /** Format: date */
     birth_date?: string;
-    /** Format: double precision */
+    /** Format: bigint */
     salary: number;
-    /** Format: smallint */
+    /** Format: numeric */
     income_percentage: number;
+  };
+  prepaid_expenses: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: bigint */
+    amount?: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
+     */
+    employee_id?: number;
+  };
+  /** @description Retentions for employees from inventorization */
+  retentions: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: bigint */
+    amount?: number;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `employees.id`.<fk table='employees' column='id'/>
+     */
+    employee_id?: number;
   };
   /** @description Work shifts for employees */
   shifts: {
@@ -551,7 +786,7 @@ export interface parameters {
   'rowFilter.bonuses.created_at': string;
   /** Format: bigint */
   'rowFilter.bonuses.employee_id': string;
-  /** Format: double precision */
+  /** Format: bigint */
   'rowFilter.bonuses.amount': string;
   /** Format: text */
   'rowFilter.bonuses.reason': string;
@@ -577,10 +812,30 @@ export interface parameters {
   'rowFilter.employees.role_id': string;
   /** Format: date */
   'rowFilter.employees.birth_date': string;
-  /** Format: double precision */
+  /** Format: bigint */
   'rowFilter.employees.salary': string;
-  /** Format: smallint */
+  /** Format: numeric */
   'rowFilter.employees.income_percentage': string;
+  /** @description prepaid_expenses */
+  'body.prepaid_expenses': definitions['prepaid_expenses'];
+  /** Format: bigint */
+  'rowFilter.prepaid_expenses.id': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.prepaid_expenses.created_at': string;
+  /** Format: bigint */
+  'rowFilter.prepaid_expenses.amount': string;
+  /** Format: bigint */
+  'rowFilter.prepaid_expenses.employee_id': string;
+  /** @description retentions */
+  'body.retentions': definitions['retentions'];
+  /** Format: bigint */
+  'rowFilter.retentions.id': string;
+  /** Format: timestamp with time zone */
+  'rowFilter.retentions.created_at': string;
+  /** Format: bigint */
+  'rowFilter.retentions.amount': string;
+  /** Format: bigint */
+  'rowFilter.retentions.employee_id': string;
   /** @description shifts */
   'body.shifts': definitions['shifts'];
   /** Format: bigint */

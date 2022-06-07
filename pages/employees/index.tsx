@@ -18,12 +18,7 @@ import exportToXLSX from '@lib/services/exportService'
 import { enforceAuthenticated, fullName } from '@lib/utils'
 import { IEmployeesTableRow } from '@interfaces'
 import { useMounted } from '@lib/hooks'
-import {
-    useSupabaseDeleteEntity,
-    useSupabaseGetEmployeeRoles,
-    useSupabaseGetEmployees,
-    useSupabaseUpsertEntity
-} from '@services/supabase'
+import { useSupabaseDeleteEntity, useSupabaseGetEntity, useSupabaseUpsertEntity } from '@services/supabase'
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
     props: {
@@ -46,12 +41,12 @@ const Employees: NextPage = () => {
         loading: employeesLoading, 
         error: employeesError,
         mutate: revalidateEmployees
-    } = useSupabaseGetEmployees()
+    } = useSupabaseGetEntity<definitions['employees']>('employees')
     const {
         data: employeeRoles,
         loading: employeeRolesLoading,
         error: employeeRolesError
-    } = useSupabaseGetEmployeeRoles()
+    } = useSupabaseGetEntity<definitions['employee_roles']>('employee_roles')
     const { 
         upsertEntity: upsertEmployee,
         loading: upsertEmployeeLoading,

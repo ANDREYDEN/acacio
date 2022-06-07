@@ -7,6 +7,8 @@
     "salaryTotal": "Total wage(₴)",
     "salesIncomeTotal": "Sales income(₴)",
     "deductionsTotal": "Deductions(₴)",
+    "prepaidExpense": "Prepaid Expense(₴)",
+    "retention": "Retention from inventorization(₴)",
     "bonus": "Bonus(₴)",
     "incomeTotal": "Total income(₴)"
   },
