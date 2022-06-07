@@ -50,7 +50,8 @@ type UpdatableEntity = Partial<{ id: number }>
 
 export async function modifyEntityAndReload(
     entity: UpdatableEntity, entities: UpdatableEntity[], revalidateEntities: KeyedMutator<any>,
-    upsertEntity: KeyedMutator<any>, deleteEntities: KeyedMutator<any>, toBeDeleted: boolean) {
+    upsertEntity: KeyedMutator<any>, deleteEntity: KeyedMutator<any>, toBeDeleted: boolean
+){
     // add
     if (!entity.id) {
         return await revalidateEntities(async () => {
@@ -62,7 +63,7 @@ export async function modifyEntityAndReload(
     // delete
     if (toBeDeleted) {
         return await revalidateEntities(async () => {
-            await deleteEntities(entity.id!)
+            await deleteEntity(entity.id!)
             return entities.filter(e => e.id !== entity.id)
         })
     }
