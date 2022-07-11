@@ -67,8 +67,8 @@ const Stock: NextPage = () => {
         }))
         .filter(row => row.ingredientName.toLowerCase().includes(searchValue.toLowerCase()))
         .filter(row => {
-            return selectedCategories.length === 0 ? row : selectedCategories.some(category => {
-                return row.category.toLowerCase().includes(category.toLowerCase())
+            return selectedCategories.length === 0 ? true : selectedCategories.some(category => {
+                return row.category.toLowerCase() === category.toLowerCase()
             })
         })
         .filter(row => row.supplier.toLowerCase().includes(supplierFilter?.label.toLowerCase() ?? ''))
