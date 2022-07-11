@@ -209,8 +209,6 @@ export async function posterGetIngredientMovement(
 
 async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, ingredients: Ingredient[]) {
     const supplies: Supply[] = await posterGet('storage.getSupplies', params)
-    console.log(supplies)
-    
 
     await Promise.all(supplies.map(async (supply) => {
         try {
@@ -218,9 +216,6 @@ async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, i
                 'storage.getSupplyIngredients',
                 { supply_id: supply.supply_id }
             )
-            if (supply.supplier_name == 'Фоззи') {
-                console.log(supply, supplyIngredients)
-            }
             if (supplyIngredients.length === 0)
                 return
 
