@@ -193,7 +193,8 @@ const Stock: NextPage = () => {
                                 />
                                 <Multiselect
                                     label={t('category_label')}
-                                    icon={<Filter2 primaryColor='#B3B3B3' />}
+                                    icon={<Filter2 primaryColor={selectedCategories.length !== 0 ? 'white' : '#B3B3B3'} />}
+                                    canHaveEmptySelection={true}
                                     items={categoryOptions}
                                     onSelectionChanged={setSelectedCategories}
                                     selectedItems={selectedCategories}
