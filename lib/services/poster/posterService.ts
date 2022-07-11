@@ -209,6 +209,8 @@ export async function posterGetIngredientMovement(
 
 async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, ingredients: Ingredient[]) {
     const supplies: Supply[] = await posterGet('storage.getSupplies', params)
+    console.log(supplies)
+    
 
     await Promise.all(supplies.map(async (supply) => {
         try {
@@ -216,17 +218,21 @@ async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, i
                 'storage.getSupplyIngredients',
                 { supply_id: supply.supply_id }
             )
+            if (supply.supplier_name == 'Фоззи') {
+                console.log(supply, supplyIngredients)
+            }
             if (supplyIngredients.length === 0)
                 return
 
-            const lastSupply = supplyIngredients[0]
-            const ingredientId = lastSupply.ingredient_id
-            const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
-            if (!ingredient)
-                return
-
-            ingredient.supplier = supply.supplier_name
-            ingredient.last_supply = lastSupply.supply_ingredient_num.toString()
+            for (const supplyIngredient of supplyIngredients) {
+                const ingredientId = supplyIngredient.ingredient_id
+                const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
+                
+                if (ingredient && !ingredient.supplier) {
+                    ingredient.supplier = supply.supplier_name
+                    ingredient.last_supply = supplyIngredient.supply_ingredient_num.toString()
+                }
+            }
         } catch (e: any) {
             console.error(`Failed to fetch supply ingredients for supply ${supply.supply_id}`)
         }
