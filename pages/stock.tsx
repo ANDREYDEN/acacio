@@ -37,7 +37,7 @@ const Stock: NextPage = () => {
     const [dateFrom, setDateFrom] = useState(defaultDateFrom)
     const [dateTo, setDateTo] = useState(defaultDateTo)
     const [searchValue, setSearchValue] = useState('')
-    const [categoryFilter, setCategoryFilter] = useState<IDropdownItem | undefined>(undefined)
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [supplierFilter, setSupplierFilter] = useState<IDropdownItem | undefined>(undefined)
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
@@ -66,20 +66,24 @@ const Stock: NextPage = () => {
             }
         }))
         .filter(row => row.ingredientName.toLowerCase().includes(searchValue.toLowerCase()))
-        .filter(row => row.category.toLowerCase().includes(categoryFilter?.label.toLowerCase() ?? ''))
+        .filter(row => {
+            return selectedCategories.length === 0 ? true : selectedCategories.some(category => {
+                return row.category.toLowerCase() === category.toLowerCase()
+            })
+        })
         .filter(row => row.supplier.toLowerCase().includes(supplierFilter?.label.toLowerCase() ?? ''))
 
     const categoriesList = useMemo(
-        () => tableData.map(td => td.category).filter(category => category !== '-'),
+        () => rows?.map(row => row.category).filter(category => category !== '-') ?? [],
         [rows]
     )
-    const categoryOptions: IDropdownItem[] = categoriesList
+
+    const categoryOptions: string[] = categoriesList
         .filter((item, index) => categoriesList.indexOf(item) === index)
-        .map(category => ({ label: capitalizeWord(category), value: category }))
 
     const suppliersList = useMemo(
         () => tableData.map(td => td.supplier).filter(supplier => supplier !== '-'),
-        [rows]
+        [tableData]
     )
     const supplierOptions: IDropdownItem[] = suppliersList
         .filter((item, index) => suppliersList.indexOf(item) === index)
@@ -187,13 +191,13 @@ const Stock: NextPage = () => {
                                     selectedTimeframe={selectedTimeframe}
                                     setSelectedTimeframe={setSelectedTimeframe}
                                 />
-                                <Dropdown
+                                <Multiselect
                                     label={t('category_label')}
+                                    icon={<Filter2 primaryColor={selectedCategories.length !== 0 ? 'white' : '#B3B3B3'} />}
+                                    canHaveEmptySelection={true}
                                     items={categoryOptions}
-                                    onItemSelected={setCategoryFilter}
-                                    icon={<Filter2 primaryColor={categoryFilter ? 'white' : '#B3B3B3'} />}
-                                    withClearFilter={true}
-                                    selectedOption={categoryFilter?.label}
+                                    onSelectionChanged={setSelectedCategories}
+                                    selectedItems={selectedCategories}
                                 />
                                 <Dropdown
                                     label={t('supplier_label')}

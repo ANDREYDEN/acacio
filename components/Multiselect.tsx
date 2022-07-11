@@ -11,6 +11,7 @@ export interface IMultiselect {
     selectedItems?: string[]
     disabledItems?: string[]
     itemFormatter?: (item: string) => string
+    canHaveEmptySelection?: boolean
 }
 
 const Multiselect: React.FC<IMultiselect> = ({ 
@@ -21,7 +22,8 @@ const Multiselect: React.FC<IMultiselect> = ({
     onSelectionChanged, 
     selectedItems = [], 
     disabledItems = [], 
-    itemFormatter = i => i
+    itemFormatter = i => i,
+    canHaveEmptySelection = false
 }: IMultiselect) => {
     const handleItemSelected = (item: string) => {
         if (disabledItems.includes(item)) return
@@ -33,16 +35,22 @@ const Multiselect: React.FC<IMultiselect> = ({
         onSelectionChanged([...items])
     }
 
+    const isSomethingSelected = canHaveEmptySelection && selectedItems?.length !== 0
+    const chevronColor = isSomethingSelected ? 'white' : 'grey'
+
     return (
         <Popover className='relative'>
             {({ open }) => (
                 <>
                     <Popover.Button>
-                        <div className={`flex items-center justify-center w-44 space-x-2 p-2 rounded-lg font-body-bold 
-                                 text-sm border border-grey text-dark-grey ${open ? 'bg-secondary-background' : ''}`}>
+                        <div className={`flex items-center justify-center w-44 space-x-2 p-2 rounded-lg
+                                 text-sm border border-grey text-dark-grey font-body-bold
+                                 ${isSomethingSelected ? 'bg-blue' : (open ? 'bg-secondary-background' : '')}`}>
                             {icon}
-                            <span className={`text-left ${buttonClass}`}>{label}</span>
-                            {open ? <ChevronUp primaryColor='grey' /> : <ChevronDown primaryColor='grey' />}
+                            <span className={`text-left ${buttonClass} ${isSomethingSelected ? 'text-white' : ''}`}>
+                                {label}
+                            </span>
+                            {open ? <ChevronUp primaryColor={chevronColor} /> : <ChevronDown primaryColor={chevronColor} />}
                         </div>
                     </Popover.Button>
                     <Popover.Panel>
