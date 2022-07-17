@@ -9,7 +9,7 @@ import {
     TimeframeDropdown
 } from '@components'
 import { StockTableRow } from '@interfaces'
-import { posterGetIngredientMovement } from '@lib/services/poster'
+import { analyzeSupplies, posterGetIngredientMovement } from '@lib/services/poster'
 import { capitalizeWord, enforceAuthenticated } from '@lib/utils'
 import { IDropdownItem } from '@interfaces'
 import { NextPage } from 'next'
@@ -22,6 +22,7 @@ import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 import exportToXLSX from '@lib/services/exportService'
 import { Column } from 'exceljs'
+import { supabaseGetEntity } from '@lib/services/supabase'
 dayjs.extend(weekday)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -206,6 +207,10 @@ const Stock: NextPage = () => {
                                     icon={<Filter2 primaryColor={supplierFilter ? 'white' : '#B3B3B3'} />}
                                     withClearFilter={true}
                                     selectedOption={supplierFilter?.label}
+                                />
+                                <Button 
+                                    label='Refresh Suppliers' 
+                                    onClick={() => analyzeSupplies(dayjs().subtract(6, 'month').format('YYYYMMDD'))} 
                                 />
                             </div>
                             <Multiselect

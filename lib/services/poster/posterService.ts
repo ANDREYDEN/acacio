@@ -17,6 +17,7 @@ import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import useSWR from 'swr'
+import { supabaseGetEntity, supabaseUpsertEntity } from '../supabase'
 
 export const posterInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_POSTER_URL,
@@ -168,16 +169,19 @@ export async function posterGetIngredientMovement(
     const categories: IngredientCategory[] = await posterGet('menu.getCategoriesIngredients')
     const ingredients: Ingredient[] = await posterGet('menu.getIngredients')
 
-    // await addLastSupplyInfo(params, ingredients)
-    const { data: ingredientsInfo, error } = await supabase.from<definitions['ingredients']>('ingredients').select()
-    if (ingredientsInfo && !error) {
-        for (const ingredient of ingredients) {
-            const ingredientInfo = ingredientsInfo.find(i => i.id === ingredient.ingredient_id)
-            if (ingredientInfo) {
-                ingredient.supplier = ingredientInfo.supplier ?? '-'
-                ingredient.last_supply = ingredientInfo.last_supply ?? ''
+    try {
+        const ingredientsInfo = await supabaseGetEntity<definitions['ingredients']>('ingredients')
+        if (ingredientsInfo) {
+            for (const ingredient of ingredients) {
+                const ingredientInfo = ingredientsInfo.find(i => i.id === ingredient.ingredient_id)
+                if (ingredientInfo) {
+                    ingredient.supplier = ingredientInfo.supplier ?? '-'
+                    ingredient.last_supply = ingredientInfo.last_supply ?? ''
+                }
             }
         }
+    } catch (e) {
+        console.error(`Failed to get ingredients information: ${e}`)
     }
     
     const writeOffs = await getIngredientWriteOffs(params)
@@ -219,10 +223,11 @@ export async function posterGetIngredientMovement(
     })
 }
 
-async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, ingredients: Ingredient[]) {
-    const supplies: Supply[] = await posterGet('storage.getSupplies', params)
+export async function analyzeSupplies(dateFrom: string) {
+    const supplies: Supply[] = await posterGet('storage.getSupplies', { dateFrom })
 
-    await Promise.all(supplies.map(async (supply) => {
+    // analyze supplies from oldest to newest
+    await Promise.all(supplies.reverse().map(async (supply) => {
         try {
             const supplyIngredients: SupplyIngredient[] = await posterGet(
                 'storage.getSupplyIngredients',
@@ -233,12 +238,12 @@ async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, i
 
             for (const supplyIngredient of supplyIngredients) {
                 const ingredientId = supplyIngredient.ingredient_id
-                const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
-                
-                if (ingredient && !ingredient.supplier) {
-                    ingredient.supplier = supply.supplier_name
-                    ingredient.last_supply = supplyIngredient.supply_ingredient_num.toString()
-                }
+                const error = await supabaseUpsertEntity('ingredients', {
+                    id: ingredientId,
+                    supplier: supply.supplier_name,
+                    last_supply: supplyIngredient.supply_ingredient_num.toString()
+                })
+                if (error) throw new Error(error)
             }
         } catch (e: any) {
             console.error(`Failed to fetch supply ingredients for supply ${supply.supply_id}`)
