@@ -1,3 +1,4 @@
+import { supabase } from '@client'
 import { 
     Waste, 
     EmployeesMonthlyStatDto, 
@@ -167,7 +168,18 @@ export async function posterGetIngredientMovement(
     const categories: IngredientCategory[] = await posterGet('menu.getCategoriesIngredients')
     const ingredients: Ingredient[] = await posterGet('menu.getIngredients')
 
-    await addLastSupplyInfo(params, ingredients)
+    // await addLastSupplyInfo(params, ingredients)
+    const { data: ingredientsInfo, error } = await supabase.from<definitions['ingredients']>('ingredients').select()
+    if (ingredientsInfo && !error) {
+        for (const ingredient of ingredients) {
+            const ingredientInfo = ingredientsInfo.find(i => i.id === ingredient.ingredient_id)
+            if (ingredientInfo) {
+                ingredient.supplier = ingredientInfo.supplier ?? '-'
+                ingredient.last_supply = ingredientInfo.last_supply ?? ''
+            }
+        }
+    }
+    
     const writeOffs = await getIngredientWriteOffs(params)
 
     return (ingredientMovements ?? []).map(ingredientMovement => {
