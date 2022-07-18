@@ -22,7 +22,6 @@ import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 import exportToXLSX from '@lib/services/exportService'
 import { Column } from 'exceljs'
-import { supabaseGetEntity } from '@lib/services/supabase'
 dayjs.extend(weekday)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({

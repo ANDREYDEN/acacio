@@ -18,8 +18,7 @@ export const useSupabaseGetEntity = <T>(entityType: keyof definitions) => {
 }
 
 export const supabaseGetEntity = async <T>(entityType: keyof definitions): Promise<T[]> => {
-    const { data } = await apiGet(`/api/${convertToKebabCase(entityType)}`)
-
+    const data = await apiGet(`/api/${convertToKebabCase(entityType)}`)
     return data ? data as T[] : []
 }
 
