@@ -9,7 +9,7 @@ import {
     TimeframeDropdown
 } from '@components'
 import { StockTableRow } from '@interfaces'
-import { analyzeSupplies, posterGetIngredientMovement } from '@lib/services/poster'
+import { posterGetIngredientMovement } from '@lib/services/poster'
 import { capitalizeWord, enforceAuthenticated } from '@lib/utils'
 import { IDropdownItem } from '@interfaces'
 import { NextPage } from 'next'
@@ -40,8 +40,7 @@ const Stock: NextPage = () => {
     const [searchValue, setSearchValue] = useState('')
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [supplierFilter, setSupplierFilter] = useState<IDropdownItem | undefined>(undefined)
-    // const [showSupplyModal, setShowSupplyModal] = useState(false)
-    const [showSupplyModal, setShowSupplyModal] = useState(true)
+    const [showSupplyModal, setShowSupplyModal] = useState(false)
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -213,7 +212,7 @@ const Stock: NextPage = () => {
                                     selectedOption={supplierFilter?.label}
                                 />
                                 <Button 
-                                    label='Refresh Suppliers' 
+                                    label={t('suppliers_refresh')} 
                                     onClick={() => setShowSupplyModal(true)} 
                                 />
                             </div>

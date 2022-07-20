@@ -8,12 +8,12 @@ interface ISupplyModal {
 }
 
 const SupplyModal: React.FC<ISupplyModal> = ({ toggleModal }: ISupplyModal) => {
-    const { t } = useTranslation('common')
+    const { t } = useTranslation('stock')
 
     const { analyze, loading, error } = useAnalyzeSupplies()
     const [monthsBack, setMonthsBack] = useState(1)
 
-    const header = <h4 className='mt-10 mb-2'>Analyze Supplies</h4>
+    const header = <h4 className='mt-10 mb-2'>{t('supply_modal.header')}</h4>
 
     return (
         <Modal toggler={() => toggleModal(false)} header={header}>
@@ -32,9 +32,9 @@ const SupplyModal: React.FC<ISupplyModal> = ({ toggleModal }: ISupplyModal) => {
                                     max='480' 
                                     className='border mr-2' 
                                 />
-                                Months back
+                                {t('supply_modal.timeframe')}
                             </label>
-                            <Button label='Analyze' onClick={() => analyze(monthsBack)} />
+                            <Button label={t('supply_modal.action')} onClick={() => analyze(monthsBack)} />
                         </div>
                 }
             </div>
