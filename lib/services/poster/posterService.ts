@@ -15,6 +15,7 @@ import {
 import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import { useState } from 'react'
 import useSWR from 'swr'
 import { supabaseGetEntity, supabaseUpsertEntity } from '../supabase'
 
@@ -248,6 +249,24 @@ export async function analyzeSupplies(dateFrom: string) {
             console.error(`Failed to fetch supply ingredients for supply ${supply.supply_id}`)
         }
     }))
+}
+
+export function useAnalyzeSupplies() {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+    
+    const analyze = async (monthsBack: number) => {
+        try {
+            setLoading(true)
+            await analyzeSupplies(dayjs().subtract(monthsBack, 'month').format('YYYYMMDD'))
+        } catch (e: any) {
+            setError(e.toString())
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { analyze, loading, error }
 }
 
 async function getIngredientWriteOffs(params: { dateFrom: string; dateTo: string }) {
