@@ -5,16 +5,22 @@ import { useAnalyzeSupplies } from '@lib/services/poster'
 import NumberInputCell from '@components/NumberInputCell'
 
 interface ISupplyModal {
-    toggleModal: (visible: boolean) => void
+    toggleModal: (visible: boolean) => void,
+    onSuccess: () => void
 }
 
-const SupplyModal: React.FC<ISupplyModal> = ({ toggleModal }: ISupplyModal) => {
+const SupplyModal: React.FC<ISupplyModal> = ({ toggleModal, onSuccess }: ISupplyModal) => {
     const { t } = useTranslation('stock')
 
     const { analyze, loading, error } = useAnalyzeSupplies()
     const [monthsBack, setMonthsBack] = useState(1)
 
     const header = <h4>{t('supply_modal.header')}</h4>
+
+    const handleAnalyze = async () => {
+        await analyze(monthsBack)
+        onSuccess()
+    }
 
     return (
         <Modal toggler={() => toggleModal(false)} header={header}>
@@ -32,7 +38,7 @@ const SupplyModal: React.FC<ISupplyModal> = ({ toggleModal }: ISupplyModal) => {
                                 />
                                 {t('supply_modal.timeframe')}
                             </label>
-                            <Button label={t('supply_modal.action')} onClick={() => analyze(monthsBack)} />
+                            <Button label={t('supply_modal.action')} onClick={handleAnalyze} />
                         </div>
                 }
             </div>

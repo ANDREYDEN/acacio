@@ -25,5 +25,9 @@
     "header": "Analyze Supplies",
     "timeframe": "Months back",
     "action": "Analyze"
+  },
+  "confirmation_modal": {
+    "header": "Supplies analyzed successfuly",
+    "message": "The supplies for the specified period were successfuly analyzed and supplier information for appropriate ingredients was updated."
   }
 }
