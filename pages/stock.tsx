@@ -1,5 +1,6 @@
 import {
     Button,
+    ConfirmationModal,
     Dropdown,
     ErrorMessage,
     Loader,
@@ -22,6 +23,7 @@ import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 import exportToXLSX from '@lib/services/exportService'
 import { Column } from 'exceljs'
+import SupplyModal from '@components/SupplyModal'
 dayjs.extend(weekday)
 
 export const getServerSideProps = enforceAuthenticated(async (context: any) => ({
@@ -39,6 +41,8 @@ const Stock: NextPage = () => {
     const [searchValue, setSearchValue] = useState('')
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [supplierFilter, setSupplierFilter] = useState<IDropdownItem | undefined>(undefined)
+    const [showSupplyModal, setShowSupplyModal] = useState(false)
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false)
     const { t } = useTranslation('stock')
     const { t: timeframeTranslation } = useTranslation('timeframe')
 
@@ -49,8 +53,13 @@ const Stock: NextPage = () => {
         { label: timeframeTranslation('1_month'), value: dayjs().subtract(1, 'month') },
     ]
 
+    const handleSuppliersUpdateSuccess = () => { 
+        setShowSupplyModal(false)
+        setShowConfirmationModal(true)
+    }
+
     const { data: rows, error } = useSWR(
-        ['getIngredients', dateFrom, dateTo],
+        ['getIngredients', dateFrom.format('YYYYMMDD'), dateTo.format('YYYYMMDD')],
         () => posterGetIngredientMovement(dateFrom, dateTo)
     )
     const loading = !rows
@@ -164,6 +173,20 @@ const Stock: NextPage = () => {
 
     return (
         <div className='flex flex-col'>
+            {showSupplyModal && 
+                <SupplyModal 
+                    toggleModal={setShowSupplyModal} 
+                    onSuccess={handleSuppliersUpdateSuccess} 
+                />
+            }
+            {showConfirmationModal &&
+                <ConfirmationModal
+                    header={t('confirmation_modal.header')}
+                    toggleModal={setShowConfirmationModal}
+                    message={t('confirmation_modal.message')}
+                />
+            }
+
             <div className='w-full flex justify-between items-center mb-6'>
                 <h3>{t('header')}</h3>
                 <Button
@@ -206,6 +229,10 @@ const Stock: NextPage = () => {
                                     icon={<Filter2 primaryColor={supplierFilter ? 'white' : '#B3B3B3'} />}
                                     withClearFilter={true}
                                     selectedOption={supplierFilter?.label}
+                                />
+                                <Button 
+                                    label={t('suppliers_refresh')} 
+                                    onClick={() => setShowSupplyModal(true)} 
                                 />
                             </div>
                             <Multiselect
