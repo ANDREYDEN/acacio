@@ -169,20 +169,7 @@ export async function posterGetIngredientMovement(
     const categories: IngredientCategory[] = await posterGet('menu.getCategoriesIngredients')
     const ingredients: Ingredient[] = await posterGet('menu.getIngredients')
 
-    try {
-        const ingredientsInfo = await supabaseGetEntity<definitions['ingredients']>('ingredients')
-        if (ingredientsInfo) {
-            for (const ingredient of ingredients) {
-                const ingredientInfo = ingredientsInfo.find(i => i.id === ingredient.ingredient_id)
-                if (ingredientInfo) {
-                    ingredient.supplier = ingredientInfo.supplier ?? '-'
-                    ingredient.last_supply = ingredientInfo.last_supply ?? ''
-                }
-            }
-        }
-    } catch (e) {
-        console.error(`Failed to get ingredients information: ${e}`)
-    }
+    addLastSupplierInformation(ingredients)
     
     const writeOffs = await getIngredientWriteOffs(params)
 
@@ -221,6 +208,23 @@ export async function posterGetIngredientMovement(
             totalCost: finalBalance * ingredientMovement.cost_end,
         }
     })
+}
+
+async function addLastSupplierInformation(ingredients: Ingredient[]) {
+    try {
+        const ingredientsInfo = await supabaseGetEntity<definitions['ingredients']>('ingredients')
+        if (!ingredientsInfo) throw Error('No ingredient data returned')
+
+        for (const ingredient of ingredients) {
+            const ingredientInfo = ingredientsInfo.find(i => i.id === ingredient.ingredient_id)
+            if (!ingredientInfo) continue
+
+            ingredient.supplier = ingredientInfo.supplier ?? '-'
+            ingredient.last_supply = ingredientInfo.last_supply ?? ''
+        }
+    } catch (e) {
+        console.error(`Failed to get ingredients information: ${e}`)
+    }
 }
 
 export async function analyzeSupplies(dateFrom: string) {
