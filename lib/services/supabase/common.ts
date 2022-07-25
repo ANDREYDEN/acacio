@@ -17,6 +17,11 @@ export const useSupabaseGetEntity = <T>(entityType: keyof definitions) => {
     return { data: definedData, loading: !data, error: error?.toString(), mutate }
 }
 
+export const supabaseGetEntity = async <T>(entityType: keyof definitions): Promise<T[]> => {
+    const data = await apiGet(`/api/${convertToKebabCase(entityType)}`)
+    return data ? data as T[] : []
+}
+
 export const useSupabaseUpsertEntity = (entityType: keyof definitions) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -32,6 +37,14 @@ export const useSupabaseUpsertEntity = (entityType: keyof definitions) => {
     }
 
     return { upsertEntity, loading, error } 
+}
+
+export const supabaseUpsertEntity = async (
+    entityType: keyof definitions, 
+    entity: Partial<definitions[typeof entityType]>
+) => {
+    const { error } = await supabase.from<definitions[typeof entityType]>(entityType).upsert(entity)
+    return error?.message
 }
 
 export const useSupabaseDeleteEntity = (entityType: keyof definitions) => {

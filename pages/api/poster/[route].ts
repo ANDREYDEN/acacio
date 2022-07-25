@@ -12,7 +12,7 @@ export default async function handler(
         const { data } = await posterInstance.get(route as string, {
             params: {
                 dateFrom: dateFrom ?? dayjs().startOf('month').format('YYYYMMDD'),
-                dateTo: dateTo ?? dayjs().endOf('month').format('YYYYMMDD'),
+                dateTo: dateTo ?? dayjs().format('YYYYMMDD'),
                 type,
                 waste_id,
                 supply_id
