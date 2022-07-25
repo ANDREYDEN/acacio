@@ -14,41 +14,41 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data, toggleModalForBonus }: ISal
 
     const columns: Column<SalaryTableRow>[] = useMemo(
         () => [
-            { 
+            {
                 Header: <h1>{t('table.employee')}</h1>,
                 accessor: 'employeeName'
             },
-            { 
+            {
                 Header: <h1>{t('table.hourlyWage')}</h1>,
                 accessor: 'hourlySalary',
             },
-            { 
+            {
                 Header: <h1>{t('table.hoursTotal')}</h1>,
                 accessor: 'hoursTotal',
             },
-            { 
+            {
                 Header: <h1>{t('table.salaryTotal')}</h1>,
                 accessor: 'salaryTotal',
                 Cell: CurrencyCell
             },
-            { 
+            {
                 Header: <h1>{t('table.salesIncomeTotal')}</h1>,
                 accessor: 'salesIncomeTotal',
                 Cell: CurrencyCell
             },
-            { 
+            {
                 Header: <h1>{t('table.deductionsTotal')}</h1>,
                 accessor: 'deductionsTotal',
                 Cell: CurrencyCell
             },
-            { 
+            {
                 Header: <h1>{t('table.prepaidExpense')}</h1>,
                 accessor: 'prepaidExpenseDto',
                 Cell: ({ value }: { value: IPrepaidExpense }) =>
                     <NumberInputCell
                         value={value.value.amount ?? 0}
                         onBlur={value.onAmountChange}
-                        widthStyle='w-16'
+                        additionalStyle='w-16'
                     />
             },
             {
@@ -58,7 +58,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data, toggleModalForBonus }: ISal
                     <NumberInputCell
                         value={value.value.amount ?? 0}
                         onBlur={value.onAmountChange}
-                        widthStyle='w-16'
+                        additionalStyle='w-16'
                     />
             },
             {
@@ -70,7 +70,7 @@ const SalaryTable: React.FC<ISalaryTable> = ({ data, toggleModalForBonus }: ISal
                         toggleModalForBonus={() => toggleModalForBonus(bonusDto)}
                     />
             },
-            { 
+            {
                 Header: <h1>{t('table.incomeTotal')}</h1>,
                 accessor: 'incomeTotal',
                 Cell: CurrencyCell

@@ -3,14 +3,14 @@ import React, { useState } from 'react'
 interface INumberInputCell {
   value: number
   onBlur: (newValue: number) => void
-  widthStyle?: string
+  additionalStyle?: string
 }
 
-const NumberInputCell: React.FC<INumberInputCell> = ({ value, onBlur, widthStyle = 'w-6' }) => {
+const NumberInputCell: React.FC<INumberInputCell> = ({ value, onBlur, additionalStyle = 'w-6' }) => {
     const [cellValue, setCellValue] = useState<number>(value)
 
     return <input
-        className={`${widthStyle} h-10 text-center border border-grey rounded`}
+        className={`${additionalStyle} h-10 text-center border border-grey rounded`}
         type='number'
         value={cellValue}
         onChange={(e) => setCellValue(+e.target.value)}
