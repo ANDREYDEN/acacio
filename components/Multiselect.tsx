@@ -55,10 +55,10 @@ const Multiselect: React.FC<IMultiselect> = ({
                     </Popover.Button>
                     <Popover.Panel>
                         <div className='flex flex-col min-w-full items-start bg-white absolute right-0
-                                 space-y-2 z-10 mt-4 shadow-filter rounded-lg pt-2 pb-4 max-h-96 overflow-y-scroll'>
+                                 z-10 mt-4 shadow-filter rounded-lg py-2 max-h-96 overflow-y-scroll'>
                             <button
                                 onClick={() => selectAll()}
-                                className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 whitespace-nowrap'
+                                className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1 whitespace-nowrap'
                             >
                                 <span className='underline'><b>Select all</b></span>
                             </button>
@@ -68,15 +68,15 @@ const Multiselect: React.FC<IMultiselect> = ({
                                     <button
                                         key={item}
                                         onClick={() => handleItemSelected(item)}
-                                        className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 whitespace-nowrap'
+                                        className='w-full text-left hover:bg-blue hover:text-secondary-background px-4 py-1 whitespace-nowrap'
                                     >
                                         <input 
                                             type='checkbox' 
                                             checked={selectedItems.includes(item)} 
                                             disabled={disabledItems.includes(item)} 
-                                            className='mr-1 checked:bg-blue disabled:bg-secondary-background' 
+                                            className='mr-1 checked:bg-blue disabled:bg-secondary-background'
+                                            readOnly
                                         />
-                                        {/* // TODO: add labels (#95) */}
                                         {itemFormatter(item)}
                                     </button>
                                 )
