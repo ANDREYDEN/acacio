@@ -70,6 +70,7 @@ const Stock: NextPage = () => {
         .map(row => ({
             ...row,
             toOrder: {
+                id: row.ingredientId,
                 initialValue: orders[row.ingredientId] ?? row.toOrder.initialValue,
                 onChange: (newValue: number) => {
                     setOrders({ ...orders, [row.ingredientId]: newValue })
