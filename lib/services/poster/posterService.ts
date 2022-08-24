@@ -1,16 +1,16 @@
-import { 
-    Waste, 
-    EmployeesMonthlyStatDto, 
-    Ingredient, 
-    IngredientCategory, 
-    IngredientMovementVM, 
-    SalesData, 
-    SalesPerDay, 
-    StockTableRow, 
-    Supply, 
-    SupplyIngredient, 
-    WriteOff, 
-    WriteOffIngredient 
+import {
+    Waste,
+    EmployeesMonthlyStatDto,
+    Ingredient,
+    IngredientCategory,
+    IngredientMovementVM,
+    SalesData,
+    SalesPerDay,
+    StockTableRow,
+    Supply,
+    SupplyIngredient,
+    WriteOff,
+    WriteOffIngredient
 } from '@interfaces'
 import { definitions } from '@types'
 import axios from 'axios'
@@ -40,34 +40,34 @@ export function usePosterGetDeductionsForEmployees(employees: definitions['emplo
     const deductionsTotalsError = error?.toString()
 
     if (!wastes) {
-        return { 
-            deductionsTotals: {} as EmployeesMonthlyStatDto, 
-            deductionsTotalsLoading: !deductionsTotalsError, 
-            deductionsTotalsError 
+        return {
+            deductionsTotals: {} as EmployeesMonthlyStatDto,
+            deductionsTotalsLoading: !deductionsTotalsError,
+            deductionsTotalsError
         }
     }
 
     const deductionsTotals: EmployeesMonthlyStatDto = wastes.reduce((acc: EmployeesMonthlyStatDto, deduction) => {
-        const employee = employees.find(employee => 
-            deduction.reason_name?.toLowerCase().includes(employee.first_name.toLowerCase()) || 
+        const employee = employees.find(employee =>
+            deduction.reason_name?.toLowerCase().includes(employee.first_name.toLowerCase()) ||
             deduction.reason_name?.toLowerCase().includes(employee.last_name?.toLowerCase() ?? ''))
         if (!employee) return acc
-        
+
         return {
             ...acc,
             [employee.id]: (acc[employee.id] ?? 0) + (+deduction.total_sum / 100),
         }
     }, {})
 
-    return { 
-        deductionsTotals, 
-        deductionsTotalsLoading: !deductionsTotalsError && !deductionsTotals, 
+    return {
+        deductionsTotals,
+        deductionsTotalsLoading: !deductionsTotalsError && !deductionsTotals,
         deductionsTotalsError
     }
 }
 
 export function usePosterGetSalesIncomeForEmployees(
-    employees: definitions['employees'][], 
+    employees: definitions['employees'][],
     shifts: definitions['shifts'][]
 ) {
     const { data: sales, error } = useSWR<SalesData>('dash.getAnalytics', posterGet)
@@ -75,10 +75,10 @@ export function usePosterGetSalesIncomeForEmployees(
     const salesIncomeTotalsError = error?.toString()
 
     if (!sales) {
-        return { 
-            salesIncomeTotals: {} as EmployeesMonthlyStatDto, 
-            salesIncomeTotalsLoading: !salesIncomeTotalsError, 
-            salesIncomeTotalsError 
+        return {
+            salesIncomeTotals: {} as EmployeesMonthlyStatDto,
+            salesIncomeTotalsLoading: !salesIncomeTotalsError,
+            salesIncomeTotalsError
         }
     }
 
@@ -89,19 +89,19 @@ export function usePosterGetSalesIncomeForEmployees(
             .reduce(
                 (total, dateSales, date) => {
                     const currentDay = dayjs().set('date', date + 1)
-                    
+
                     const workHours = shifts
                         .find(shift => employee.id === shift.employee_id && dayjs(shift.date).isSame(currentDay, 'date'))
                         ?.duration ?? 0
                     return total + workHours * (employee.income_percentage / 100) * (+dateSales)
-                }, 
+                },
                 0
             )
     }
 
-    return { 
-        salesIncomeTotals, 
-        salesIncomeTotalsLoading: !salesIncomeTotalsError && !salesIncomeTotals, 
+    return {
+        salesIncomeTotals,
+        salesIncomeTotalsLoading: !salesIncomeTotalsError && !salesIncomeTotals,
         salesIncomeTotalsError
     }
 }
@@ -157,7 +157,7 @@ async function getSalesForDay(day: dayjs.Dayjs, type?: string) {
 }
 
 export async function posterGetIngredientMovement(
-    dateFrom: dayjs.Dayjs, 
+    dateFrom: dayjs.Dayjs,
     dateTo: dayjs.Dayjs
 ): Promise<StockTableRow[]> {
     const params = {
@@ -170,7 +170,7 @@ export async function posterGetIngredientMovement(
     const ingredients: Ingredient[] = await posterGet('menu.getIngredients')
 
     addLastSupplierInformation(ingredients)
-    
+
     const writeOffs = await getIngredientWriteOffs(params)
 
     return (ingredientMovements ?? []).map(ingredientMovement => {
@@ -202,9 +202,10 @@ export async function posterGetIngredientMovement(
             finalBalanceCost: 0, // TODO: ask client if this is the same as totalCost
             reorder: reorder.toString(),
             toOrder: {
+                id: ingredientMovement.ingredient_id,
                 initialValue: reorder,
                 onChange: () => {} // gets reassigned later
-            }, 
+            },
             totalCost: finalBalance * ingredientMovement.cost_end,
         }
     })
@@ -258,7 +259,7 @@ export async function analyzeSupplies(dateFrom: string) {
 export function useAnalyzeSupplies() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
-    
+
     const analyze = async (monthsBack: number) => {
         try {
             setLoading(true)

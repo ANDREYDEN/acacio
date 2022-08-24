@@ -53,7 +53,7 @@ const Stock: NextPage = () => {
         { label: timeframeTranslation('1_month'), value: dayjs().subtract(1, 'month') },
     ]
 
-    const handleSuppliersUpdateSuccess = () => { 
+    const handleSuppliersUpdateSuccess = () => {
         setShowSupplyModal(false)
         setShowConfirmationModal(true)
     }
@@ -65,13 +65,16 @@ const Stock: NextPage = () => {
     const loading = !rows
 
     const [orders, setOrders] = useState<Record<string, number>>({}) // TODO: use this to persist orders
-    
+
     const tableData: StockTableRow[] = (rows ?? [])
         .map(row => ({
             ...row,
             toOrder: {
-                ...row.toOrder,
-                onChange: (newValue: number) => setOrders({ ...orders, [row.ingredientId]: newValue })
+                id: row.ingredientId,
+                initialValue: orders[row.ingredientId] ?? row.toOrder.initialValue,
+                onChange: (newValue: number) => {
+                    setOrders({ ...orders, [row.ingredientId]: newValue })
+                }
             }
         }))
         .filter(row => row.ingredientName.toLowerCase().includes(searchValue.toLowerCase()))
@@ -163,8 +166,8 @@ const Stock: NextPage = () => {
         }
 
         const columns: Partial<Column>[] = selectedColumns.map(accessor => ({
-            key: accessor, 
-            header: t(`table_headers.${accessor}`).toString(), 
+            key: accessor,
+            header: t(`table_headers.${accessor}`).toString(),
             width: columnWidths[accessor]
         }))
 
@@ -173,10 +176,10 @@ const Stock: NextPage = () => {
 
     return (
         <div className='flex flex-col'>
-            {showSupplyModal && 
-                <SupplyModal 
-                    toggleModal={setShowSupplyModal} 
-                    onSuccess={handleSuppliersUpdateSuccess} 
+            {showSupplyModal &&
+                <SupplyModal
+                    toggleModal={setShowSupplyModal}
+                    onSuccess={handleSuppliersUpdateSuccess}
                 />
             }
             {showConfirmationModal &&
@@ -230,9 +233,9 @@ const Stock: NextPage = () => {
                                     withClearFilter={true}
                                     selectedOption={supplierFilter?.label}
                                 />
-                                <Button 
-                                    label={t('suppliers_refresh')} 
-                                    onClick={() => setShowSupplyModal(true)} 
+                                <Button
+                                    label={t('suppliers_refresh')}
+                                    onClick={() => setShowSupplyModal(true)}
                                 />
                             </div>
                             <Multiselect

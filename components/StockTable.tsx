@@ -85,7 +85,8 @@ const StockTable: React.FC<IStockTable> = ({ data, selectedColumns }: IStockTabl
             {
                 Header: <h1>{t('table_headers.toOrder').toString()}</h1>,
                 accessor: 'toOrder',
-                Cell: ({ value }: { value: IRowInput}) => <NumberInputCell value={roundValue(value.initialValue)} onBlur={value.onChange} additionalStyle='w-16' />
+                Cell: ({ value }: { value: IRowInput }) =>
+                    <NumberInputCell key={value.id} value={roundValue(value.initialValue)} onBlur={value.onChange} additionalStyle='w-16'/>
             },
             {
                 Header: <h1>{t('table_headers.totalCost').toString()}</h1>,

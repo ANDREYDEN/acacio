@@ -19,7 +19,7 @@ This project contains a `.nvmrc` file with the desired node version. If you are 
 
 Set up the environment variables
 ```bash
-cp .env .env.production.local
+cp .env .env.development.local
 ```
 
 Install dependencies
