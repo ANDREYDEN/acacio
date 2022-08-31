@@ -7,6 +7,7 @@ export interface IRowAction {
 }
 
 export interface IRowInput {
+    id: string
     onChange: (newValue: number) => void
     initialValue: number
 }

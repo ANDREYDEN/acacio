@@ -19,5 +19,15 @@
     "totalCost": "Total Cost"
   },
   "category_label": "Category",
-  "supplier_label": "Supplier"
+  "supplier_label": "Supplier",
+  "suppliers_refresh": "Refresh suppliers",
+  "supply_modal": {
+    "header": "Analyze Supplies",
+    "timeframe": "Months back",
+    "action": "Analyze"
+  },
+  "confirmation_modal": {
+    "header": "Supplies analyzed successfuly",
+    "message": "The supplies for the specified period were successfuly analyzed and supplier information for appropriate ingredients was updated."
+  }
 }

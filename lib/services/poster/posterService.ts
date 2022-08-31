@@ -1,21 +1,23 @@
-import { 
-    Waste, 
-    EmployeesMonthlyStatDto, 
-    Ingredient, 
-    IngredientCategory, 
-    IngredientMovementVM, 
-    SalesData, 
-    SalesPerDay, 
-    StockTableRow, 
-    Supply, 
-    SupplyIngredient, 
-    WriteOff, 
-    WriteOffIngredient 
+import {
+    Waste,
+    EmployeesMonthlyStatDto,
+    Ingredient,
+    IngredientCategory,
+    IngredientMovementVM,
+    SalesData,
+    SalesPerDay,
+    StockTableRow,
+    Supply,
+    SupplyIngredient,
+    WriteOff,
+    WriteOffIngredient
 } from '@interfaces'
 import { definitions } from '@types'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import { useState } from 'react'
 import useSWR from 'swr'
+import { supabaseGetEntity, supabaseUpsertEntity } from '../supabase'
 
 export const posterInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_POSTER_URL,
@@ -38,34 +40,34 @@ export function usePosterGetDeductionsForEmployees(employees: definitions['emplo
     const deductionsTotalsError = error?.toString()
 
     if (!wastes) {
-        return { 
-            deductionsTotals: {} as EmployeesMonthlyStatDto, 
-            deductionsTotalsLoading: !deductionsTotalsError, 
-            deductionsTotalsError 
+        return {
+            deductionsTotals: {} as EmployeesMonthlyStatDto,
+            deductionsTotalsLoading: !deductionsTotalsError,
+            deductionsTotalsError
         }
     }
 
     const deductionsTotals: EmployeesMonthlyStatDto = wastes.reduce((acc: EmployeesMonthlyStatDto, deduction) => {
-        const employee = employees.find(employee => 
-            deduction.reason_name?.toLowerCase().includes(employee.first_name.toLowerCase()) || 
+        const employee = employees.find(employee =>
+            deduction.reason_name?.toLowerCase().includes(employee.first_name.toLowerCase()) ||
             deduction.reason_name?.toLowerCase().includes(employee.last_name?.toLowerCase() ?? ''))
         if (!employee) return acc
-        
+
         return {
             ...acc,
             [employee.id]: (acc[employee.id] ?? 0) + (+deduction.total_sum / 100),
         }
     }, {})
 
-    return { 
-        deductionsTotals, 
-        deductionsTotalsLoading: !deductionsTotalsError && !deductionsTotals, 
+    return {
+        deductionsTotals,
+        deductionsTotalsLoading: !deductionsTotalsError && !deductionsTotals,
         deductionsTotalsError
     }
 }
 
 export function usePosterGetSalesIncomeForEmployees(
-    employees: definitions['employees'][], 
+    employees: definitions['employees'][],
     shifts: definitions['shifts'][]
 ) {
     const { data: sales, error } = useSWR<SalesData>('dash.getAnalytics', posterGet)
@@ -73,10 +75,10 @@ export function usePosterGetSalesIncomeForEmployees(
     const salesIncomeTotalsError = error?.toString()
 
     if (!sales) {
-        return { 
-            salesIncomeTotals: {} as EmployeesMonthlyStatDto, 
-            salesIncomeTotalsLoading: !salesIncomeTotalsError, 
-            salesIncomeTotalsError 
+        return {
+            salesIncomeTotals: {} as EmployeesMonthlyStatDto,
+            salesIncomeTotalsLoading: !salesIncomeTotalsError,
+            salesIncomeTotalsError
         }
     }
 
@@ -87,19 +89,19 @@ export function usePosterGetSalesIncomeForEmployees(
             .reduce(
                 (total, dateSales, date) => {
                     const currentDay = dayjs().set('date', date + 1)
-                    
+
                     const workHours = shifts
                         .find(shift => employee.id === shift.employee_id && dayjs(shift.date).isSame(currentDay, 'date'))
                         ?.duration ?? 0
                     return total + workHours * (employee.income_percentage / 100) * (+dateSales)
-                }, 
+                },
                 0
             )
     }
 
-    return { 
-        salesIncomeTotals, 
-        salesIncomeTotalsLoading: !salesIncomeTotalsError && !salesIncomeTotals, 
+    return {
+        salesIncomeTotals,
+        salesIncomeTotalsLoading: !salesIncomeTotalsError && !salesIncomeTotals,
         salesIncomeTotalsError
     }
 }
@@ -155,7 +157,7 @@ async function getSalesForDay(day: dayjs.Dayjs, type?: string) {
 }
 
 export async function posterGetIngredientMovement(
-    dateFrom: dayjs.Dayjs, 
+    dateFrom: dayjs.Dayjs,
     dateTo: dayjs.Dayjs
 ): Promise<StockTableRow[]> {
     const params = {
@@ -167,7 +169,8 @@ export async function posterGetIngredientMovement(
     const categories: IngredientCategory[] = await posterGet('menu.getCategoriesIngredients')
     const ingredients: Ingredient[] = await posterGet('menu.getIngredients')
 
-    await addLastSupplyInfo(params, ingredients)
+    addLastSupplierInformation(ingredients)
+
     const writeOffs = await getIngredientWriteOffs(params)
 
     return (ingredientMovements ?? []).map(ingredientMovement => {
@@ -199,18 +202,37 @@ export async function posterGetIngredientMovement(
             finalBalanceCost: 0, // TODO: ask client if this is the same as totalCost
             reorder: reorder.toString(),
             toOrder: {
+                id: ingredientMovement.ingredient_id,
                 initialValue: reorder,
                 onChange: () => {} // gets reassigned later
-            }, 
+            },
             totalCost: finalBalance * ingredientMovement.cost_end,
         }
     })
 }
 
-async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, ingredients: Ingredient[]) {
-    const supplies: Supply[] = await posterGet('storage.getSupplies', params)
+async function addLastSupplierInformation(ingredients: Ingredient[]) {
+    try {
+        const ingredientsInfo = await supabaseGetEntity<definitions['ingredients']>('ingredients')
+        if (!ingredientsInfo) throw Error('No ingredient data returned')
 
-    await Promise.all(supplies.map(async (supply) => {
+        for (const ingredient of ingredients) {
+            const ingredientInfo = ingredientsInfo.find(i => i.id === ingredient.ingredient_id)
+            if (!ingredientInfo) continue
+
+            ingredient.supplier = ingredientInfo.supplier ?? '-'
+            ingredient.last_supply = ingredientInfo.last_supply ?? ''
+        }
+    } catch (e) {
+        console.error(`Failed to get ingredients information: ${e}`)
+    }
+}
+
+export async function analyzeSupplies(dateFrom: string) {
+    const supplies: Supply[] = await posterGet('storage.getSupplies', { dateFrom })
+
+    // analyze supplies from oldest to newest
+    await Promise.all(supplies.reverse().map(async (supply) => {
         try {
             const supplyIngredients: SupplyIngredient[] = await posterGet(
                 'storage.getSupplyIngredients',
@@ -221,17 +243,35 @@ async function addLastSupplyInfo(params: { dateFrom: string; dateTo: string }, i
 
             for (const supplyIngredient of supplyIngredients) {
                 const ingredientId = supplyIngredient.ingredient_id
-                const ingredient = ingredients.find(i => i.ingredient_id === ingredientId)
-                
-                if (ingredient && !ingredient.supplier) {
-                    ingredient.supplier = supply.supplier_name
-                    ingredient.last_supply = supplyIngredient.supply_ingredient_num.toString()
-                }
+                const error = await supabaseUpsertEntity('ingredients', {
+                    id: ingredientId,
+                    supplier: supply.supplier_name,
+                    last_supply: supplyIngredient.supply_ingredient_num.toString()
+                })
+                if (error) throw new Error(error)
             }
         } catch (e: any) {
             console.error(`Failed to fetch supply ingredients for supply ${supply.supply_id}`)
         }
     }))
+}
+
+export function useAnalyzeSupplies() {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+
+    const analyze = async (monthsBack: number) => {
+        try {
+            setLoading(true)
+            await analyzeSupplies(dayjs().subtract(monthsBack, 'month').format('YYYYMMDD'))
+        } catch (e: any) {
+            setError(e.toString())
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return { analyze, loading, error }
 }
 
 async function getIngredientWriteOffs(params: { dateFrom: string; dateTo: string }) {
