@@ -2,13 +2,13 @@ import React from 'react'
 import { ChevronDown, ChevronUp } from 'react-iconly'
 import { Column, useSortBy, useTable } from 'react-table'
 
-interface ITable<T extends Object> {
+interface ITable<T extends object> {
     columns: Column<T>[]
     data: T[]
     tableSpacing: string
 }
 
-const Table = <T extends Object>({ columns, data, tableSpacing }: ITable<T>) => {
+const Table = <T extends object>({ columns, data, tableSpacing }: ITable<T>) => {
     const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<T>({
         columns,
         data,
