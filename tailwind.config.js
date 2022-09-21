@@ -37,7 +37,9 @@ module.exports = {
                 '116': '28rem',
             },
             boxShadow: {
-                'filter': '0 3px 20px #CCC'
+                'filter': '0 3px 20px #CCC',
+                'bottom': '0px 1px 1px #D1D1D1',
+                'top': '0px -1px 1px #D1D1D1'
             }
         },
     },
