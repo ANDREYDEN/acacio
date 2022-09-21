@@ -79,7 +79,7 @@ const Table = <T extends object>({ columns, data, tableSpacing, footer = false }
                 </tbody>
                 {footer &&
                     <tfoot>
-                        <tr className='sticky z-0 bottom-0 shadow-top bg-white w-full'>
+                        <tr className='bg-secondary-background sticky z-0 bottom-0 shadow-top bg-white w-full'>
                             {headers.map((header, index) => {
                                 return (
                                     <td
