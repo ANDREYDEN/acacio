@@ -80,7 +80,7 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
         return columns.filter(c => c.accessor && selectedColumns.includes(c.accessor as string))
     }, [columns, selectedColumns])
 
-    return <Table columns={filteredColumns} data={data} tableSpacing='px-2' />
+    return <Table columns={filteredColumns} data={data} tableSpacing='px-2' footer={true} />
 }
 
 export default SalesTable

@@ -6,9 +6,10 @@ interface ITable<T extends object> {
     columns: Column<T>[]
     data: T[]
     tableSpacing: string
+    footer?: boolean
 }
 
-const Table = <T extends object>({ columns, data, tableSpacing }: ITable<T>) => {
+const Table = <T extends object>({ columns, data, tableSpacing, footer = false }: ITable<T>) => {
     const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<T>({
         columns,
         data,
@@ -76,24 +77,26 @@ const Table = <T extends object>({ columns, data, tableSpacing }: ITable<T>) => 
                         )
                     })}
                 </tbody>
-                <tfoot>
-                    <tr className='sticky z-0 bottom-0 shadow-top bg-white w-full'>
-                        {headers.map((header, index) => {
-                            return (
-                                <td
-                                    key={index}
-                                    className={`py-6 text-left ${tableSpacing}
-                                        ${index === 0 ? 'pl-6' : ''}
-                                        ${index === headers.length - 1 ? 'pr-6' : ''}`}
-                                >
-                                    <span className='flex items-center'>
-                                        <span className='mr-1'>{header.render('Header')}</span>
-                                    </span>
-                                </td>
-                            )
-                        })}
-                    </tr>
-                </tfoot>
+                {footer &&
+                    <tfoot>
+                        <tr className='sticky z-0 bottom-0 shadow-top bg-white w-full'>
+                            {headers.map((header, index) => {
+                                return (
+                                    <td
+                                        key={index}
+                                        className={`py-6 text-left ${tableSpacing}
+                                            ${index === 0 ? 'pl-6' : ''}
+                                            ${index === headers.length - 1 ? 'pr-6' : ''}`}
+                                    >
+                                        <span className='flex items-center'>
+                                            <span className='mr-1'>{header.render('Header')}</span>
+                                        </span>
+                                    </td>
+                                )
+                            })}
+                        </tr>
+                    </tfoot>
+                }
             </table>
         </div>
     )
