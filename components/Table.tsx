@@ -76,6 +76,12 @@ const Table = <T extends object>({ columns, data, tableSpacing }: ITable<T>) => 
                         )
                     })}
                 </tbody>
+                <tfoot>
+                    <tr className='sticky z-0 bottom-0 border-t border-table-grey bg-white'>
+                        <td>Sum</td>
+                        <td>$180</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     )
