@@ -204,7 +204,7 @@ export async function posterGetIngredientMovement(
             toOrder: {
                 id: ingredientMovement.ingredient_id,
                 initialValue: reorder,
-                onChange: () => {} // gets reassigned later
+                onChange: () => undefined // gets reassigned later
             },
             totalCost: finalBalance * ingredientMovement.cost_end,
         }

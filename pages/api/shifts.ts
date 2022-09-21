@@ -8,7 +8,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        let { month, year } = req.query
+        const { month, year } = req.query
         const date = dayjs()
             .month(month ? +month : dayjs().month())
             .year(year ? +year : dayjs().year())
