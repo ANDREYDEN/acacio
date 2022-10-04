@@ -21,7 +21,8 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
             {
                 Header: <h1>{t('table_headers.date').toString()}</h1>,
                 accessor: 'date',
-                Cell: ({ value: date }: { value: dayjs.Dayjs }) => <span>{date.format('DD.MM')}</span>
+                Cell: ({ value: date }: { value: dayjs.Dayjs }) => <span>{date.format('DD.MM')}</span>,
+                Footer: <h1>Total:</h1>
             },
             {
                 Header: <h1>{t('table_headers.dayOfWeek').toString()}</h1>,
@@ -36,41 +37,49 @@ const SalesTable: React.FC<ISalesTable> = ({ data, selectedColumns }: ISalesTabl
             {
                 Header: <h1>{t('table_headers.customers').toString()}</h1>,
                 accessor: 'customers',
+                Footer: <h1>Popular</h1>
             },
             {
                 Header: <h1>{t('table_headers.averageBill').toString()}</h1>,
                 accessor: 'averageBill',
-                Cell: CurrencyCell
+                Cell: CurrencyCell,
+                Footer: <h1>Popular</h1>
             },
             {
                 Header: <h1>{t('table_headers.kitchenRevenue').toString()}</h1>,
                 accessor: 'kitchenRevenue',
-                Cell: CurrencyCell
+                Cell: CurrencyCell,
+                Footer: <h1>Popular</h1>
             },
             {
                 Header: <h1>{t('table_headers.kitchenProfit').toString()}</h1>,
                 accessor: 'kitchenProfit',
-                Cell: CurrencyCell
+                Cell: CurrencyCell,
+                Footer: <h1>Popular</h1>
             },
             {
                 Header: <h1>{t('table_headers.barRevenue').toString()}</h1>,
                 accessor: 'barRevenue',
-                Cell: CurrencyCell
+                Cell: CurrencyCell,
+                Footer: <h1>Popular</h1>
             },
             {
                 Header: <h1>{t('table_headers.barProfit').toString()}</h1>,
                 accessor: 'barProfit',
-                Cell: CurrencyCell
+                Cell: CurrencyCell,
+                Footer: <h1>Popular</h1>
             },
             {
                 Header: <h1>{t('table_headers.totalRevenue').toString()}</h1>,
                 accessor: 'totalRevenue',
-                Cell: CurrencyCell
+                Cell: CurrencyCell,
+                Footer: <h1>Popular</h1>
             },
             {
                 Header: <h1>{t('table_headers.totalProfit').toString()}</h1>,
                 accessor: 'totalProfit',
-                Cell: CurrencyCell
+                Cell: CurrencyCell,
+                Footer: <h1>Popular</h1>
             },
         ],
         [router.locale, t]

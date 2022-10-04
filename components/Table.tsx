@@ -10,7 +10,7 @@ interface ITable<T extends object> {
 }
 
 const Table = <T extends object>({ columns, data, tableSpacing, footer = false }: ITable<T>) => {
-    const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable<T>({
+    const { getTableProps, getTableBodyProps, headers, rows, footerGroups, prepareRow } = useTable<T>({
         columns,
         data,
     }, useSortBy)
@@ -89,7 +89,7 @@ const Table = <T extends object>({ columns, data, tableSpacing, footer = false }
                                             ${index === headers.length - 1 ? 'pr-6' : ''}`}
                                     >
                                         <span className='flex items-center'>
-                                            <span className='mr-1'>{header.render('Header')}</span>
+                                            <span className='mr-1'>{header.render('Footer')}</span>
                                         </span>
                                     </td>
                                 )
